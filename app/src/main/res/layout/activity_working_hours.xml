@@ -1,0 +1,607 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#666666"
+    android:orientation="vertical"
+    tools:context=".features.FacilitynPaymentMethod">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/iv_back_orking_hours"
+            android:layout_margin="@dimen/size_10dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/back_wihte"/>
+
+        <com.electrom.vahanwireprovider.utility.CustomTextView
+            android:textColor="@color/colorWhite"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ALL WORKING HOURS"
+            android:textSize="@dimen/size_20sp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_50dp"
+        android:layout_marginRight="@dimen/size_5dp"
+        android:layout_marginLeft="@dimen/size_5dp"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/payments_method"
+            android:layout_weight="2">
+            <com.electrom.vahanwireprovider.utility.CustomTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:textSize="@dimen/size_15dp"
+                android:paddingLeft="@dimen/size_10dp"
+                android:text="DAY"
+                android:layout_gravity="center_vertical"/>
+
+            <com.electrom.vahanwireprovider.utility.CustomTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:textSize="@dimen/size_15dp"
+                android:layout_marginRight="@dimen/size_10dp"
+                android:text="START TIME"/>
+
+        </RelativeLayout>
+
+
+
+        <RelativeLayout
+            android:background="@drawable/payments_method"
+            android:layout_marginLeft="@dimen/size_5dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <com.electrom.vahanwireprovider.utility.CustomTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="END TIME"
+                android:layout_centerVertical="true"
+                android:layout_centerInParent="true"
+                android:textSize="@dimen/size_15dp"/>
+
+        </RelativeLayout>
+
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/payments_method"
+        android:layout_margin="@dimen/size_5dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_50dp"
+            android:layout_marginRight="@dimen/size_5dp"
+            android:layout_marginLeft="@dimen/size_5dp"
+            android:layout_marginTop="@dimen/size_10dp"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/payments_method"
+                android:layout_weight="2">
+                <com.electrom.vahanwireprovider.utility.CustomTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:textSize="@dimen/size_15dp"
+                    android:paddingLeft="@dimen/size_10dp"
+                    android:text="Monday"
+                    android:layout_gravity="center_vertical"/>
+
+                <RelativeLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/round_transparent">
+
+                    <Spinner
+                        android:pointerIcon="cell"
+                        style="@style/Widget.AppCompat.DropDownItem.Spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:id="@+id/spinMandayDate"/>
+                </RelativeLayout>
+
+
+            </RelativeLayout>
+
+
+
+            <RelativeLayout
+                android:background="@drawable/payments_method"
+                android:layout_marginLeft="@dimen/size_5dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <RelativeLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/round_transparent">
+
+                    <Spinner
+                        android:pointerIcon="cell"
+                        style="@style/Widget.AppCompat.DropDownItem.Spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:id="@+id/spinMandayEndDate"/>
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_50dp"
+            android:layout_marginRight="@dimen/size_5dp"
+            android:layout_marginLeft="@dimen/size_5dp"
+            android:layout_marginTop="@dimen/size_10dp"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/payments_method"
+                android:layout_weight="2">
+                <com.electrom.vahanwireprovider.utility.CustomTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:textSize="@dimen/size_15dp"
+                    android:paddingLeft="@dimen/size_10dp"
+                    android:text="Tuesday"
+                    android:layout_gravity="center_vertical"/>
+
+                <RelativeLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/round_transparent">
+
+                    <Spinner
+                        android:pointerIcon="cell"
+                        style="@style/Widget.AppCompat.DropDownItem.Spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:id="@+id/spinTuesdayDateStart"/>
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+
+
+            <RelativeLayout
+                android:background="@drawable/payments_method"
+                android:layout_marginLeft="@dimen/size_5dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <RelativeLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/round_transparent">
+
+                    <Spinner
+                        android:pointerIcon="cell"
+                        style="@style/Widget.AppCompat.DropDownItem.Spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:id="@+id/spinTuesdayDateEnd"/>
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+
+
+        </LinearLayout><LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_50dp"
+        android:layout_marginRight="@dimen/size_5dp"
+        android:layout_marginLeft="@dimen/size_5dp"
+        android:layout_marginTop="@dimen/size_10dp"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/payments_method"
+            android:layout_weight="2">
+            <com.electrom.vahanwireprovider.utility.CustomTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:textSize="@dimen/size_15dp"
+                android:paddingLeft="@dimen/size_10dp"
+                android:text="Wednesday"
+                android:layout_gravity="center_vertical"/>
+
+            <RelativeLayout
+                android:layout_marginTop="10dp"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/round_transparent">
+
+                <Spinner
+                    android:pointerIcon="cell"
+                    style="@style/Widget.AppCompat.DropDownItem.Spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:id="@+id/spinWednesdayDateStart"/>
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+
+
+        <RelativeLayout
+            android:background="@drawable/payments_method"
+            android:layout_marginLeft="@dimen/size_5dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <RelativeLayout
+                android:layout_marginTop="10dp"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/round_transparent">
+
+                <Spinner
+                    android:pointerIcon="cell"
+                    style="@style/Widget.AppCompat.DropDownItem.Spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:id="@+id/spinWednesdayDateEnd"/>
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+
+
+    </LinearLayout><LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_50dp"
+        android:layout_marginRight="@dimen/size_5dp"
+        android:layout_marginLeft="@dimen/size_5dp"
+        android:layout_marginTop="@dimen/size_10dp"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/payments_method"
+            android:layout_weight="2">
+            <com.electrom.vahanwireprovider.utility.CustomTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:textSize="@dimen/size_15dp"
+                android:paddingLeft="@dimen/size_10dp"
+                android:text="Thrusday"
+                android:layout_gravity="center_vertical"/>
+
+            <RelativeLayout
+                android:layout_marginTop="10dp"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/round_transparent">
+
+                <Spinner
+                    android:pointerIcon="cell"
+                    style="@style/Widget.AppCompat.DropDownItem.Spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:id="@+id/spinThrusdayDateStart"/>
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+
+
+        <RelativeLayout
+            android:background="@drawable/payments_method"
+            android:layout_marginLeft="@dimen/size_5dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <RelativeLayout
+                android:layout_marginTop="10dp"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/round_transparent">
+
+                <Spinner
+                    android:pointerIcon="cell"
+                    style="@style/Widget.AppCompat.DropDownItem.Spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:id="@+id/spinThrusdayDateEnd"/>
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+
+
+    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_50dp"
+            android:layout_marginRight="@dimen/size_5dp"
+            android:layout_marginLeft="@dimen/size_5dp"
+            android:layout_marginTop="@dimen/size_10dp"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/payments_method"
+                android:layout_weight="2">
+                <com.electrom.vahanwireprovider.utility.CustomTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:textSize="@dimen/size_15dp"
+                    android:paddingLeft="@dimen/size_10dp"
+                    android:text="Friday"
+                    android:layout_gravity="center_vertical"/>
+
+                <RelativeLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/round_transparent">
+
+                    <Spinner
+                        android:pointerIcon="cell"
+                        style="@style/Widget.AppCompat.DropDownItem.Spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:id="@+id/spinFridayDateStart"/>
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+
+
+            <RelativeLayout
+                android:background="@drawable/payments_method"
+                android:layout_marginLeft="@dimen/size_5dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <RelativeLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/round_transparent">
+
+                    <Spinner
+                        android:pointerIcon="cell"
+                        style="@style/Widget.AppCompat.DropDownItem.Spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:id="@+id/spinFridayDateEnd"/>
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_50dp"
+            android:layout_marginRight="@dimen/size_5dp"
+            android:layout_marginLeft="@dimen/size_5dp"
+            android:layout_marginTop="@dimen/size_10dp"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/payments_method"
+                android:layout_weight="2">
+                <com.electrom.vahanwireprovider.utility.CustomTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:textSize="@dimen/size_15dp"
+                    android:paddingLeft="@dimen/size_10dp"
+                    android:text="Saturday"
+                    android:layout_gravity="center_vertical"/>
+
+                <RelativeLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/round_transparent">
+
+                    <Spinner
+                        android:pointerIcon="cell"
+                        style="@style/Widget.AppCompat.DropDownItem.Spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:id="@+id/spinSaturdayDateStart"/>
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+
+
+            <RelativeLayout
+                android:background="@drawable/payments_method"
+                android:layout_marginLeft="@dimen/size_5dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <RelativeLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/round_transparent">
+
+                    <Spinner
+                        android:pointerIcon="cell"
+                        style="@style/Widget.AppCompat.DropDownItem.Spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:id="@+id/spinSaturdayDateEnd"/>
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_50dp"
+            android:layout_marginRight="@dimen/size_5dp"
+            android:layout_marginLeft="@dimen/size_5dp"
+            android:layout_marginTop="@dimen/size_10dp"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/payments_method"
+                android:layout_weight="2">
+                <com.electrom.vahanwireprovider.utility.CustomTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:textSize="@dimen/size_15dp"
+                    android:paddingLeft="@dimen/size_10dp"
+                    android:text="Sunday"
+                    android:layout_gravity="center_vertical"/>
+
+                <RelativeLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/round_transparent">
+
+                    <Spinner
+                        android:pointerIcon="cell"
+                        style="@style/Widget.AppCompat.DropDownItem.Spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:id="@+id/spinSundayStart"/>
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+
+
+            <RelativeLayout
+                android:background="@drawable/payments_method"
+                android:layout_marginLeft="@dimen/size_5dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <RelativeLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/round_transparent">
+
+                    <Spinner
+                        android:pointerIcon="cell"
+                        style="@style/Widget.AppCompat.DropDownItem.Spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:id="@+id/spinSundayEndDate"/>
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+
+
+        </LinearLayout>
+
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:gravity="center">
+        <com.electrom.vahanwireprovider.utility.CustomButton
+            android:id="@+id/btnSumbitWorkingHours"
+            android:layout_width="200dp"
+            android:text="SUBMIT"
+            android:textSize="@dimen/size_20dp"
+            android:layout_height="@dimen/size_50dp"
+            android:background="@drawable/button"/>
+    </LinearLayout>
+
+
+
+
+</LinearLayout>

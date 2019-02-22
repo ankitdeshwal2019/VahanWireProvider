@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/background_offer"
+    tools:context=".features.OfferActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_margin="@dimen/size_10dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/back_button_darkgrey"/>
+
+        <com.electrom.vahanwireprovider.utility.CustomTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="OFFERS"
+            android:textSize="@dimen/size_25sp"/>
+
+    </LinearLayout>
+
+
+    <com.electrom.vahanwireprovider.utility.CustomEditText
+        android:id="@+id/etOfferTitle"
+        android:layout_marginTop="@dimen/size_30dp"
+        android:background="@drawable/title_text_offer"
+        android:layout_marginLeft="@dimen/size_10dp"
+        android:inputType="text"
+        android:layout_marginRight="@dimen/size_10dp"
+        android:hint="OFFER TITLES"
+        android:paddingLeft="@dimen/size_10dp"
+        android:layout_width="match_parent"
+        android:layout_height="60dp" />
+
+
+    <com.electrom.vahanwireprovider.utility.CustomEditText
+        android:id="@+id/etOfferDescription"
+        android:layout_marginTop="@dimen/size_30dp"
+        android:background="@drawable/title_text_offer"
+        android:layout_marginLeft="@dimen/size_10dp"
+        android:layout_marginRight="@dimen/size_10dp"
+        android:inputType="text"
+        android:hint="Offer description"
+        android:gravity="top"
+        android:padding="@dimen/size_10dp"
+        android:layout_width="match_parent"
+        android:layout_height="200dp" />
+
+
+    <LinearLayout
+        android:layout_margin="@dimen/size_20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.electrom.vahanwireprovider.utility.CustomButton
+            android:id="@+id/btnStartDate"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:text="Start Date"
+            android:textSize="@dimen/size_20dp"
+            android:background="@drawable/time_start_end"
+            android:layout_weight="1"/>
+
+        <com.electrom.vahanwireprovider.utility.CustomButton
+            android:id="@+id/btnEndDate"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:background="@drawable/time_start_end"
+            android:text="End Date"
+            android:textSize="@dimen/size_20dp"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+
+    <com.electrom.vahanwireprovider.utility.CustomButton
+        android:id="@+id/btnSubmitOffer"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/size_20dp"
+        android:background="@drawable/button"
+        android:layout_width="200dp"
+        android:text="Submit"
+        android:textSize="@dimen/size_20dp"
+        android:layout_height="@dimen/size_50dp" />
+
+</LinearLayout>

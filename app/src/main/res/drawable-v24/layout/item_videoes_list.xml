@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.v7.widget.CardView
+        android:layout_margin="@dimen/size_5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+
+        card_view:cardElevation="@dimen/size_5dp">
+
+        <RelativeLayout
+            android:id="@+id/rlImageContainer"
+            android:layout_width="215dp"
+            android:layout_height="145dp">
+
+            <ImageView
+                android:id="@+id/iv_item_video_thumb"
+                android:src="@color/colorBlueApp"
+                android:layout_width="215dp"
+                android:layout_height="145dp"/>
+
+            <ImageButton
+                android:layout_width="@dimen/size_40dp"
+                android:layout_height="@dimen/size_40dp"
+                android:padding="@dimen/size_10dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/video_play_icon"/>
+
+            <ImageButton
+
+                android:layout_marginRight="@dimen/size_10dp"
+                android:layout_marginTop="@dimen/size_10dp"
+                android:layout_alignParentRight="true"
+                android:layout_width="40dp"
+                android:layout_height="@dimen/size_20dp"
+                android:background="@drawable/live_button"/>
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+</FrameLayout>

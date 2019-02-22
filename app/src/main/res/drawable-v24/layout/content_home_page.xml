@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".features.HomePage"
+    android:orientation="vertical"
+    tools:showIn="@layout/app_bar_home_page">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="7"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/llEmergencyContainer"
+                android:layout_marginTop="@dimen/size_5dp"
+                android:layout_marginRight="@dimen/size_5dp"
+                android:layout_marginBottom="@dimen/size_5dp"
+
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/colorRedApp"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/emergency"
+                    android:layout_marginBottom="@dimen/size_30dp"/>
+
+                <com.electrom.vahanwirecustomer.utility.CustomTextView
+                    android:layout_marginTop="@dimen/size_5dp"
+                    android:layout_marginRight="@dimen/size_5dp"
+                    android:layout_marginBottom="@dimen/size_5dp"
+                    android:layout_marginLeft="@dimen/size_5dp"
+                    android:layout_width="match_parent"
+                    android:gravity="center"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/size_20sp"
+                    android:drawablePadding="@dimen/size_20dp"
+                    android:text="EMERGENCY"
+                    android:layout_height="wrap_content"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llPreAppointmentContainer"
+                android:layout_marginTop="@dimen/size_5dp"
+                android:layout_marginLeft="@dimen/size_5dp"
+                android:layout_marginBottom="@dimen/size_5dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/colorYellowApp"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/pre_appointment"
+                    android:layout_marginBottom="@dimen/size_30dp"/>
+
+                <com.electrom.vahanwirecustomer.utility.CustomTextView
+                    android:layout_marginTop="@dimen/size_5dp"
+                    android:layout_marginRight="@dimen/size_5dp"
+                    android:layout_marginBottom="@dimen/size_5dp"
+                    android:layout_marginLeft="@dimen/size_5dp"
+                    android:layout_width="match_parent"
+                    android:gravity="center"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/size_20sp"
+                    android:drawablePadding="@dimen/size_20dp"
+                    android:text="PRE\nAPPOINTMENT"
+                    android:layout_height="wrap_content"/>
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/llVahanMoneyContainer"
+                android:layout_marginTop="@dimen/size_5dp"
+                android:layout_marginRight="@dimen/size_5dp"
+                android:layout_marginBottom="@dimen/size_5dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/colorGreenApp"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/vahan_money"
+                    android:layout_marginBottom="@dimen/size_30dp"/>
+
+                <com.electrom.vahanwirecustomer.utility.CustomTextView
+
+                    android:layout_width="match_parent"
+                    android:gravity="center"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/size_20sp"
+                    android:drawablePadding="@dimen/size_20dp"
+                    android:text="VAHAN MONEY"
+                    android:layout_height="wrap_content"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llMarketPlaceContainer"
+                android:layout_marginTop="@dimen/size_5dp"
+                android:layout_marginLeft="@dimen/size_5dp"
+                android:layout_marginBottom="@dimen/size_5dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/colorBlueApp"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/market_palce"
+                    android:layout_marginBottom="@dimen/size_30dp"/>
+
+                <com.electrom.vahanwirecustomer.utility.CustomTextView
+
+                    android:layout_width="match_parent"
+                    android:gravity="center"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/size_20sp"
+                    android:drawablePadding="@dimen/size_20dp"
+                    android:text="MARKET PLACE"
+                    android:layout_height="wrap_content"/>
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3.6"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorGreyApp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_35dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.electrom.vahanwirecustomer.utility.CustomTextView
+                android:layout_marginLeft="@dimen/size_10dp"
+                android:gravity="center_vertical"
+                android:textColor="@color/colorGreyApp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textSize="@dimen/size_20sp"
+                android:text="EXCLUCIVE VIDEO" />
+
+            <ImageView
+                android:layout_width="@dimen/size_15dp"
+                android:layout_height="@dimen/size_15dp"
+                android:layout_marginLeft="@dimen/size_10dp"
+                android:src="@drawable/exclucive_video"/>
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rcyVideoHome"
+            android:layout_marginRight="@dimen/size_10dp"
+            android:layout_marginLeft="@dimen/size_10dp"
+            android:layout_marginBottom="@dimen/size_10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </android.support.v7.widget.RecyclerView>
+
+    </LinearLayout>
+
+</LinearLayout>

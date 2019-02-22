@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/provider_login_one"
+    tools:context=".ragistration.ProviderLogin">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/logo"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="6"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_50dp"
+            android:background="@color/colorWhite"
+            android:layout_marginRight="@dimen/size_30dp"
+            android:layout_marginLeft="@dimen/size_30dp">
+
+            <ImageView
+                android:padding="@dimen/size_10dp"
+                android:id="@+id/iv_mobile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/mobile_no"/>
+
+            <com.electrom.vahanwireprovider.utility.CustomEditText
+                android:layout_toRightOf="@id/iv_mobile"
+                android:id="@+id/etLoginMobile"
+                android:background="#fff"
+                android:inputType="number"
+                android:hint="Mobile no"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_marginTop="@dimen/size_20dp"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_50dp"
+            android:background="@color/colorWhite"
+            android:layout_marginRight="@dimen/size_30dp"
+            android:layout_marginLeft="@dimen/size_30dp">
+
+            <ImageView
+                android:padding="@dimen/size_10dp"
+                android:id="@+id/iv_pass"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/password"/>
+
+            <com.electrom.vahanwireprovider.utility.CustomEditText
+                android:layout_toRightOf="@id/iv_pass"
+                android:id="@+id/etLoginPassword"
+                android:background="#fff"
+                android:inputType="numberPassword"
+                android:hint="Mobile Pin"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </RelativeLayout>
+
+        <com.electrom.vahanwireprovider.utility.CustomButton
+            android:id="@+id/btnLogin"
+            android:layout_marginTop="@dimen/size_20dp"
+            android:layout_width="150dp"
+            android:gravity="center"
+            android:text="LOGIN"
+            android:textSize="@dimen/size_20sp"
+            android:background="@drawable/button"
+            android:layout_height="@dimen/size_40dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+
+        <LinearLayout
+            android:layout_marginBottom="@dimen/size_50dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <com.electrom.vahanwireprovider.utility.CustomTextView
+                android:layout_marginBottom="@dimen/size_10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorWhite"
+                android:text="Not register yet?"/>
+
+            <com.electrom.vahanwireprovider.utility.CustomButton
+                android:id="@+id/btnRegister"
+                android:layout_width="200dp"
+                android:layout_height="@dimen/size_50dp"
+                android:gravity="center"
+                android:background="@drawable/button"
+                android:paddingRight="@dimen/size_20dp"
+                android:paddingLeft="@dimen/size_20dp"
+                android:textSize="@dimen/size_20sp"
+                android:text="REGISTER"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".features.Emergency">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/iv_back_emergency"
+            android:layout_margin="@dimen/size_10dp"
+            android:layout_width="@dimen/size_30dp"
+            android:layout_height="@dimen/size_30dp"
+            android:src="@drawable/back_button_darkgrey"/>
+
+        <com.electrom.vahanwirecustomer.utility.CustomTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/size_25sp"
+            android:text="EMERGENCY"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:gravity="center"
+        android:background="#f3f3f3">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_50dp"
+            android:orientation="horizontal"
+            android:layout_marginRight="@dimen/size_10dp"
+            android:layout_marginLeft="@dimen/size_10dp"
+            android:background="@drawable/search_box"
+            android:gravity="center_vertical">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <com.electrom.vahanwirecustomer.utility.CustomTextView
+                    android:id="@+id/tvSearchArea"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Search location"
+                    android:textColor="#A89E9E"
+                    android:layout_marginRight="@dimen/size_15dp"
+                    android:layout_marginLeft="@dimen/size_15dp"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/size_10dp"
+                    android:src="@drawable/search"/>
+
+
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/gps_current_loc"
+                android:padding="@dimen/size_10dp"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:background="@drawable/petrol_pump">
+
+        <com.electrom.vahanwirecustomer.utility.CustomTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/size_25sp"
+            android:textColor="@color/colorWhite"
+            android:text="Petrol Pump"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_marginTop="@dimen/size_5dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/ambulance"
+        android:gravity="center">
+
+        <com.electrom.vahanwirecustomer.utility.CustomTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/size_25sp"
+            android:textColor="@color/colorWhite"
+            android:text="Ambulance"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_marginTop="@dimen/size_5dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/mechanics"
+        android:gravity="center">
+
+        <com.electrom.vahanwirecustomer.utility.CustomTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/size_25sp"
+            android:textColor="@color/colorWhite"
+            android:text="Mechanic"/>
+    </LinearLayout>
+
+
+
+</LinearLayout>

@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:background="@drawable/provider_login_four"
+    tools:context=".ragistration.RegistrationActivity">
+
+    <ImageView
+        android:layout_width="180dp"
+        android:layout_height="150dp"
+        android:src="@drawable/logo"/>
+
+    <com.electrom.vahanwireprovider.utility.CustomTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="REGISTER"
+        android:textSize="@dimen/size_20sp"
+        android:textColor="@color/colorWhite"
+        android:layout_marginBottom="@dimen/size_5dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/strip"
+            android:layout_marginLeft="@dimen/size_30dp"
+            android:layout_marginTop="@dimen/size_5dp"
+            android:layout_marginRight="@dimen/size_30dp">
+
+            <ImageView
+                android:id="@+id/iv_company_name"
+                android:padding="@dimen/size_10dp"
+                android:layout_marginLeft="@dimen/size_10dp"
+                android:layout_width="@dimen/size_40dp"
+                android:layout_height="@dimen/size_40dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/company_name" />
+
+            <com.electrom.vahanwireprovider.utility.CustomEditText
+                android:id="@+id/et_resister_com_name"
+                android:layout_width="306dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="@dimen/size_10dp"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/iv_company_name"
+                android:background="@android:color/transparent"
+                android:hint="Company name "
+                android:textSize="@dimen/size_15sp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/strip"
+            android:layout_marginLeft="@dimen/size_30dp"
+            android:layout_marginTop="@dimen/size_5dp"
+            android:layout_marginRight="@dimen/size_30dp">
+
+            <ImageView
+                android:id="@+id/iv_mobile"
+                android:layout_width="@dimen/size_40dp"
+                android:layout_height="@dimen/size_40dp"
+                android:padding="@dimen/size_10dp"
+                android:layout_marginLeft="@dimen/size_10dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/name" />
+
+            <com.electrom.vahanwireprovider.utility.CustomEditText
+                android:id="@+id/etContactPerson"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_40dp"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/size_10dp"
+                android:layout_toRightOf="@id/iv_mobile"
+                android:background="@android:color/transparent"
+                android:hint="Contact Person"
+                android:textSize="@dimen/size_15sp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/strip"
+            android:layout_marginLeft="@dimen/size_30dp"
+            android:layout_marginTop="@dimen/size_5dp"
+            android:layout_marginRight="@dimen/size_30dp">
+
+            <ImageView
+                android:id="@+id/iv_landline"
+                android:padding="@dimen/size_10dp"
+                android:layout_marginLeft="@dimen/size_10dp"
+                android:layout_width="@dimen/size_40dp"
+                android:layout_height="@dimen/size_40dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/landline" />
+
+            <com.electrom.vahanwireprovider.utility.CustomEditText
+                android:id="@+id/etRegisterLandLine"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_40dp"
+                android:layout_centerVertical="true"
+                android:inputType="number"
+                android:layout_marginRight="@dimen/size_10dp"
+                android:layout_toRightOf="@id/iv_landline"
+                android:background="@android:color/transparent"
+                android:hint="Landline"
+                android:textSize="@dimen/size_15sp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/strip"
+            android:layout_marginLeft="@dimen/size_30dp"
+            android:layout_marginTop="@dimen/size_5dp"
+            android:layout_marginRight="@dimen/size_30dp">
+
+            <ImageView
+                android:id="@+id/iv_email"
+                android:layout_width="@dimen/size_40dp"
+                android:layout_height="@dimen/size_40dp"
+                android:layout_centerVertical="true"
+                android:padding="@dimen/size_10dp"
+                android:layout_marginLeft="@dimen/size_10dp"
+                android:src="@drawable/mail" />
+
+            <com.electrom.vahanwireprovider.utility.CustomEditText
+                android:id="@+id/etRegisterEmail"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_40dp"
+                android:layout_centerVertical="true"
+                android:inputType="textEmailAddress"
+                android:layout_marginRight="@dimen/size_10dp"
+                android:layout_toRightOf="@id/iv_email"
+                android:background="@android:color/transparent"
+                android:hint="Email"
+                android:textSize="@dimen/size_15sp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/strip"
+            android:layout_marginLeft="@dimen/size_30dp"
+            android:layout_marginTop="@dimen/size_5dp"
+            android:layout_marginRight="@dimen/size_30dp">
+
+            <ImageView
+                android:id="@+id/iv_password"
+                android:layout_width="@dimen/size_40dp"
+                android:layout_height="@dimen/size_40dp"
+                android:layout_centerVertical="true"
+                android:padding="@dimen/size_10dp"
+                android:layout_marginLeft="@dimen/size_10dp"
+                android:src="@drawable/password" />
+
+            <com.electrom.vahanwireprovider.utility.CustomEditText
+                android:id="@+id/etRegisterPassword"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="@android:color/transparent"
+                android:layout_centerVertical="true"
+                android:inputType="number"
+                android:maxLength="4"
+                android:layout_marginRight="@dimen/size_10dp"
+                android:layout_toRightOf="@id/iv_password"
+                android:hint="Mobile Pin"
+                android:textSize="@dimen/size_15sp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/strip"
+            android:layout_marginLeft="@dimen/size_30dp"
+            android:layout_marginTop="@dimen/size_5dp"
+            android:layout_marginRight="@dimen/size_30dp">
+
+            <ImageView
+                android:id="@+id/iv_address"
+                android:layout_width="@dimen/size_40dp"
+                android:layout_height="@dimen/size_40dp"
+                android:layout_centerVertical="true"
+                android:padding="@dimen/size_10dp"
+                android:src="@drawable/address" />
+
+            <com.electrom.vahanwireprovider.utility.CustomEditText
+                android:id="@+id/etRegisterAddress"
+                android:layout_width="match_parent"
+                android:padding="@dimen/size_10dp"
+                android:layout_height="@dimen/size_40dp"
+                android:inputType="textPostalAddress"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/size_10dp"
+                android:layout_toRightOf="@id/iv_address"
+                android:background="@android:color/transparent"
+                android:hint="Address"
+                android:textSize="@dimen/size_15sp" />
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+    <com.electrom.vahanwireprovider.utility.CustomButton
+        android:id="@+id/btnRegisterFinal"
+        android:layout_margin="@dimen/size_10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button"
+        android:paddingLeft="@dimen/size_15dp"
+        android:paddingRight="@dimen/size_15dp"
+        android:textSize="@dimen/size_20sp"
+        android:text="REGISTER"/>
+
+
+</LinearLayout>

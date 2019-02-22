@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "469499760489",
+    "firebase_url": "https://vahanwireprovider.firebaseio.com",
+    "project_id": "vahanwireprovider",
+    "storage_bucket": "vahanwireprovider.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:469499760489:android:3fb999c8e32fdc21",
+        "android_client_info": {
+          "package_name": "com.electrom.vahanwireprovider"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "469499760489-odil1ap8frgsq7b2nl25q2809ojjhfd2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.electrom.vahanwireprovider",
+            "certificate_hash": "fdd13df93c222d57d598aabbde25fdcf73743f4a"
+          }
+        },
+        {
+          "client_id": "469499760489-p8tl5hlupvpok8ip8t03bsq5gq2mlv07.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYxiiNz5j85-LK_nBU09YyU_Ir2FetLnw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "469499760489-p8tl5hlupvpok8ip8t03bsq5gq2mlv07.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

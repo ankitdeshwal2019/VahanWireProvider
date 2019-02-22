@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/nav_home"
+            android:title="Home" />
+        <item
+            android:id="@+id/nav_profile"
+            android:icon="@drawable/profile"
+            android:title="Profile" />
+        <item
+            android:id="@+id/nav_offer"
+            android:icon="@drawable/offer"
+            android:title="Offer" />
+        <item
+            android:id="@+id/nav_time_n_schedule"
+            android:icon="@drawable/time_schedule"
+            android:title="Time and Schedule" />
+
+        <item
+            android:id="@+id/nav_facility_n_payment"
+            android:icon="@drawable/facility_payments_method"
+            android:title="Facility" />
+
+        <item
+            android:id="@+id/nav_payment_method"
+            android:icon="@drawable/facility_payments_method"
+            android:title="Payment method" />
+
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/log_out"
+            android:title="Log out" />
+
+
+    </group>
+
+</menu>
