@@ -32,6 +32,7 @@ import com.electrom.vahanwireprovider.utility.ActionForAll;
 import com.electrom.vahanwireprovider.utility.CodeMinimisations;
 import com.electrom.vahanwireprovider.utility.CustomButton;
 import com.electrom.vahanwireprovider.utility.CustomTextView;
+import com.electrom.vahanwireprovider.utility.PicassoClient;
 import com.electrom.vahanwireprovider.utility.SessionManager;
 import com.electrom.vahanwireprovider.utility.Util;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -109,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Picasso.with(this).load(sessionManager.getString(SessionManager.PROVIDER_IMAGE)).into(img);
        /* nav_name.setText("ANKIT");
         nav_email.setText("A@GMAIL.COM");*/
+        PicassoClient.downloadImage(this, sessionManager.getString(SessionManager.PROVIDER_IMAGE), img);
         nav_name.setText(sessionManager.getString(SessionManager.REGISTER_NAME));
         nav_email.setText(sessionManager.getString(SessionManager.EMAIL));
 

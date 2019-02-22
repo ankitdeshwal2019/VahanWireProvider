@@ -115,11 +115,11 @@
                 android:background="@drawable/text_box_background"
                 android:layout_marginTop="@dimen/size_15dp"
                 android:layout_marginLeft="@dimen/size_25dp"
+                android:paddingRight="@dimen/size_15dp"
                 android:layout_marginRight="@dimen/size_25dp"
                 android:paddingLeft="@dimen/size_15dp"
                 android:textSize="14sp"
                 android:hint="address"/>
-
 
             <LinearLayout
                 android:layout_marginTop="@dimen/size_15dp"

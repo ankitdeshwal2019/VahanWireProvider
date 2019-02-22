@@ -79,6 +79,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         etProfileMobileNumber.setText(sessionManager.getString(SessionManager.PROVIDER_MOBILE));
         etProfileLandLine.setText(sessionManager.getString(SessionManager.LANDLINE));
         etProfileAddress.setText(sessionManager.getString(SessionManager.ADDRESS));
+        PicassoClient.downloadImage(this, sessionManager.getString(SessionManager.PROVIDER_IMAGE), iv_profile_image);
     }
 
     @Override
