@@ -1,7 +1,8 @@
 package com.electrom.vahanwireprovider.utility;
 
 public class UrlConstants {
-    public static final String BASE_URL = "https://polar-plateau-32696.herokuapp.com/api/";
+    //public static final String BASE_URL = "https://polar-plateau-32696.herokuapp.com/api/";
+    public static final String BASE_URL = "http://52.66.52.59/api/";
     public static final String REGISTER_PROVIDER = "petrolpump/provider/register/mobile";
     public static final String VERIFY_MOB_PROVIDER = "petrolpump/provider/register/verifymobile";
     public static final String RESISTRATION_UPDATE = "petrolpump/provider/details/update";
@@ -12,4 +13,6 @@ public class UrlConstants {
     public static final String ALL_PAYMENT_METHOD = "petrolpump/provider/paymentmethod/all";
     public static final String PAYMENT_METHOD_UPDATE = "petrolpump/provider/paymentmethod/update";
     public static final String SERVICE_UPDATE = "petrolpump/provider/service/update";
+    public static final String AMB_USER_STATUS = "ambulance/provider/activestatus";
+    public static final String AMB_USER_LOGIN = "ambulance/provider/login";
 }

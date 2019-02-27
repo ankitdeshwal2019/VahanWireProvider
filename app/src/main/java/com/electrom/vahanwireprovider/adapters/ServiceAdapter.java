@@ -77,7 +77,6 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ViewHold
     @Override
     public void onBindViewHolder(final ServiceAdapter.ViewHolder holder, final int position) {
 
-
         holder.tvServiceName.setText(list.get(position).getService());
         holder.checkBox.setOnCheckedChangeListener(null);
         holder.checkBox.setChecked(list.get(position).isSelected());

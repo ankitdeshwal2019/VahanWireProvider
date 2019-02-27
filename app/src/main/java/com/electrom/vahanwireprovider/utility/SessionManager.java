@@ -28,6 +28,10 @@ public class SessionManager {
     public static final String LATITUDE = "latitude";
     public static final String LONGITUDE = "longitude";
     public static final String PROVIDER_IMAGE = "profile_pic";
+    public static final String LOGIN_STATUS = "login_status";
+    public static final String SERVICE = "service";
+    public static final String PROVIDER_ID = "provider_id";
+    public static final String ACTIVE_STATUS = "active_status" ;
     private static String SHARED_PREFERENCE_PROVIDER = "shared_provider_electrom";
     ///public static final String COUNT_COMPARE = "count_compare";
     private static SharedPreferences sharedPref;

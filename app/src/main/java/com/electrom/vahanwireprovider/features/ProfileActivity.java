@@ -73,6 +73,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void setAllFielda() {
+
         //PicassoClient.downloadImage(this, sessionManager.getString(SessionManager.PROVIDER_IMAGE),iv_profile_image);
         etProfileCompanyName.setText(sessionManager.getString(SessionManager.REGISTER_NAME));
         etProfilePersonName.setText(sessionManager.getString(SessionManager.CONTACT_PERSON));

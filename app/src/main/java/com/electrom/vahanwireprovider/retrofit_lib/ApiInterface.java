@@ -2,8 +2,10 @@ package com.electrom.vahanwireprovider.retrofit_lib;
 
 import com.electrom.vahanwireprovider.models.detail.Detail;
 import com.electrom.vahanwireprovider.models.login.Login;
+import com.electrom.vahanwireprovider.models.login_ambulance.LoginAmbulance;
 import com.electrom.vahanwireprovider.models.payment.Payment;
 import com.electrom.vahanwireprovider.models.services.Service;
+import com.electrom.vahanwireprovider.models.status_user.StatusUser;
 import com.electrom.vahanwireprovider.models.update_profile.Update;
 import com.electrom.vahanwireprovider.utility.UrlConstants;
 
@@ -43,7 +45,6 @@ public interface ApiInterface {
 
     @GET(UrlConstants.ALL_PAYMENT_METHOD)
     Call<Payment> getAllPaymentMethod(@QueryMap Map<String, String> params);
-
 
     @POST(UrlConstants.RESISTRATION_UPDATE)
     @FormUrlEncoded
@@ -106,5 +107,18 @@ public interface ApiInterface {
     @FormUrlEncoded
     Call<ResponseBody> service_update(@Field("mobile") String mobile,
                                       @Field("service") String service);
+
+    @POST(UrlConstants.AMB_USER_STATUS)
+    @FormUrlEncoded
+    Call<StatusUser> update_status(@Field("id") String id,
+                                   @Field("status") String status);
+
+    @POST(UrlConstants.AMB_USER_LOGIN)
+    @FormUrlEncoded
+    Call<LoginAmbulance> login_ambulance(@Field("mobile") String mobile,
+                                         @Field("pin") String pin,
+                                         @Field("device_id") String device_id,
+                                         @Field("device_type") String device_type,
+                                         @Field("notification_id") String notification_id);
 
 }

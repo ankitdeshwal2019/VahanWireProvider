@@ -10,8 +10,11 @@ import android.view.View;
 
 import com.electrom.vahanwireprovider.MainActivity;
 import com.electrom.vahanwireprovider.R;
+import com.electrom.vahanwireprovider.features.AmbulanceProvider;
 import com.electrom.vahanwireprovider.models.detail.Detail;
 import com.electrom.vahanwireprovider.models.login.Login;
+import com.electrom.vahanwireprovider.models.login_ambulance.Data;
+import com.electrom.vahanwireprovider.models.login_ambulance.LoginAmbulance;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiClient;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiInterface;
 import com.electrom.vahanwireprovider.utility.ActionForAll;
@@ -32,7 +35,7 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
     CustomButton btnRegister, btnLogin;
     CustomEditText etLoginMobile, etLoginPassword;
     SessionManager sessionManager;
-
+    String service = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +51,10 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
         etLoginPassword = findViewById(R.id.etLoginPassword);
         btnRegister.setOnClickListener(this);
         btnLogin.setOnClickListener(this);
+        if(getIntent()!=null)
+        {
+            service = getIntent().getStringExtra("service");
+        }
     }
 
     @Override
@@ -56,7 +63,17 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
             case R.id.btnLogin:
                 if (ActionForAll.validMobileEditText(etLoginMobile, "mobile number", ProviderLogin.this) &&
                         ActionForAll.validEditText(etLoginPassword, "valid pin", ProviderLogin.this)) {
-                    login();
+
+                    Log.e(TAG, "onClick: service  " + service );
+
+                    if(service.contains("Petrol_Pump"))
+                    {
+                        login();
+                    }
+                    else if(service.contains("Ambulance"))
+                    {
+                        loginAmbulance();
+                    }
                 }
                 //startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 break;
@@ -107,6 +124,7 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
                         sessionManager.setString(SessionManager.LATITUDE, latitude+"");
                         sessionManager.setString(SessionManager.LONGITUDE, longitude+"");
                         sessionManager.setString(SessionManager.PROVIDER_IMAGE, login.getData().getProfilePic());
+                        sessionManager.setString(SessionManager.SERVICE, service);
 
                         Intent logout= new Intent(getApplicationContext(), MainActivity.class);
                         logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -128,30 +146,81 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
             public void onFailure(Call<Login> call, Throwable t) {
                 Util.hideProgressDialog(progressDialog);
                 Log.e(TAG, "error::: " + t.getMessage());
+                etLoginMobile.setText("");
+                etLoginPassword.setText("");
+                ActionForAll.alertUser("VahanWire", "Invalid credentials, Please check", "OK", ProviderLogin.this);
             }
         });
 
+    }
+
+    private void loginAmbulance() {
+
+        final ProgressDialog progressDialog = Util.showProgressDialog(this);
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        Call<LoginAmbulance> call = apiService.login_ambulance(etLoginMobile.getText().toString(),
+                etLoginPassword.getText().toString(),
+                sessionManager.getString(SessionManager.DEVICE_ID),
+                "1",
+                sessionManager.getString(SessionManager.NOTIFICATION_TOKEN));
 
 
-
-
-       /* call.enqueue(new Callback<Detail>() {
+        call.enqueue(new Callback<LoginAmbulance>() {
             @Override
-            public void onResponse(Call<Detail> call, Response<Detail> response) {
-
+            public void onResponse(Call<LoginAmbulance> call, Response<LoginAmbulance> response) {
                 if (response != null && response.isSuccessful()) {
+                    Log.d(TAG, "onResponse: "+ response.body().getStatus());
                     Util.hideProgressDialog(progressDialog);
-                    Detail login = response.body();
-                    if (login.getStatus().equals("200")) {
-                        Log.d(TAG, "login " + login.getMessage());
+                    LoginAmbulance login = response.body();
+                    if (login.getStatus().equals("200"))
+                    {
+                        sessionManager.setString(SessionManager.SERVICE, service);
+                        Data data = login.getData();
+                        sessionManager.setString(SessionManager.PROVIDER_MOBILE, data.getContact());
+                        sessionManager.setString(SessionManager.PROVIDER_PIN, data.getMobilePin());
+                        sessionManager.setString(SessionManager.PROVIDER_IMAGE, data.getOrganisation().getProfilePic());
+                        sessionManager.setString(SessionManager.REGISTER_NAME, data.getOrganisation().getOrganisationName());
+                        sessionManager.setString(SessionManager.EMAIL, data.getOrganisation().getEmail());
+                        sessionManager.setString(SessionManager.PROVIDER_ID, data.getId());
+
+                        Intent intent= new Intent(getApplicationContext(), AmbulanceProvider.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        finish();
+
+                       /* Log.d(TAG, "onResponse: " + "  message " + login.getMessage());
+                        Log.d(TAG, "onResponse: " + "  mobile " + login.getData().getMobile());
+                        Log.d(TAG, "onResponse: " + "  pin " + "--" + login.getData().getMobilePin());
+                        Log.d(TAG, "onResponse: " + " first address " + "--" + login.getData().getAddress().getFirstAddress());
+                        Log.d(TAG, "onResponse: " + "contact person " + "--" + login.getData().getContactPerson());
+                        Log.d(TAG, "onResponse: " + "phone number" + "--" + login.getData().getPhone());
+                        List<Double> list = login.getData().getAddress().getLocation().getCoordinates();
+                        Double longitude = list.get(0).doubleValue();
+                        Double latitude = list.get(1).doubleValue();
+                        Log.d(TAG, "onResponse: " + "longitude" + "--" + longitude);
+                        Log.d(TAG, "onResponse: " + "longitude" + "--" + latitude);
+                        Log.d(TAG, "onResponse: " + " image " + "--" + login.getData().getProfilePic());
 
                         sessionManager.setString(SessionManager.PROVIDER_MOBILE, login.getData().getMobile());
-                        sessionManager.setString(SessionManager.PROVIDER_PIN, login.getData().getAccess().getMobilePin());
+                        sessionManager.setString(SessionManager.PROVIDER_PIN, login.getData().getMobilePin());
                         sessionManager.setString(SessionManager.REGISTER_NAME, login.getData().getRegisteredName());
                         sessionManager.setString(SessionManager.EMAIL, login.getData().getEmail());
-                        Log.d(TAG, "onResponse: " + login.getData().getMobile() + "--" + login.getData().getAccess().getMobilePin());
-                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                    } else {
+                        sessionManager.setString(SessionManager.ADDRESS, login.getData().getAddress().getFirstAddress());
+                        sessionManager.setString(SessionManager.CONTACT_PERSON,login.getData().getContactPerson());
+                        sessionManager.setString(SessionManager.LANDLINE, login.getData().getPhone());
+                        sessionManager.setString(SessionManager.LATITUDE, latitude+"");
+                        sessionManager.setString(SessionManager.LONGITUDE, longitude+"");
+                        sessionManager.setString(SessionManager.PROVIDER_IMAGE, login.getData().getProfilePic());
+
+                        Intent logout= new Intent(getApplicationContext(), MainActivity.class);
+                        logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(logout);
+                        finish();*/
+                    }
+
+                    else {
+                        Util.hideProgressDialog(progressDialog);
                         ActionForAll.alertUser("VahanWire", login.getMessage(), "OK", ProviderLogin.this);
                     }
 
@@ -162,11 +231,13 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
             }
 
             @Override
-            public void onFailure(Call<Detail> call, Throwable t) {
+            public void onFailure(Call<LoginAmbulance> call, Throwable t) {
+                etLoginMobile.setText("");
+                etLoginPassword.setText("");
                 Util.hideProgressDialog(progressDialog);
-                Log.d(TAG, "onFailure: " + t.getMessage());
+                ActionForAll.alertUser("VahanWire", "Invalid credentials, Please check", "OK", ProviderLogin.this);
             }
-        });*/
+        });
 
     }
 
@@ -174,7 +245,7 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
     public boolean onKeyDown(int keyCode, KeyEvent event)
     {
         //replaces the default 'Back' button action
-        if(keyCode==KeyEvent.KEYCODE_BACK)
+        if(keyCode == KeyEvent.KEYCODE_BACK)
         {
             ActionForAll.alertChoiseCloseActivity(this);
         }

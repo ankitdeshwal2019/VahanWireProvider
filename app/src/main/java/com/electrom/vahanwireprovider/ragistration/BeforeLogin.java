@@ -16,6 +16,7 @@ import android.view.View;
 
 import com.electrom.vahanwireprovider.MainActivity;
 import com.electrom.vahanwireprovider.R;
+import com.electrom.vahanwireprovider.features.AmbulanceProvider;
 import com.electrom.vahanwireprovider.location_service.GPSTracker;
 import com.electrom.vahanwireprovider.utility.ActionForAll;
 import com.electrom.vahanwireprovider.utility.CustomTextView;
@@ -36,6 +37,7 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
 
     CustomTextView tvPetrolPump, tvMechanic, tvAbmulance;
     SessionManager sessionManager;
+    String service = "";
     public static final String TAG =BeforeLogin.class.getSimpleName();
 
     @Override
@@ -47,6 +49,7 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
 
     private void initView() {
         sessionManager = SessionManager.getInstance(this);
+        service = sessionManager.getString(SessionManager.SERVICE);
         String android_id = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
         Log.d(TAG, "onCreate: android id :: " + android_id);
         if(android_id.length() > 0)
@@ -59,11 +62,23 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
         tvAbmulance.setOnClickListener(this);
         tvMechanic.setOnClickListener(this);
 
+        Log.e(TAG, "mobile: " + sessionManager.getString(SessionManager.PROVIDER_MOBILE));
+        Log.e(TAG, "pin: " +  sessionManager.getString(SessionManager.PROVIDER_PIN) );
+        Log.e(TAG, "serivce: " +  sessionManager.getString(SessionManager.SERVICE) );
+
         if(sessionManager.getString(SessionManager.PROVIDER_MOBILE).length() > 0 &&
-                sessionManager.getString(SessionManager.PROVIDER_PIN).length() > 0){
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-            finish();
+                sessionManager.getString(SessionManager.PROVIDER_PIN).length() > 0)
+        {
+            if(service.contains("Petrol_Pump")){
+                startActivity(new Intent(getApplicationContext(), MainActivity.class).putExtra("service", service));
+                finish();
+            }
+            else if(service.contains("Ambulance")){
+                startActivity(new Intent(getApplicationContext(), AmbulanceProvider.class).putExtra("service", service));
+                finish();
+            }
         }
+
     }
 
 
@@ -73,7 +88,7 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
         switch (v.getId())
         {
             case R.id.tvPetrolPump:
-
+                service = "Petrol_Pump";
                 Dexter.withActivity(this).withPermissions(
                         Manifest.permission.ACCESS_COARSE_LOCATION,
                         Manifest.permission.ACCESS_FINE_LOCATION)
@@ -85,7 +100,8 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
                                     // do you work now
                                     if (!isMyServiceRunning(GPSTracker.class))
                                         startService(new Intent(getApplicationContext(), GPSTracker.class));
-                                        startActivity(new Intent(getApplicationContext(), ProviderLogin.class));
+                                        startActivity(new Intent(getApplicationContext(), ProviderLogin.class)
+                                                .putExtra("service", service));
                                 }
 
                                 // check for permanent denial of any permission
@@ -105,6 +121,8 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
                 break;
             case R.id.tvAmbulance:
 
+                service = "Ambulance";
+
                 Dexter.withActivity(this).withPermissions(
                         Manifest.permission.ACCESS_COARSE_LOCATION,
                         Manifest.permission.ACCESS_FINE_LOCATION)
@@ -116,10 +134,12 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
                                     // do you work now
                                     if (!isMyServiceRunning(GPSTracker.class))
                                         startService(new Intent(getApplicationContext(), GPSTracker.class));
-                                        ActionForAll.alertUser("VahanWire", "Under Process", "OK", BeforeLogin.this);
+                                        startActivity(new Intent(getApplicationContext(), ProviderLogin.class)
+                                            .putExtra("service", service));
+                                        //ActionForAll.alertUser("VahanWire", "Under Process", "OK", BeforeLogin.this);
                                 }
 
-                                // check for permanent denial of any permission
+                                //check for permanent denial of any permission
                                 if (report.isAnyPermissionPermanentlyDenied()) {
                                     showSettingsDialog();
                                     // permission is denied permenantly, navigate user to app settings
@@ -136,6 +156,7 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
                 break;
             case R.id.tvMechanic:
 
+                service = "Mechanic";
                 Dexter.withActivity(this).withPermissions(
                         Manifest.permission.ACCESS_COARSE_LOCATION,
                         Manifest.permission.ACCESS_FINE_LOCATION)
@@ -163,7 +184,6 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
                         })
                         .onSameThread()
                         .check();
-
                 break;
         }
 

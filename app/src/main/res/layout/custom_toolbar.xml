@@ -29,8 +29,9 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="@dimen/size_15dp"
                 android:adjustViewBounds="true"
-                android:text="HOME"
-                android:textSize="@dimen/size_30sp"
+                android:text="Home"
+                android:id="@+id/tvtoolText"
+                android:textSize="@dimen/size_20sp"
                 android:textColor="@color/colorGreyApp"
                 android:gravity="center_vertical"
                 android:cropToPadding="true" />

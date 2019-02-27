@@ -3,13 +3,18 @@ package com.electrom.vahanwireprovider;
 import android.Manifest;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.CountDownTimer;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -18,9 +23,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.electrom.vahanwireprovider.features.BookingStatusActivity;
 import com.electrom.vahanwireprovider.location_service.GPSTracker;
 import com.electrom.vahanwireprovider.models.detail.Detail;
 import com.electrom.vahanwireprovider.models.detail.Offer;
@@ -32,6 +41,7 @@ import com.electrom.vahanwireprovider.utility.ActionForAll;
 import com.electrom.vahanwireprovider.utility.CodeMinimisations;
 import com.electrom.vahanwireprovider.utility.CustomButton;
 import com.electrom.vahanwireprovider.utility.CustomTextView;
+import com.electrom.vahanwireprovider.utility.MyHandler;
 import com.electrom.vahanwireprovider.utility.PicassoClient;
 import com.electrom.vahanwireprovider.utility.SessionManager;
 import com.electrom.vahanwireprovider.utility.Util;
@@ -65,6 +75,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int count_navitaion_user = 0;
     CustomButton btnLocationUpdate;
     Double Latitude, Longitude;
+    Handler handler;
+    String faltuCheck = "auto";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,10 +86,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setUpLayoutWithToolbar();
         initView();
         startLocationUpdate();
+        //requestPopup();
 
     }
 
     private void initView() {
+        handler = new MyHandler();
         tvTotalVisitorsCount = findViewById(R.id.tvTotalVisitorsCount);
         btnLocationUpdate = findViewById(R.id.btnLocationUpdate);
         btnLocationUpdate.setOnClickListener(this);
@@ -94,26 +108,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initToolbar();
 
         ImageView nav = findViewById(R.id.ivDrawer);
-        CustomTextView title = findViewById(R.id.tvToolClick);
+        /*CustomTextView title = findViewById(R.id.tvToolClick);
         title.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ActionForAll.alertUser("VahanWire", "Work in Progress", "OK", MainActivity.this);
             }
-        });
+        });*/
 
         NavigationView mNavigationView = findViewById(R.id.nav_view);
         View navHeader = mNavigationView.getHeaderView(0);
-        CircleImageView img = (CircleImageView) navHeader.findViewById(R.id.ivNavProfile);
+        CircleImageView img =  navHeader.findViewById(R.id.ivNavProfile);
         CustomTextView nav_name = navHeader.findViewById(R.id.tvNavName);
         CustomTextView nav_email = navHeader.findViewById(R.id.tvNavEmail);
         //Picasso.with(this).load(sessionManager.getString(SessionManager.PROVIDER_IMAGE)).into(img);
        /* nav_name.setText("ANKIT");
         nav_email.setText("A@GMAIL.COM");*/
-        PicassoClient.downloadImage(this, sessionManager.getString(SessionManager.PROVIDER_IMAGE), img);
+        //PicassoClient.downloadImage(this, sessionManager.getString(SessionManager.PROVIDER_IMAGE), img);
         nav_name.setText(sessionManager.getString(SessionManager.REGISTER_NAME));
         nav_email.setText(sessionManager.getString(SessionManager.EMAIL));
-
         DrawerLayout mDrawerLayout = findViewById(R.id.drawer_layout);
         CodeMinimisations.navListener(nav, mNavigationView, mDrawerLayout, this);
         CodeMinimisations.navigationItemListener(mNavigationView, this);
@@ -193,6 +206,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .onSameThread()
                 .check();
     }
+
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
@@ -245,7 +259,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             Log.d(TAG, "onClick: " + "no update");
                                         }
                                     }).create().show();
-
                         }
 
                     } catch (IOException e) {
@@ -380,6 +393,150 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         //ActionForAll.myFlash(getApplicationContext(), token);
                     }
                 });
+    }
+
+
+    public void requestPopup() {
+        // handler.removeCallbacks(n);
+//        handler.removeCallbacksAndMessages(null);
+//        pDialog = new ProgressDialog(getActivity());
+//        // Showing progress dialog before making http request
+//        pDialog.setMessage("Loading...");
+//        pDialog.setCancelable(false);
+//        pDialog.setCanceledOnTouchOutside(false);
+//        pDialog.show();
+        final Dialog requestPopup = new Dialog(MainActivity.this);
+        // faltuCheck = "auto";
+        requestPopup.setContentView(R.layout.dialog_request_popup);
+        //requestPopup.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        requestPopup.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        requestPopup.getWindow().getAttributes().windowAnimations = R.style.diologIntertnet;
+        requestPopup.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+        requestPopup.setCanceledOnTouchOutside(false);
+        requestPopup.setCancelable(false);
+        final CustomTextView tv_popup_request_timer = requestPopup.findViewById(R.id.tv_popup_request_timer);
+        final CustomButton btnPopupRequestReject = requestPopup.findViewById(R.id.btnPopupRequestReject);
+        final CustomButton btnPopupRequestAccept = requestPopup.findViewById(R.id.btnPopupRequestAccept);
+        btnPopupRequestAccept.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), BookingStatusActivity.class));
+                requestPopup.dismiss();
+                finish();
+            }
+        });
+
+        btnPopupRequestReject.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ActionForAll.myFlash(getApplicationContext(), "reject button click");
+                requestPopup.dismiss();
+            }
+        });
+
+        /* TextView btnAccpet = requestPopup.findViewById(R.id.txtAccept);
+        TextView btnReject =  requestPopup.findViewById(R.id.txtReject);
+        txtCount =  requestPopup.findViewById(R.id.countdown_text);
+        txtAddress = requestPopup.findViewById(R.id.txtAddress);
+        txtAccept =  requestPopup.findViewById(R.id.txtAccept);
+        txtReject =  requestPopup.findViewById(R.id.txtReject);
+        pBar2 =  requestPopup.findViewById(R.id.ProgressBar);*/
+
+        /* if(sessionManager.getString(SessionManager.AMB_LOGIN_STATUS).equals("1"))
+        {
+            HomeFragment.btnEnable.setVisibility(View.INVISIBLE);
+            HomeFragment.btnDisable.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            HomeFragment.btnEnable.setVisibility(View.VISIBLE);
+            HomeFragment.btnDisable.setVisibility(View.INVISIBLE);
+        }*/
+
+        /*
+        btnAccpet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                requestPopup.dismiss();
+            }
+        });
+        btnReject.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                requestPopup.dismiss();
+
+            }
+        });
+        txtAddress.setText(cust_search_area);
+        txtAccept.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!ConnectionDetector.networkStatus(getApplicationContext())) {
+                    diologInternet.show();
+                } else {
+                    acceptByProvider();
+                    HomeFragment.layCustomerDetails.setVisibility(View.VISIBLE);
+                    HomeFragment.txtUSerReq.setText("EMERGENCY - AMBULANCE REQUEST");
+                    HomeFragment.txtReqStatus.setText("Accepted");
+                    HomeFragment.txtUSerName.setText(sessionManager.getString(SessionManager.BOOKING_CUSTOMER));
+                    HomeFragment.txtUSerAddress.setText(sessionManager.getString(SessionManager.BOOKING_ADDRESS));
+                    HomeFragment.txtUSerJobID.setText("Booking Id - " + sessionManager.getString(SessionManager.BOOKING_ID));
+                    HomeFragment.btnDisable.setVisibility(View.INVISIBLE);
+                    HomeFragment.btnEnable.setVisibility(View.INVISIBLE);
+                    HomeFragment.layCustomerDet.setVisibility(View.VISIBLE);
+                    HomeFragment.layUser.setVisibility(View.VISIBLE);
+                    requestPopup.dismiss();
+                }
+            }
+        });
+        txtReject.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!ConnectionDetector.networkStatus(getApplicationContext())) {
+                    diologInternet.show();
+                } else {
+                    cancelByProvider();
+                    HomeFragment.layCustomerDetails.setVisibility(View.VISIBLE);
+                    HomeFragment.txtUSerReq.setText("EMERGENCY - AMBULANCE REQUEST");
+                    HomeFragment.txtUSerName.setText(sessionManager.getString(SessionManager.BOOKING_CUSTOMER));
+                    HomeFragment.txtUSerAddress.setText(sessionManager.getString(SessionManager.BOOKING_ADDRESS));
+                    HomeFragment.txtUSerJobID.setText("Booking Id - " + sessionManager.getString(SessionManager.BOOKING_ID));
+                    HomeFragment.txtReqStatus.setText("Canceled");
+                    HomeFragment.btnDisable.setVisibility(View.INVISIBLE);
+                    HomeFragment.btnEnable.setVisibility(View.INVISIBLE);
+                    HomeFragment.layCustomerDet.setVisibility(View.VISIBLE);
+                    HomeFragment.layUser.setVisibility(View.VISIBLE);
+                    requestPopup.dismiss();
+                }
+            }
+        });*/
+
+        if(!(MainActivity.this.isFinishing()))
+        {
+           CountDownTimer timer = new CountDownTimer(30000, 1000) {
+                public void onTick(long millisUntilFinished) {
+                    long seconds = millisUntilFinished / 1000;
+                    //pBar2.setProgress((int) (millisUntilFinished));
+                    tv_popup_request_timer.setText(millisUntilFinished / 1000 + " seconds left");
+                }
+                public void onFinish() {
+                    requestPopup.dismiss();
+                    if (!ActionForAll.isNetworkAvailable(getApplicationContext())) {
+                        //diologInternet.show();
+                    } else {
+                        if (faltuCheck.equalsIgnoreCase("auto")) {
+                            ActionForAll.myFlash(getApplicationContext(), "cancel");
+                            //rejectReequest();
+                            requestPopup.dismiss();
+                            handler.removeCallbacks(null);
+                            finish();
+                        } else {
+                        }
+                    }
+                }
+            }.start();
+            requestPopup.show();
+        }
     }
 
 }
