@@ -3,6 +3,9 @@ package com.electrom.vahanwireprovider.retrofit_lib;
 import com.electrom.vahanwireprovider.models.detail.Detail;
 import com.electrom.vahanwireprovider.models.login.Login;
 import com.electrom.vahanwireprovider.models.login_ambulance.LoginAmbulance;
+import com.electrom.vahanwireprovider.models.mech_status.MechanicStatus;
+import com.electrom.vahanwireprovider.models.mechanic.MechanicLogin;
+import com.electrom.vahanwireprovider.models.mechanic_registration.Mechanic;
 import com.electrom.vahanwireprovider.models.payment.Payment;
 import com.electrom.vahanwireprovider.models.services.Service;
 import com.electrom.vahanwireprovider.models.status_user.StatusUser;
@@ -26,16 +29,29 @@ public interface ApiInterface {
     Call<ResponseBody> registerProvider(@Field("mobile") String mobile,
                                         @Field("device_type") String device_type,
                                         @Field("notification_id") String notification_id);
+    @POST(UrlConstants.MECHANIC_MOBILE_REGISTRATION)
+    @FormUrlEncoded
+    Call<Mechanic> registration_mechanic(@Field("device_id") String device_id,
+                                         @Field("device_type") String device_type,
+                                         @Field("notification_id") String notification_id,
+                                         @Field("mobile") String mobile);
 
     @POST(UrlConstants.VERIFY_MOB_PROVIDER)
     @FormUrlEncoded
     Call<ResponseBody> verifyProvider(@Field("mobile") String mobile,
                                       @Field("otp") String otp);
 
+    @POST(UrlConstants.MECHANIC_MOBILE_VERIFY)
+    @FormUrlEncoded
+    Call<ResponseBody> verifyProviderMecanic(@Field("mobile") String mobile,
+                                      @Field("otp") String otp);
+
     @POST(UrlConstants.LOGIN)
     @FormUrlEncoded
     Call<Login> login(@Field("mobile") String mobile,
-                      @Field("pin") String pin);
+                      @Field("pin") String pin,
+                      @Field("device_type") String device_type,
+                      @Field("notification_id") String notification_id);
 
     @GET(UrlConstants.PROVIDER_DETAIL)
     Call<Detail> getUpdatedDetail(@QueryMap Map<String, String> params);
@@ -113,6 +129,16 @@ public interface ApiInterface {
     Call<StatusUser> update_status(@Field("id") String id,
                                    @Field("status") String status);
 
+    @POST(UrlConstants.MECHANIC_STATUS)
+    @FormUrlEncoded
+    Call<MechanicStatus> update_status_mechanic(@Field("id") String id,
+                                                @Field("status") String status);
+
+    @POST(UrlConstants.PETROL_PUMP_UPLOAD)
+    @FormUrlEncoded
+    Call<StatusUser> petrol_pump_upload(@Field("id") String id,
+                                   @Field("status") String status);
+
     @POST(UrlConstants.AMB_USER_LOGIN)
     @FormUrlEncoded
     Call<LoginAmbulance> login_ambulance(@Field("mobile") String mobile,
@@ -120,5 +146,35 @@ public interface ApiInterface {
                                          @Field("device_id") String device_id,
                                          @Field("device_type") String device_type,
                                          @Field("notification_id") String notification_id);
+
+    @POST(UrlConstants.MECHANIC_LOGIN)
+    @FormUrlEncoded
+    Call<MechanicLogin> login_mechanic(@Field("mobile") String mobile,
+                                       @Field("pin") String pin,
+                                       @Field("device_id") String device_id,
+                                       @Field("device_type") String device_type,
+                                       @Field("notification_id") String notification_id);
+
+    @POST(UrlConstants.MECHANIC_REGISTRATION_UPDATE)
+    @FormUrlEncoded
+    Call<ResponseBody> registrationUpdateMechanic(
+                                         @Field("mobile") String mobile,
+                                         @Field("name") String name,
+                                         @Field("mobile_pin") String mobile_pin,
+                                         @Field("organisation_name") String organisation_name,
+                                         @Field("latitude") String latitude,
+                                         @Field("longitude") String longitude,
+                                         @Field("email") String email,
+                                         @Field("gst_number") String gst_number,
+                                         @Field("pan_number") String pan_number,
+                                         @Field("phone") String phone,
+                                         @Field("first_address") String first_address,
+                                         @Field("city") String city,
+                                         @Field("state") String state,
+                                         @Field("country") String country,
+                                         @Field("pincode") String pincode);
+
+
+
 
 }

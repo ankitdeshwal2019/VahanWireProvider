@@ -24,9 +24,13 @@ import com.electrom.vahanwireprovider.utility.CustomEditText;
 import com.electrom.vahanwireprovider.utility.SessionManager;
 import com.electrom.vahanwireprovider.utility.Util;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -40,6 +44,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
             etRegisterPassword,etRegisterAddress;
     GPSTracker gps;
     Double Latitude, Longitude;
+    String service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +79,8 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
         etRegisterEmail = findViewById(R.id.etRegisterEmail);
         etRegisterPassword = findViewById(R.id.etRegisterPassword);
         etRegisterAddress = findViewById(R.id.etRegisterAddress);
+        service = sessionManager.getString(SessionManager.SERVICE);
+        Log.e(TAG, "service: registration Act " + service );
         getLocation();
         btnRegisterFinal.setOnClickListener(this);
         etRegisterAddress.addTextChangedListener(new TextWatcher() {
@@ -117,14 +124,15 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void compaleteRegistration() {
-
+        Log.e(TAG, "service: regstration for petrol ");
         final ProgressDialog progressDialog = Util.showProgressDialog(this);
 
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
 
         Call<Update> call = apiService.registrationUpdate(
                 sessionManager.getString(SessionManager.PROVIDER_MOBILE),
-                etRegisterPassword.getText().toString().trim(), et_resister_com_name.getText().toString(), etContactPerson.getText().toString(),etRegisterLandLine.getText().toString(),
+                etRegisterPassword.getText().toString().trim(), et_resister_com_name.getText().toString(),
+                etContactPerson.getText().toString(),etRegisterLandLine.getText().toString(),
                 etRegisterEmail.getText().toString(), "", "", "1",
                 sessionManager.getString(SessionManager.NOTIFICATION_TOKEN),"",
                 etRegisterAddress.getText().toString(), "", "","","",
@@ -174,6 +182,67 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
         });
     }
 
+    private void compaleteRegistrationMechanic() {
+        Log.e(TAG, "service: regstration for mechanic ");
+        final ProgressDialog progressDialog = Util.showProgressDialog(this);
+
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        Call<ResponseBody> call = apiService.registrationUpdateMechanic(
+                sessionManager.getString(SessionManager.PROVIDER_MOBILE),
+                etContactPerson.getText().toString(),
+                etRegisterPassword.getText().toString(),
+                et_resister_com_name.getText().toString(),
+                sessionManager.getString(SessionManager.LATITUDE),
+                sessionManager.getString(SessionManager.LONGITUDE),
+                etRegisterEmail.getText().toString(),
+                "",
+                "",
+                etRegisterLandLine.getText().toString(),
+                etRegisterAddress.getText().toString(),
+                "", "", "", "");
+
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+
+
+                ResponseBody responseBody = response.body();
+
+                try {
+                    JSONObject obj = new JSONObject(responseBody.string());
+                    obj.getString("status");
+                    Log.e(TAG, "onResponse: "+  obj.getString("status"));
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Util.hideProgressDialog(progressDialog);
+                            sessionManager.setString(SessionManager.PROVIDER_PIN, etRegisterPassword.getText().toString());
+                            Intent logout= new Intent(RegistrationActivity.this, ProviderLogin.class);
+                            logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(logout);
+                        }
+                    }, 300);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Util.hideProgressDialog(progressDialog);
+                ActionForAll.alertUserWithCloseActivity("VahanWire", t.getMessage(), "OK", RegistrationActivity.this);
+            }
+        });
+    }
+
     private void isNotEmptyFields(){
         if(ActionForAll.validEditText(et_resister_com_name, "company name", RegistrationActivity.this) &&
                 ActionForAll.validEditText(etContactPerson, "name", RegistrationActivity.this) &&
@@ -181,7 +250,15 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
                 ActionForAll.validEditText(etRegisterPassword, "password", RegistrationActivity.this) &&
                 ActionForAll.validEditText(etRegisterAddress, "address", RegistrationActivity.this))
         {
-            compaleteRegistration();
+            if(sessionManager.getString(SessionManager.SERVICE).equalsIgnoreCase("Petrol_Pump"))
+            {
+                compaleteRegistration();
+            }
+            else if (sessionManager.getString(SessionManager.SERVICE).equalsIgnoreCase("MechanicPro"))
+            {
+                compaleteRegistrationMechanic();
+            }
+
         }
 
     }

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#666666"
+    android:background="#cccccc"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -28,6 +28,7 @@
             android:layout_centerInParent="true"/>
 
         <ImageView
+            android:id="@+id/ivProfileContainer"
             android:layout_width="130dp"
             android:layout_height="130dp"
             android:background="@drawable/image__circle"
@@ -61,7 +62,7 @@
                 android:layout_marginRight="@dimen/size_25dp"
                 android:paddingLeft="@dimen/size_15dp"
                 android:textSize="14sp"
-                android:hint="company name"/>
+                android:hint="Company name"/>
 
             <com.electrom.vahanwireprovider.utility.CustomEditText
                 android:id="@+id/etProfilePersonName"
@@ -73,7 +74,7 @@
                 android:layout_marginRight="@dimen/size_25dp"
                 android:paddingLeft="@dimen/size_15dp"
                 android:textSize="14sp"
-                android:hint="person name"/>
+                android:hint="Person name"/>
 
             <LinearLayout
                 android:layout_marginTop="@dimen/size_15dp"
@@ -91,7 +92,7 @@
                     android:textSize="14sp"
                     android:editable="false"
                     android:clickable="false"
-                    android:hint="mobile number"
+                    android:hint="Mobile number"
                     android:paddingLeft="@dimen/size_15dp"
                     android:layout_marginRight="@dimen/size_5dp"
                     android:background="@drawable/text_box_background"/>
@@ -100,7 +101,8 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:hint="landline number"
+                    android:inputType="number"
+                    android:hint="Landline number"
                     android:paddingLeft="@dimen/size_15dp"
                     android:textSize="14sp"
                     android:layout_marginLeft="@dimen/size_5dp"
@@ -119,7 +121,7 @@
                 android:layout_marginRight="@dimen/size_25dp"
                 android:paddingLeft="@dimen/size_15dp"
                 android:textSize="14sp"
-                android:hint="address"/>
+                android:hint="Address"/>
 
             <LinearLayout
                 android:layout_marginTop="@dimen/size_15dp"
@@ -136,7 +138,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:textSize="14sp"
-                    android:hint="country"
+                    android:hint="Country"
                     android:paddingLeft="@dimen/size_15dp"
                     android:layout_marginRight="@dimen/size_5dp"
                     android:background="@drawable/text_box_background"/>
@@ -145,7 +147,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:hint="state"
+                    android:hint="State"
                     android:paddingLeft="@dimen/size_15dp"
                     android:textSize="14sp"
                     android:layout_marginLeft="@dimen/size_5dp"
@@ -168,7 +170,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:textSize="14sp"
-                    android:hint="city"
+                    android:hint="City"
                     android:paddingLeft="@dimen/size_15dp"
                     android:layout_marginRight="@dimen/size_5dp"
                     android:background="@drawable/text_box_background"/>
@@ -177,7 +179,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:hint="pincode"
+                    android:hint="Pincode"
                     android:paddingLeft="@dimen/size_15dp"
                     android:textSize="14sp"
                     android:layout_marginLeft="@dimen/size_5dp"
@@ -191,7 +193,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="80dp"
             android:gravity="center">
 
             <com.electrom.vahanwireprovider.utility.CustomButton

@@ -124,9 +124,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Picasso.with(this).load(sessionManager.getString(SessionManager.PROVIDER_IMAGE)).into(img);
        /* nav_name.setText("ANKIT");
         nav_email.setText("A@GMAIL.COM");*/
-        //PicassoClient.downloadImage(this, sessionManager.getString(SessionManager.PROVIDER_IMAGE), img);
+        PicassoClient.downloadImage(this, sessionManager.getString(SessionManager.PROVIDER_IMAGE), img);
         nav_name.setText(sessionManager.getString(SessionManager.REGISTER_NAME));
         nav_email.setText(sessionManager.getString(SessionManager.EMAIL));
+
         DrawerLayout mDrawerLayout = findViewById(R.id.drawer_layout);
         CodeMinimisations.navListener(nav, mNavigationView, mDrawerLayout, this);
         CodeMinimisations.navigationItemListener(mNavigationView, this);
@@ -530,7 +531,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             requestPopup.dismiss();
                             handler.removeCallbacks(null);
                             finish();
-                        } else {
+                        }
+                        else {
                         }
                     }
                 }

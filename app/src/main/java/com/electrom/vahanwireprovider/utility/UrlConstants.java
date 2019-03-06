@@ -15,4 +15,11 @@ public class UrlConstants {
     public static final String SERVICE_UPDATE = "petrolpump/provider/service/update";
     public static final String AMB_USER_STATUS = "ambulance/provider/activestatus";
     public static final String AMB_USER_LOGIN = "ambulance/provider/login";
+    public static final String MECHANIC_MOBILE_REGISTRATION = "mechanic/provider/register/mobile";
+    public static final String MECHANIC_MOBILE_VERIFY = "mechanic/provider/register/verifymobile";
+    public static final String MECHANIC_REGISTRATION_UPDATE = "mechanic/provider/details/update";
+    public static final String MECHANIC_LOGIN = "mechanic/provider/login";
+    public static final String PETROL_PUMP_UPLOAD = "profilepic/petrolpump";
+    public static final String MECHANIC_UPLOAD = "profilepic/mechanic";
+    public static final String MECHANIC_STATUS = "mechanic/provider/activestatus";
 }

@@ -13,10 +13,19 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="4"
-        android:gravity="center"
+        android:gravity="top"
         android:orientation="vertical">
 
         <ImageView
+            android:id="@+id/ivBackLogin"
+            android:layout_margin="@dimen/size_10dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="@dimen/size_5dp"
+            android:src="@drawable/back_wihte"/>
+
+        <ImageView
+            android:layout_gravity="center"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:src="@drawable/logo"/>
@@ -49,7 +58,7 @@
                 android:id="@+id/etLoginMobile"
                 android:background="#fff"
                 android:inputType="number"
-                android:hint="Mobile no"
+                android:hint="Mobile number"
                 android:maxLength="10"
                 android:cursorVisible="false"
                 android:layout_width="match_parent"
@@ -78,7 +87,7 @@
                 android:id="@+id/etLoginPassword"
                 android:background="#fff"
                 android:inputType="numberPassword"
-                android:hint="Mobile Pin"
+                android:hint="Pin"
                 android:maxLength="4"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
@@ -95,10 +104,28 @@
             android:background="@drawable/button"
             android:layout_height="@dimen/size_40dp" />
 
-        <View
+
+
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:gravity="bottom|center"
+            android:orientation="vertical">
+
+            <com.electrom.vahanwireprovider.utility.CustomTextView
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/size_10dp"
+                android:textSize="18sp"
+                android:textColor="@color/colorWhite"
+                android:gravity="center"
+                android:text="Forgot pin"/>
+        </LinearLayout>
+
+
 
 
         <LinearLayout
@@ -117,8 +144,8 @@
 
             <com.electrom.vahanwireprovider.utility.CustomButton
                 android:id="@+id/btnRegister"
-                android:layout_width="200dp"
-                android:layout_height="@dimen/size_50dp"
+                android:layout_width="160dp"
+                android:layout_height="@dimen/size_40dp"
                 android:gravity="center"
                 android:background="@drawable/button"
                 android:paddingRight="@dimen/size_20dp"

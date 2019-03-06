@@ -174,11 +174,11 @@
                 android:layout_height="60dp"
                 android:background="@android:color/transparent"
                 android:layout_centerVertical="true"
-                android:inputType="number"
+                android:inputType="numberPassword"
                 android:maxLength="4"
                 android:layout_marginRight="@dimen/size_10dp"
                 android:layout_toRightOf="@id/iv_password"
-                android:hint="Mobile Pin"
+                android:hint="Create pin"
                 android:textSize="@dimen/size_15sp" />
 
         </RelativeLayout>

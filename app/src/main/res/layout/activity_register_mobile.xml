@@ -12,10 +12,19 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="4"
-        android:gravity="center"
+        android:gravity="top"
         android:orientation="vertical">
 
         <ImageView
+            android:id="@+id/ivBackLogin"
+            android:layout_margin="@dimen/size_10dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="@dimen/size_5dp"
+            android:src="@drawable/back_wihte"/>
+
+        <ImageView
+            android:layout_gravity="center"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:src="@drawable/logo"/>

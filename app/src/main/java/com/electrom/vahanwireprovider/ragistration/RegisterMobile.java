@@ -1,10 +1,14 @@
 package com.electrom.vahanwireprovider.ragistration;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -12,8 +16,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.electrom.vahanwireprovider.R;
+import com.electrom.vahanwireprovider.models.mechanic_registration.Mechanic;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiClient;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiInterface;
 import com.electrom.vahanwireprovider.utility.ActionForAll;
@@ -21,6 +27,13 @@ import com.electrom.vahanwireprovider.utility.CustomButton;
 import com.electrom.vahanwireprovider.utility.CustomEditText;
 import com.electrom.vahanwireprovider.utility.SessionManager;
 import com.electrom.vahanwireprovider.utility.Util;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.DexterError;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.PermissionRequestErrorListener;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,6 +54,8 @@ public class RegisterMobile extends AppCompatActivity implements View.OnClickLis
     CustomButton btnSendOtp;
     CustomEditText etRegisterMobile;
     SessionManager sessionManager;
+    String service;
+    ImageView ivBackLogin;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +67,11 @@ public class RegisterMobile extends AppCompatActivity implements View.OnClickLis
         sessionManager =  SessionManager.getInstance(this);
         btnSendOtp = findViewById(R.id.btnSendOtp);
         etRegisterMobile = findViewById(R.id.etRegisterMobile);
+        ivBackLogin = findViewById(R.id.ivBackLogin);
         btnSendOtp.setOnClickListener(this);
+        ivBackLogin.setOnClickListener(this);
+        service = sessionManager.getString(SessionManager.SERVICE);
+        Log.e(TAG, "service: register mobile " + service );
     }
 
     @Override
@@ -64,18 +83,30 @@ public class RegisterMobile extends AppCompatActivity implements View.OnClickLis
                 if(ActionForAll.isNetworkAvailable(this))
                 {
                     if(ActionForAll.validMobileEditText(etRegisterMobile, "10 digit mobile number", RegisterMobile.this)){
-                        if(checkAndRequestPermissions()){}
-                        getRegisterMobile();
 
+                        if(service.equalsIgnoreCase("Ambulance"))
+                        {
+                            ActionForAll.alertUserWithCloseActivity("VahanWire", "Ambulance Registration not valid", "OK", RegisterMobile.this);
+                        }
+                        else {
+                            requestGetOtp();
+                        }
                     }
                 }
                 //startActivity(new Intent(getApplicationContext(), VerifyOtp.class));
+                break;
+
+            case R.id.ivBackLogin:
+                finish();
                 break;
         }
 
     }
 
+    //petrol pump registration
     private void getRegisterMobile(){
+
+        Log.e(TAG, "service: regst mobile for petrol ");
 
         final ProgressDialog progressDialog = Util.showProgressDialog(this);
 
@@ -138,28 +169,124 @@ public class RegisterMobile extends AppCompatActivity implements View.OnClickLis
 
     }
 
-    private  boolean checkAndRequestPermissions() {
-        int permissionSendMessage = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.SEND_SMS);
-        int receiveSMS = ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS);
-        int readSMS = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS);
-        List<String> listPermissionsNeeded = new ArrayList<>();
-        if (receiveSMS != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.RECEIVE_MMS);
-        }
-        if (readSMS != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.READ_SMS);
-        }
-        if (permissionSendMessage != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.SEND_SMS);
-        }
-        if (!listPermissionsNeeded.isEmpty()) {
-            ActivityCompat.requestPermissions(this,
-                    listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),
-                    REQUEST_ID_MULTIPLE_PERMISSIONS);
-            return false;
-        }
-        return true;
+    //mechanic registration
+    private void getRegisterMobileMechanic(){
+
+        Log.e(TAG, "service: regst for MechanicPro ");
+        final ProgressDialog progressDialog = Util.showProgressDialog(this);
+
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        Call<Mechanic> call = apiService.registration_mechanic(
+                sessionManager.getString(SessionManager.DEVICE_ID),
+                "1",
+                sessionManager.getString(SessionManager.NOTIFICATION_TOKEN),
+                etRegisterMobile.getText().toString());
+
+        call.enqueue(new Callback<Mechanic>() {
+            @Override
+            public void onResponse(Call<Mechanic> call, Response<Mechanic> response) {
+
+                Util.hideProgressDialog(progressDialog);
+
+                if(response!=null && response.isSuccessful())
+                {
+                    Mechanic mechanic = response.body();
+                    if(mechanic.getStatus().equals("200"))
+                    {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                startActivity(new Intent(getApplicationContext(), VerifyOtp.class).putExtra("mobile", etRegisterMobile.getText().toString()));
+                            }
+                        }, 300);
+                    }
+                    else
+                    {
+                        ActionForAll.alertUserWithCloseActivity("VahanWire", mechanic.getMessage(), "OK", RegisterMobile.this);
+                    }
+                }
+                else
+                {
+                    ActionForAll.alertUserWithCloseActivity("VahanWire", "Network busy please try after sometime", "OK", RegisterMobile.this);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Mechanic> call, Throwable t) {
+                Util.hideProgressDialog(progressDialog);
+                ActionForAll.alertUserWithCloseActivity("VahanWire", "Network busy please try after sometime \n"+t.getMessage(), "OK", RegisterMobile.this);
+            }
+        });
+    }
+
+    private void requestGetOtp() {
+
+        Dexter.withActivity(this)
+                .withPermissions(
+                        Manifest.permission.RECEIVE_SMS,
+                        Manifest.permission.READ_SMS,
+                        Manifest.permission.READ_PHONE_STATE)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        // check if all permissions are granted
+                        if (report.areAllPermissionsGranted()) {
+
+                            if(service.equalsIgnoreCase("Petrol_Pump"))
+                            getRegisterMobile();
+                            else if(service.equalsIgnoreCase("MechanicPro"))
+                            getRegisterMobileMechanic();
+                        }
+                        // check for permanent denial of any permission
+                        if (report.isAnyPermissionPermanentlyDenied()) {
+                            // show alert dialog navigating to Settings
+                            showSettingsDialog();
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                }).
+                withErrorListener(new PermissionRequestErrorListener() {
+                    @Override
+                    public void onError(DexterError error) {
+                        //Toast.makeText(getApplicationContext(), "Error occurred! ", Toast.LENGTH_SHORT).show();
+                        ActionForAll.myFlash(getApplicationContext(), "Error occurred!");
+                    }
+                })
+                .onSameThread()
+                .check();
+    }
+
+    private void showSettingsDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(RegisterMobile.this);
+        builder.setTitle("Need Permissions");
+        builder.setMessage("This app needs permission to use this feature. You can grant them in app settings.");
+        builder.setPositiveButton("GOTO SETTINGS", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                openSettings();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+    }
+
+    // navigating user to app settings
+    private void openSettings() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", getPackageName(), null);
+        intent.setData(uri);
+        startActivityForResult(intent, 101);
     }
 
     @Override

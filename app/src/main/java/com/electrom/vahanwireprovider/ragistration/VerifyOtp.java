@@ -1,32 +1,48 @@
 package com.electrom.vahanwireprovider.ragistration;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.electrom.vahanwireprovider.R;
+import com.electrom.vahanwireprovider.models.mechanic_registration.Mechanic;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiClient;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiInterface;
 import com.electrom.vahanwireprovider.utility.ActionForAll;
 import com.electrom.vahanwireprovider.utility.CustomButton;
 import com.electrom.vahanwireprovider.utility.CustomEditText;
+import com.electrom.vahanwireprovider.utility.CustomTextView;
 import com.electrom.vahanwireprovider.utility.SessionManager;
 import com.electrom.vahanwireprovider.utility.Util;
 import com.google.gson.Gson;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.DexterError;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.PermissionRequestErrorListener;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,6 +57,10 @@ public class VerifyOtp extends AppCompatActivity implements View.OnClickListener
     CustomButton btnVerifyOtp;
     CustomEditText etVerifyOtp;
     SessionManager sessionManager;
+    String service;
+    ImageView ivBackLogin;
+    CustomTextView tvResendOtp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,14 +81,13 @@ public class VerifyOtp extends AppCompatActivity implements View.OnClickListener
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            String pin =  matcher.group(1);
+                            String pin = matcher.group(1);
                             etVerifyOtp.setText(pin);
                             Util.hideProgressDialog(pd);
                         }
-                    },2000);
+                    }, 2000);
 
-                }
-                else{
+                } else {
                     //ActionForAll.myFlash(context, "Not found please resend OTP");
                 }
             }
@@ -77,9 +96,15 @@ public class VerifyOtp extends AppCompatActivity implements View.OnClickListener
 
     private void initView() {
         sessionManager = SessionManager.getInstance(this);
+        service = sessionManager.getString(SessionManager.SERVICE);
+        Log.e(TAG, "service: verify otp " + service );
         btnVerifyOtp = findViewById(R.id.btnVerifyOtp);
         etVerifyOtp = findViewById(R.id.etVerifyOtp);
+        ivBackLogin = findViewById(R.id.ivBackLogin);
+        tvResendOtp = findViewById(R.id.tvResendOtp);
         btnVerifyOtp.setOnClickListener(this);
+        ivBackLogin.setOnClickListener(this);
+        tvResendOtp.setOnClickListener(this);
     }
 
 
@@ -98,18 +123,39 @@ public class VerifyOtp extends AppCompatActivity implements View.OnClickListener
 
     @Override
     public void onClick(View v) {
-        switch (v.getId())
-        {
+        switch (v.getId()) {
             case R.id.btnVerifyOtp:
-                if( ActionForAll.validEditText(etVerifyOtp, "4 digit otp", VerifyOtp.this))
-                {
-                  verifyOTP();
+                if (ActionForAll.validEditText(etVerifyOtp, "4 digit otp", VerifyOtp.this)) {
+                    switch (service) {
+                        case "Petrol_Pump":
+                            verifyOTP();
+                            break;
+
+                        case "MechanicPro":
+                            verifyOTPMecanic();
+                            break;
+
+                        default:
+                            ActionForAll.myFlash(getApplicationContext(), "no service found");
+                            break;
+                    }
+
                 }
+                break;
+            case R.id.ivBackLogin:
+                finish();
+                break;
+
+                case R.id.tvResendOtp:
+
+                    etVerifyOtp.setText("");
+                    requestGetOtp();
+                break;
         }
     }
 
     private void verifyOTP() {
-
+        Log.e(TAG, "service: for provider");
         final ProgressDialog progressDialog = Util.showProgressDialog(this);
 
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
@@ -129,12 +175,180 @@ public class VerifyOtp extends AppCompatActivity implements View.OnClickListener
                         JSONObject object = new JSONObject(jsonResponse);
                         Log.d(TAG, object.getString("status"));
 
+                        if (object.getString("status").equals("200")) {
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    startActivity(new Intent(getApplicationContext(), RegistrationActivity.class));
+                                }
+                            }, 300);
+                        } else {
+                            ActionForAll.alertUser("VahanWire", object.getString("message"), "OK", VerifyOtp.this);
+                        }
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Util.hideProgressDialog(progressDialog);
+                    ActionForAll.alertUserWithCloseActivity("VahanWire", "Network busy, Please try after some time", "OK", VerifyOtp.this);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Util.hideProgressDialog(progressDialog);
+                Log.d(TAG, "onFailure: " + t.getMessage());
+            }
+        });
+    }
+    String mobile;
+    private void verifyOTPMecanic() {
+        Log.e(TAG, "service: for mechanic");
+
+        if(getIntent()!=null)
+        {
+            mobile = getIntent().getStringExtra("mobile");
+        }
+
+
+        final ProgressDialog progressDialog = Util.showProgressDialog(this);
+
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        Call<ResponseBody> call = apiService.verifyProviderMecanic
+                (mobile, etVerifyOtp.getText().toString().trim());
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response != null && response.isSuccessful()) {
+                    Util.hideProgressDialog(progressDialog);
+                    try {
+
+                        String jsonResponse = response.body().string();
+                        Log.d(TAG, jsonResponse);
+                        JSONObject object = new JSONObject(jsonResponse);
+                        Log.d(TAG, object.getString("status"));
+
+                        if (object.getString("status").equals("200")) {
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    sessionManager.setString(SessionManager.PROVIDER_MOBILE, mobile);
+                                    startActivity(new Intent(getApplicationContext(), RegistrationActivity.class));
+                                }
+                            }, 300);
+                        } else {
+                            ActionForAll.alertUser("VahanWire", object.getString("message"), "OK", VerifyOtp.this);
+                        }
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else {
+                    Util.hideProgressDialog(progressDialog);
+                    ActionForAll.alertUserWithCloseActivity("VahanWire", "Network busy, Please try after some time", "OK", VerifyOtp.this);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Util.hideProgressDialog(progressDialog);
+                Log.d(TAG, "onFailure: " + t.getMessage());
+            }
+        });
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        //replaces the default 'Back' button action
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            ActionForAll.alertChoiseCloseActivity(this);
+        }
+        return true;
+    }
+
+    private void requestGetOtp() {
+
+        Dexter.withActivity(this)
+                .withPermissions(
+                        Manifest.permission.RECEIVE_SMS,
+                        Manifest.permission.READ_SMS,
+                        Manifest.permission.READ_PHONE_STATE)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        // check if all permissions are granted
+                        if (report.areAllPermissionsGranted()) {
+
+                            if(service.equalsIgnoreCase("Petrol_Pump"))
+                                getRegisterMobile();
+                            else if(service.equalsIgnoreCase("MechanicPro"))
+                                getRegisterMobileMechanic();
+                        }
+                        // check for permanent denial of any permission
+                        if (report.isAnyPermissionPermanentlyDenied()) {
+                            // show alert dialog navigating to Settings
+                            showSettingsDialog();
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                }).
+                withErrorListener(new PermissionRequestErrorListener() {
+                    @Override
+                    public void onError(DexterError error) {
+                        //Toast.makeText(getApplicationContext(), "Error occurred! ", Toast.LENGTH_SHORT).show();
+                        ActionForAll.myFlash(getApplicationContext(), "Error occurred!");
+                    }
+                })
+                .onSameThread()
+                .check();
+    }
+
+    //petrol pump registration
+    private void getRegisterMobile(){
+
+        Log.e(TAG, "service: regst mobile for petrol ");
+
+        final ProgressDialog progressDialog = Util.showProgressDialog(this);
+
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        Call<ResponseBody> call = apiService.registerProvider(
+               sessionManager.getString(SessionManager.PROVIDER_MOBILE),
+                "1",
+                sessionManager.getString(SessionManager.NOTIFICATION_TOKEN));
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                if(response!=null && response.isSuccessful()){
+                    Util.hideProgressDialog(progressDialog);
+                    sessionManager.setString(SessionManager.PROVIDER_MOBILE, sessionManager.getString(SessionManager.PROVIDER_MOBILE));
+                    try {
+
+                        String jsonResponse = response.body().string();
+                        Log.d(TAG, jsonResponse);
+                        JSONObject object = new JSONObject(jsonResponse);
+                        Log.d(TAG, object.getString("status"));
+
                         if(object.getString("status").equals("200"))
                         {
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    startActivity(new Intent(getApplicationContext(), RegistrationActivity.class));
+                                   ActionForAll.myFlash(getApplicationContext(), "Otp resend successfully");
                                 }
                             }, 300);
                         }
@@ -148,8 +362,8 @@ public class VerifyOtp extends AppCompatActivity implements View.OnClickListener
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                } else {
-                    Util.hideProgressDialog(progressDialog);
+                }
+                else{
                     ActionForAll.alertUserWithCloseActivity("VahanWire", "Network busy, Please try after some time", "OK", VerifyOtp.this);
                 }
 
@@ -159,18 +373,90 @@ public class VerifyOtp extends AppCompatActivity implements View.OnClickListener
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Util.hideProgressDialog(progressDialog);
                 Log.d(TAG, "onFailure: " + t.getMessage());
+
+            }
+        });
+
+
+
+    }
+
+    //mechanic registration
+    private void getRegisterMobileMechanic(){
+
+        Log.e(TAG, "service: regst for MechanicPro ");
+        final ProgressDialog progressDialog = Util.showProgressDialog(this);
+
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        Call<Mechanic> call = apiService.registration_mechanic(
+                sessionManager.getString(SessionManager.DEVICE_ID),
+                "1",
+                sessionManager.getString(SessionManager.NOTIFICATION_TOKEN),
+                sessionManager.getString(SessionManager.PROVIDER_MOBILE));
+
+        call.enqueue(new Callback<Mechanic>() {
+            @Override
+            public void onResponse(Call<Mechanic> call, Response<Mechanic> response) {
+
+                Util.hideProgressDialog(progressDialog);
+
+                if(response!=null && response.isSuccessful())
+                {
+                    Mechanic mechanic = response.body();
+                    if(mechanic.getStatus().equals("200"))
+                    {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                startActivity(new Intent(getApplicationContext(), VerifyOtp.class).putExtra("mobile", sessionManager.getString(SessionManager.PROVIDER_MOBILE)));
+                            }
+                        }, 300);
+                    }
+                    else
+                    {
+                        ActionForAll.alertUserWithCloseActivity("VahanWire", mechanic.getMessage(), "OK", VerifyOtp.this);
+                    }
+                }
+                else
+                {
+                    ActionForAll.alertUserWithCloseActivity("VahanWire", "Network busy please try after sometime", "OK", VerifyOtp.this);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Mechanic> call, Throwable t) {
+                Util.hideProgressDialog(progressDialog);
+                ActionForAll.alertUserWithCloseActivity("VahanWire", "Network busy please try after sometime \n"+t.getMessage(), "OK", VerifyOtp.this);
             }
         });
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event)
-    {
-        //replaces the default 'Back' button action
-        if(keyCode==KeyEvent.KEYCODE_BACK)
-        {
-            ActionForAll.alertChoiseCloseActivity(this);
-        }
-        return true;
+    private void showSettingsDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(VerifyOtp.this);
+        builder.setTitle("Need Permissions");
+        builder.setMessage("This app needs permission to use this feature. You can grant them in app settings.");
+        builder.setPositiveButton("GOTO SETTINGS", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                openSettings();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+    }
+
+    // navigating user to app settings
+    private void openSettings() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", getPackageName(), null);
+        intent.setData(uri);
+        startActivityForResult(intent, 101);
     }
 }

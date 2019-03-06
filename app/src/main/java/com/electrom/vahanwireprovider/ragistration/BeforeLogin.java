@@ -17,6 +17,7 @@ import android.view.View;
 import com.electrom.vahanwireprovider.MainActivity;
 import com.electrom.vahanwireprovider.R;
 import com.electrom.vahanwireprovider.features.AmbulanceProvider;
+import com.electrom.vahanwireprovider.features.MachanicHomePage;
 import com.electrom.vahanwireprovider.location_service.GPSTracker;
 import com.electrom.vahanwireprovider.utility.ActionForAll;
 import com.electrom.vahanwireprovider.utility.CustomTextView;
@@ -50,6 +51,7 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
     private void initView() {
         sessionManager = SessionManager.getInstance(this);
         service = sessionManager.getString(SessionManager.SERVICE);
+        Log.e(TAG, "service: before login " + service );
         String android_id = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
         Log.d(TAG, "onCreate: android id :: " + android_id);
         if(android_id.length() > 0)
@@ -66,15 +68,22 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
         Log.e(TAG, "pin: " +  sessionManager.getString(SessionManager.PROVIDER_PIN) );
         Log.e(TAG, "serivce: " +  sessionManager.getString(SessionManager.SERVICE) );
 
+        Log.e(TAG, "initView: D_ID "+ sessionManager.getString(SessionManager.DEVICE_ID));
+        Log.e(TAG, "initView: NOTIFICATION "+ sessionManager.getString(SessionManager.NOTIFICATION_TOKEN));
+
         if(sessionManager.getString(SessionManager.PROVIDER_MOBILE).length() > 0 &&
                 sessionManager.getString(SessionManager.PROVIDER_PIN).length() > 0)
         {
             if(service.contains("Petrol_Pump")){
-                startActivity(new Intent(getApplicationContext(), MainActivity.class).putExtra("service", service));
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 finish();
             }
             else if(service.contains("Ambulance")){
-                startActivity(new Intent(getApplicationContext(), AmbulanceProvider.class).putExtra("service", service));
+                startActivity(new Intent(getApplicationContext(), AmbulanceProvider.class));
+                finish();
+            }
+            else if(service.contains("MechanicPro")){
+                startActivity(new Intent(getApplicationContext(), MachanicHomePage.class));
                 finish();
             }
         }
@@ -89,6 +98,7 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
         {
             case R.id.tvPetrolPump:
                 service = "Petrol_Pump";
+
                 Dexter.withActivity(this).withPermissions(
                         Manifest.permission.ACCESS_COARSE_LOCATION,
                         Manifest.permission.ACCESS_FINE_LOCATION)
@@ -100,8 +110,8 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
                                     // do you work now
                                     if (!isMyServiceRunning(GPSTracker.class))
                                         startService(new Intent(getApplicationContext(), GPSTracker.class));
-                                        startActivity(new Intent(getApplicationContext(), ProviderLogin.class)
-                                                .putExtra("service", service));
+                                        startActivity(new Intent(getApplicationContext(), ProviderLogin.class));
+                                        sessionManager.setString(SessionManager.SERVICE, service);
                                 }
 
                                 // check for permanent denial of any permission
@@ -134,9 +144,8 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
                                     // do you work now
                                     if (!isMyServiceRunning(GPSTracker.class))
                                         startService(new Intent(getApplicationContext(), GPSTracker.class));
-                                        startActivity(new Intent(getApplicationContext(), ProviderLogin.class)
-                                            .putExtra("service", service));
-                                        //ActionForAll.alertUser("VahanWire", "Under Process", "OK", BeforeLogin.this);
+                                        startActivity(new Intent(getApplicationContext(), ProviderLogin.class));
+                                        sessionManager.setString(SessionManager.SERVICE, service);
                                 }
 
                                 //check for permanent denial of any permission
@@ -156,7 +165,7 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
                 break;
             case R.id.tvMechanic:
 
-                service = "Mechanic";
+                service = "MechanicPro";
                 Dexter.withActivity(this).withPermissions(
                         Manifest.permission.ACCESS_COARSE_LOCATION,
                         Manifest.permission.ACCESS_FINE_LOCATION)
@@ -166,9 +175,13 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
                                 // check if all permissions are granted
                                 if (report.areAllPermissionsGranted()) {
                                     // do you work now
-                                    if (!isMyServiceRunning(GPSTracker.class))
-                                        startService(new Intent(getApplicationContext(), GPSTracker.class));
-                                        ActionForAll.alertUser("VahanWire", "Under Process", "OK", BeforeLogin.this);
+                                    if (report.areAllPermissionsGranted()) {
+                                        // do you work now
+                                        if (!isMyServiceRunning(GPSTracker.class))
+                                            startService(new Intent(getApplicationContext(), GPSTracker.class));
+                                            startActivity(new Intent(getApplicationContext(), ProviderLogin.class));
+                                            sessionManager.setString(SessionManager.SERVICE, service);
+                                    }
                                 }
 
                                 // check for permanent denial of any permission

@@ -32,6 +32,7 @@ public class SessionManager {
     public static final String SERVICE = "service";
     public static final String PROVIDER_ID = "provider_id";
     public static final String ACTIVE_STATUS = "active_status" ;
+    public static final String MECH_STATUS = "mechanic_status";
     private static String SHARED_PREFERENCE_PROVIDER = "shared_provider_electrom";
     ///public static final String COUNT_COMPARE = "count_compare";
     private static SharedPreferences sharedPref;

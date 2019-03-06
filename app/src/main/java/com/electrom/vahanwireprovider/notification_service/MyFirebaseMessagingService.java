@@ -16,12 +16,16 @@ import android.util.Log;
 
 import com.electrom.vahanwireprovider.MainActivity;
 import com.electrom.vahanwireprovider.R;
+import com.electrom.vahanwireprovider.features.AmbulanceProvider;
+import com.electrom.vahanwireprovider.features.MachanicHomePage;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "MyFirebaseMsgService";
+
+    String title, body, tag;
 
     /**
      * Called when message is received.
@@ -49,20 +53,20 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         // TODO(developer): Handle FCM messages here.
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
-        Log.d(TAG, "From: " + remoteMessage.getFrom());
+        Log.d(TAG, "From: " + remoteMessage.getData().get("sound"));
 
-        Log.d(TAG, "Message Notification Sound: " + remoteMessage.getNotification().getSound());
+        // payload. {tag=test tag, body=test body, sound=apple_tone.mp3, title=test title}
 
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
-
+            sendMyNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("body"), remoteMessage.getData().get("tag"));
         }
 
-        // Check if message contains a notification payload.
+        // Check if message contains a notification
         if (remoteMessage.getNotification() != null) {
             //sendNotification(remoteMessage.getNotification().getBody());
-            sendMyNotification(remoteMessage.getNotification().getBody());
+
         }
 
         // Also if you intend on generating your own notifications as a result of a received FCM
@@ -110,7 +114,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     /**
      * Persist token to third-party servers.
-     *
+     * <p>
      * Modify this method to associate the user's FCM InstanceID token with any server-side account
      * maintained by your application.
      *
@@ -125,7 +129,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      *
      * @param messageBody FCM message body received.
      */
-    private void sendNotification(String messageBody) {
+    /*private void sendNotification(String messageBody) {
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0  , intent,
@@ -154,18 +158,28 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         notificationManager.notify(0   , notificationBuilder.build());
     }
+*/
+    private void sendMyNotification(String title, String body, String tag) {
 
-    private void sendMyNotification(String message) {
+        PendingIntent pendingIntent = null;
 
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        if (tag.equalsIgnoreCase("ambulance")) {
+            Intent intent = new Intent(this, AmbulanceProvider.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        }
+
+        if (tag.equalsIgnoreCase("mechanic")) {
+            Intent intent = new Intent(this, MachanicHomePage.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        }
 
         Uri soundUri = Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/" + R.raw.apple_tone);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, "CH_ID")
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(getString(R.string.app_name))
-                .setContentText(message)
+                .setContentTitle(title)
+                .setContentText(body)
                 .setAutoCancel(true)
                 .setSound(soundUri)
                 .setContentIntent(pendingIntent);
@@ -173,7 +187,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
 
-            if(soundUri != null){
+            if (soundUri != null) {
                 // Changing Default mode of notification
                 notificationBuilder.setDefaults(Notification.DEFAULT_VIBRATE);
                 // Creating an Audio Attribute
@@ -183,8 +197,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         .build();
 
                 // Creating Channel
-                NotificationChannel notificationChannel = new NotificationChannel("CH_ID","Testing_Audio",NotificationManager.IMPORTANCE_HIGH);
-                notificationChannel.setSound(soundUri,audioAttributes);
+                NotificationChannel notificationChannel = new NotificationChannel("CH_ID", "Testing_Audio", NotificationManager.IMPORTANCE_HIGH);
+                notificationChannel.setSound(soundUri, audioAttributes);
                 mNotificationManager.createNotificationChannel(notificationChannel);
             }
         }
