@@ -151,6 +151,7 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
                         sessionManager.setString(SessionManager.LATITUDE, latitude+"");
                         sessionManager.setString(SessionManager.LONGITUDE, longitude+"");
                         sessionManager.setString(SessionManager.PROVIDER_IMAGE, login.getData().getProfilePic());
+                        sessionManager.setString(SessionManager.PROVIDER_ID, login.getData().getId());
 
                         Intent logout= new Intent(getApplicationContext(), MachanicHomePage.class);
                         logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);

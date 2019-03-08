@@ -146,7 +146,7 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ViewHold
                                 StringBuilder builder = new StringBuilder();
                                 String ids;
 
-                                for(Datum service : list)
+                                for(CityData service : list)
                                 {
                                  *//* Log.d(TAG, "item checked value :: " +service.getChecked());
                                     Log.d(TAG, "item labal :: " +service.getLabel());

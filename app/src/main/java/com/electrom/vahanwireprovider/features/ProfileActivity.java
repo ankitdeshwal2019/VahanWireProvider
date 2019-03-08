@@ -3,15 +3,12 @@ package com.electrom.vahanwireprovider.features;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -23,21 +20,24 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
+import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.Spinner;
 
 import com.android.volley.VolleyError;
-import com.electrom.vahanwireprovider.MainActivity;
 import com.electrom.vahanwireprovider.Multipart.MultipartRequest;
 import com.electrom.vahanwireprovider.Multipart.NetworkOperationHelper;
 import com.electrom.vahanwireprovider.R;
-import com.electrom.vahanwireprovider.models.detail.Detail;
+import com.electrom.vahanwireprovider.adapters.CityAdapter;
+import com.electrom.vahanwireprovider.adapters.SpinnerAdapter;
+import com.electrom.vahanwireprovider.adapters.StateAdapter;
+import com.electrom.vahanwireprovider.models.city.City;
+import com.electrom.vahanwireprovider.models.city.CityData;
+import com.electrom.vahanwireprovider.models.country.Country;
+import com.electrom.vahanwireprovider.models.state.DateState;
+import com.electrom.vahanwireprovider.models.state.State;
 import com.electrom.vahanwireprovider.models.update_profile.Datum;
 import com.electrom.vahanwireprovider.models.update_profile.Update;
-import com.electrom.vahanwireprovider.ragistration.RegistrationActivity;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiClient;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiInterface;
 import com.electrom.vahanwireprovider.utility.ActionForAll;
@@ -51,14 +51,10 @@ import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.DexterError;
-import com.karumi.dexter.listener.PermissionDeniedResponse;
-import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-import com.karumi.dexter.listener.single.PermissionListener;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -70,8 +66,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -80,12 +76,15 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     private static final String TAG = ProfileActivity.class.getSimpleName();
     ImageView iv_Profile_back, iv_profile_image, ivProfileContainer;
-    CustomEditText etProfileCompanyName, etProfilePersonName, etProfileMobileNumber,etProfileLandLine,
-            etProfileAddress, etProfileCountry, etProfileState, etProfileCity, etProfilePincode;
+    CustomEditText etProfileCompanyName, etProfilePersonName, etProfileMobileNumber,
+            etProfileLandLine, etProfileAddress, etPinCode;
     CustomButton btnProfileSubmit;
     SessionManager sessionManager;
+    String country, state_name, city_name, pincode = "";
+    Spinner spinCountry, spinState, spinCity;
     private int REQUEST_CAMERA = 0, SELECT_FILE = 1;
-    String imgUSerString = "", userId, name, userChoosenTask, mobile, email, progilePic, service;
+    String imgUSerString = "", userChoosenTask, service;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -95,6 +94,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void initView() {
+        getCountry();
         sessionManager = SessionManager.getInstance(this);
         iv_Profile_back = findViewById(R.id.iv_Profile_back);
         iv_profile_image = findViewById(R.id.iv_profile_image);
@@ -103,27 +103,39 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         etProfileMobileNumber = findViewById(R.id.etProfileMobileNumber);
         etProfileLandLine = findViewById(R.id.etProfileLandLine);
         etProfileAddress = findViewById(R.id.etProfileAddress);
-        etProfileCountry = findViewById(R.id.etProfileCountry);
-        etProfileState = findViewById(R.id.etProfileState);
-        etProfileCity = findViewById(R.id.etProfileCity);
-        etProfilePincode = findViewById(R.id.etProfilePincode);
+        spinCountry = findViewById(R.id.spinCountry);
+        spinState = findViewById(R.id.spinState);
+        spinCity = findViewById(R.id.spinCity);
+        //etProfilePincode = findViewById(R.id.etProfilePincode);
         btnProfileSubmit = findViewById(R.id.btnProfileSubmit);
         ivProfileContainer = findViewById(R.id.ivProfileContainer);
+        etPinCode = findViewById(R.id.etPinCode);
         btnProfileSubmit.setOnClickListener(this);
         iv_Profile_back.setOnClickListener(this);
         ivProfileContainer.setOnClickListener(this);
         setAllFielda();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                spinCountry.setSelection(sessionManager.getInt(SessionManager.COUNRTY_TAG));
+                spinState.setSelection(sessionManager.getInt(SessionManager.STATE_TAG));
+                spinCity.setSelection(sessionManager.getInt(SessionManager.CITY_TAG));
+            }
+        }, 3000);
+
     }
 
     private void setAllFielda() {
 
-        //PicassoClient.downloadImage(this, sessionManager.getString(SessionManager.PROVIDER_IMAGE),iv_profile_image);
         etProfileCompanyName.setText(sessionManager.getString(SessionManager.REGISTER_NAME));
         etProfilePersonName.setText(sessionManager.getString(SessionManager.CONTACT_PERSON));
         etProfileMobileNumber.setText(sessionManager.getString(SessionManager.PROVIDER_MOBILE));
         etProfileLandLine.setText(sessionManager.getString(SessionManager.LANDLINE));
         etProfileAddress.setText(sessionManager.getString(SessionManager.ADDRESS));
+        etPinCode.setText(sessionManager.getString(SessionManager.PINCODE));
         PicassoClient.downloadImage(this, sessionManager.getString(SessionManager.PROVIDER_IMAGE), iv_profile_image);
+
     }
 
     @Override
@@ -158,7 +170,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 etProfilePersonName.getText().toString(),
                 etProfileLandLine.getText().toString(),
                 "","","","","","",etProfileAddress.getText().toString(),
-                "","","","","","","","","","","","",
+                city_name, state_name, country, etPinCode.getText().toString(),"","","","","","","","",
                 "","","","","","","","","","" +
                         "","","","","","","","");
 
@@ -181,12 +193,18 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         sessionManager.setString(SessionManager.CONTACT_PERSON,list.get(0).getContactPerson());
                         sessionManager.setString(SessionManager.LANDLINE, list.get(0).getPhone());
                         sessionManager.setString(SessionManager.PROVIDER_IMAGE, list.get(0).getProfilePic());
+                        sessionManager.setString(SessionManager.COUNRTY, list.get(0).getAddress().getCountry());
+                        sessionManager.setString(SessionManager.STATE, list.get(0).getAddress().getState());
+                        sessionManager.setString(SessionManager.CITY, list.get(0).getAddress().getCity());
+                        sessionManager.setString(SessionManager.PINCODE, list.get(0).getAddress().getPincode());
+
                         //PicassoClient.downloadImage(this, sessionManager.getString(SessionManager.PROVIDER_IMAGE),iv_profile_image);
                         etProfileCompanyName.setText(sessionManager.getString(SessionManager.REGISTER_NAME));
                         etProfilePersonName.setText(sessionManager.getString(SessionManager.CONTACT_PERSON));
                         etProfileMobileNumber.setText(sessionManager.getString(SessionManager.PROVIDER_MOBILE));
                         etProfileLandLine.setText(sessionManager.getString(SessionManager.LANDLINE));
                         etProfileAddress.setText(sessionManager.getString(SessionManager.ADDRESS));
+                        etPinCode.setText(sessionManager.getString(SessionManager.PINCODE));
                         PicassoClient.downloadImage(getApplicationContext(), sessionManager.getString(SessionManager.PROVIDER_IMAGE), iv_profile_image);
                         ActionForAll.alertUser("VahanWire", update.getMessage(), "OK", ProfileActivity.this);
                     }
@@ -539,6 +557,211 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
         builder.show();
+    }
+
+    private void getCountry(){
+
+        final ProgressDialog progressDialog = Util.showProgressDialog(this);
+
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        Call<Country> call = apiService.getCounrty();
+        call.enqueue(new Callback<Country>() {
+            @Override
+            public void onResponse(Call<Country> call, Response<Country> response) {
+
+                Util.hideProgressDialog(progressDialog);
+
+                Country service = response.body();
+
+                if(response.isSuccessful())
+                {
+
+                    if(service.getStatus().equals("200"))
+                    {
+                        final List<com.electrom.vahanwireprovider.models.country.Datum> list  = service.getData();
+                        Log.d("size", "list size " + list.size()+"");
+
+                        // CountryAdapter adapter = new CountryAdapter(ProfileActivity.this, list);
+                        SpinnerAdapter adapter = new SpinnerAdapter(ProfileActivity.this, list);
+                        spinCountry.setAdapter(adapter);
+                        spinCountry.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                            @Override
+                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                Log.e(TAG, "onItemSelected: "+ list.get(position).getCountryCode());
+                                country = list.get(position).getName();
+                                sessionManager.setInt(SessionManager.COUNRTY_TAG, position);
+                                getState(list.get(position).getCountryCode());
+                            }
+
+                            @Override
+                            public void onNothingSelected(AdapterView<?> parent) {
+
+                            }
+                        });
+                    }
+                    else
+                    {
+                        country = "";
+                    }
+
+                }
+                else
+                {
+                    country ="";
+                }
+
+                Log.e("service", response.body().getStatus());
+
+            }
+
+            @Override
+            public void onFailure(Call<Country> call, Throwable t) {
+                Log.e("service failier", t.getMessage());
+                country ="";
+            }
+        });
+
+    }
+
+    private void getState(String id){
+
+        final ProgressDialog progressDialog = Util.showProgressDialog(this);
+
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("country_code", id);
+
+
+        Call<State> call = apiService.getState(params);
+        call.enqueue(new Callback<State>() {
+            @Override
+            public void onResponse(Call<State> call, Response<State> response) {
+
+                Util.hideProgressDialog(progressDialog);
+
+                State state = response.body();
+
+                if(response.isSuccessful())
+                {
+
+                    if(state.getStatus().equals("200"))
+                    {
+
+                        final List<DateState> list  = state.getData();
+                        Log.d("size", "list size " + list.size()+"");
+
+                        // CountryAdapter adapter = new CountryAdapter(ProfileActivity.this, list);
+                        StateAdapter adapter = new StateAdapter(ProfileActivity.this, list);
+                        spinState.setAdapter(adapter);
+                        spinState.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                            @Override
+                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                Log.e(TAG, "onItemSelected: "+ list.get(position).getStateCode());
+                                state_name = list.get(position).getName();
+                                sessionManager.setInt(SessionManager.STATE_TAG, position);
+                                getCity(list.get(position).getStateCode());
+
+                            }
+
+                            @Override
+                            public void onNothingSelected(AdapterView<?> parent) {
+
+                            }
+                        });
+                    }
+                    else
+                    {
+                        state_name = "";
+                    }
+
+                }
+                else
+                {
+                    state_name ="";
+                }
+
+                Log.e("service", response.body().getStatus());
+
+            }
+
+            @Override
+            public void onFailure(Call<State> call, Throwable t) {
+                Log.e("service failier", t.getMessage());
+                state_name="";
+            }
+        });
+
+    }
+
+
+    private void getCity(String id){
+
+        final ProgressDialog progressDialog = Util.showProgressDialog(this);
+
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("state_code", id);
+
+        Call<City> call = apiService.getCity(params);
+        call.enqueue(new Callback<City>() {
+            @Override
+            public void onResponse(Call<City> call, Response<City> response) {
+
+                Util.hideProgressDialog(progressDialog);
+
+                City city = response.body();
+
+                if(response.isSuccessful())
+                {
+                    com.electrom.vahanwireprovider.models.country.Datum datum = new com.electrom.vahanwireprovider.models.country.Datum();
+
+
+                    if(city.getStatus().equals("200"))
+                    {
+                        final List<CityData> list  = city.getData();
+                        Log.d("size", "list size " + list.size()+"");
+
+                        // CountryAdapter adapter = new CountryAdapter(ProfileActivity.this, list);
+                        CityAdapter adapter = new CityAdapter(ProfileActivity.this, list);
+                        spinCity.setAdapter(adapter);
+                        spinCity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                            @Override
+                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                Log.e(TAG, "onItemSelected: "+ list.get(position).getStateCode());
+                                sessionManager.setInt(SessionManager.CITY_TAG, position);
+                            }
+
+                            @Override
+                            public void onNothingSelected(AdapterView<?> parent) {
+
+                            }
+                        });
+                    }
+                    else
+                    {
+                        city_name = "";
+                    }
+
+                }
+                else
+                {
+                    city_name ="";
+                }
+
+                Log.e("service", response.body().getStatus());
+
+            }
+
+            @Override
+            public void onFailure(Call<City> call, Throwable t) {
+                Log.e("service failier", t.getMessage());
+                city_name ="";
+            }
+        });
+
     }
 
 }

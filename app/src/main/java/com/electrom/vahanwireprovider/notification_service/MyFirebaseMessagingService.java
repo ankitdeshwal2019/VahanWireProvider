@@ -18,14 +18,16 @@ import com.electrom.vahanwireprovider.MainActivity;
 import com.electrom.vahanwireprovider.R;
 import com.electrom.vahanwireprovider.features.AmbulanceProvider;
 import com.electrom.vahanwireprovider.features.MachanicHomePage;
+import com.electrom.vahanwireprovider.utility.SessionManager;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "MyFirebaseMsgService";
-
-    String title, body, tag;
 
     /**
      * Called when message is received.
@@ -59,8 +61,31 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
-            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
-            sendMyNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("body"), remoteMessage.getData().get("tag"));
+            Log.e(TAG, "Message data payload: " + remoteMessage.getData().get("notification_details"));
+            String Obj =  remoteMessage.getData().get("notification_details");
+            try {
+                JSONObject data = new JSONObject(Obj);
+                String booking_id = data.getString("booking_id");
+                SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_ID, booking_id);
+                Log.e(TAG, "onMessageReceived: " + booking_id );
+                JSONObject booking_status = data.getJSONObject("booking_status");
+                JSONObject mech = booking_status.getJSONObject("mechanic");
+                String b_s = mech.getString("cancel_reason");
+                String status = mech.getString("status");
+                Log.e(TAG, "onMessageReceived: " + b_s + " - " + status);
+
+                sendMyNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("body"), remoteMessage.getData().get("tag"));
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            catch (NullPointerException e){
+                e.printStackTrace();
+            }
+
+            //sendMyNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("body"), remoteMessage.getData().get("tag"));
+
         }
 
         // Check if message contains a notification
@@ -173,6 +198,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Intent intent = new Intent(this, MachanicHomePage.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+
         }
 
         Uri soundUri = Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/" + R.raw.apple_tone);

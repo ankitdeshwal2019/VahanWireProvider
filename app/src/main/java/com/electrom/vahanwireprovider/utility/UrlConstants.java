@@ -22,4 +22,9 @@ public class UrlConstants {
     public static final String PETROL_PUMP_UPLOAD = "profilepic/petrolpump";
     public static final String MECHANIC_UPLOAD = "profilepic/mechanic";
     public static final String MECHANIC_STATUS = "mechanic/provider/activestatus";
+    public static final String SELECT_COUNRTY = "commonapi/country";
+    public static final String SELECT_STATE = "commonapi/country/state" ;
+    public static final String SELECT_CITY = "commonapi/state/city";
+    public static final String MECHANIC_REQUEST_ACCEPT = "mechanic/provider/request/accept" ;
+    public static final String MECHANIC_REQUEST_CANCEL = "mechanic/provider/request/cancel";
 }

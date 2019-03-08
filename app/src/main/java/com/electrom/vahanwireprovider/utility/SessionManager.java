@@ -32,7 +32,14 @@ public class SessionManager {
     public static final String SERVICE = "service";
     public static final String PROVIDER_ID = "provider_id";
     public static final String ACTIVE_STATUS = "active_status" ;
-    public static final String MECH_STATUS = "mechanic_status";
+    public static final String COUNRTY = "country";
+    public static final String STATE = "state";
+    public static final String CITY = "city";
+    public static final String PINCODE = "pincode";
+    public static final String CITY_TAG = "city_tag";
+    public static final String STATE_TAG = "state_tag";
+    public static final String COUNRTY_TAG = "country_tag";
+    public static final String BOOKING_ID = "booking_id";
     private static String SHARED_PREFERENCE_PROVIDER = "shared_provider_electrom";
     ///public static final String COUNT_COMPARE = "count_compare";
     private static SharedPreferences sharedPref;

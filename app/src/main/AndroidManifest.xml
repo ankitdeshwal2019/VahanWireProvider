@@ -23,62 +23,53 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
+        <activity android:name=".features.Signature"></activity>
+        <activity android:name=".features.MechanicTracker" />
         <activity
             android:name=".features.MachanicHomePage"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".features.BookingStatusActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".features.AmbulanceProvider"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".features.WorkingHours"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".features.FacilitynPaymentMethod"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".features.OfferActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".features.PaymentMethod"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".ragistration.BeforeLogin"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ragistration.RegistrationActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".ragistration.VerifyOtp"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".ragistration.RegisterMobile"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".ragistration.ProviderLogin"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".features.ProfileActivity"
             android:theme="@style/AppTheme.NoActionBar" />

@@ -1,5 +1,8 @@
 package com.electrom.vahanwireprovider.retrofit_lib;
 
+import com.electrom.vahanwireprovider.models.cancel_request.CancelRequest;
+import com.electrom.vahanwireprovider.models.city.City;
+import com.electrom.vahanwireprovider.models.country.Country;
 import com.electrom.vahanwireprovider.models.detail.Detail;
 import com.electrom.vahanwireprovider.models.login.Login;
 import com.electrom.vahanwireprovider.models.login_ambulance.LoginAmbulance;
@@ -7,7 +10,9 @@ import com.electrom.vahanwireprovider.models.mech_status.MechanicStatus;
 import com.electrom.vahanwireprovider.models.mechanic.MechanicLogin;
 import com.electrom.vahanwireprovider.models.mechanic_registration.Mechanic;
 import com.electrom.vahanwireprovider.models.payment.Payment;
+import com.electrom.vahanwireprovider.models.request_accept.RequestAccept;
 import com.electrom.vahanwireprovider.models.services.Service;
+import com.electrom.vahanwireprovider.models.state.State;
 import com.electrom.vahanwireprovider.models.status_user.StatusUser;
 import com.electrom.vahanwireprovider.models.update_profile.Update;
 import com.electrom.vahanwireprovider.utility.UrlConstants;
@@ -137,7 +142,7 @@ public interface ApiInterface {
     @POST(UrlConstants.PETROL_PUMP_UPLOAD)
     @FormUrlEncoded
     Call<StatusUser> petrol_pump_upload(@Field("id") String id,
-                                   @Field("status") String status);
+                                        @Field("status") String status);
 
     @POST(UrlConstants.AMB_USER_LOGIN)
     @FormUrlEncoded
@@ -147,13 +152,6 @@ public interface ApiInterface {
                                          @Field("device_type") String device_type,
                                          @Field("notification_id") String notification_id);
 
-    @POST(UrlConstants.MECHANIC_LOGIN)
-    @FormUrlEncoded
-    Call<MechanicLogin> login_mechanic(@Field("mobile") String mobile,
-                                       @Field("pin") String pin,
-                                       @Field("device_id") String device_id,
-                                       @Field("device_type") String device_type,
-                                       @Field("notification_id") String notification_id);
 
     @POST(UrlConstants.MECHANIC_REGISTRATION_UPDATE)
     @FormUrlEncoded
@@ -174,6 +172,36 @@ public interface ApiInterface {
                                          @Field("country") String country,
                                          @Field("pincode") String pincode);
 
+
+    @POST(UrlConstants.MECHANIC_LOGIN)
+    @FormUrlEncoded
+    Call<MechanicLogin> login_mechanic(@Field("mobile") String mobile,
+                                       @Field("pin") String pin,
+                                       @Field("device_id") String device_id,
+                                       @Field("device_type") String device_type,
+                                       @Field("notification_id") String notification_id);
+
+    @GET(UrlConstants.SELECT_COUNRTY)
+    Call<Country> getCounrty();
+
+    @GET(UrlConstants.SELECT_STATE)
+    Call<State> getState(@QueryMap Map<String, String> params);
+
+    @GET(UrlConstants.SELECT_CITY)
+    Call<City> getCity(@QueryMap Map<String, String> params);
+
+    @POST(UrlConstants.MECHANIC_REQUEST_ACCEPT)
+    @FormUrlEncoded
+    Call<RequestAccept> mech_req_accept(@Field("id") String id,
+                                        @Field("booking_id") String booking_id);
+
+    @POST(UrlConstants.MECHANIC_REQUEST_CANCEL)
+    @FormUrlEncoded
+    Call<CancelRequest> mech_req_cancel(@Field("id") String id,
+                                        @Field("booking_id") String booking_id,
+                                        @Field("reason") String reason
+
+    );
 
 
 

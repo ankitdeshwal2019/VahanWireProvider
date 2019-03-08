@@ -108,6 +108,14 @@ public class CodeMinimisations {
                         sessionManager.setString(SessionManager.DEVICE_ID,"");
                         sessionManager.setString(SessionManager.NOTIFICATION_TOKEN, "");
                         sessionManager.setString(SessionManager.ACTIVE_STATUS, "");
+                        sessionManager.setString(SessionManager.PROVIDER_ID, "");
+                        sessionManager.setString(SessionManager.COUNRTY, "");
+                        sessionManager.setString(SessionManager.STATE, "");
+                        sessionManager.setString(SessionManager.CITY, "");
+                        sessionManager.setString(SessionManager.PINCODE, "");
+                        sessionManager.setString(SessionManager.CITY_TAG, "");
+                        sessionManager.setString(SessionManager.STATE_TAG, "");
+                        sessionManager.setString(SessionManager.COUNRTY_TAG, "");
 
                         dialog.dismiss();
                         Intent logout= new Intent(context, BeforeLogin.class);
