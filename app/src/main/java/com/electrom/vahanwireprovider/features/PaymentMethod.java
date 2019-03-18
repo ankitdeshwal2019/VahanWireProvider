@@ -18,6 +18,7 @@ import com.electrom.vahanwireprovider.models.payment.Payment_array;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiClient;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiInterface;
 import com.electrom.vahanwireprovider.utility.ActionForAll;
+import com.electrom.vahanwireprovider.utility.Constant;
 import com.electrom.vahanwireprovider.utility.CustomButton;
 import com.electrom.vahanwireprovider.utility.SessionManager;
 import com.electrom.vahanwireprovider.utility.Util;
@@ -53,7 +54,23 @@ public class PaymentMethod extends AppCompatActivity implements View.OnClickList
         iv_back_payment = findViewById(R.id.iv_back_payment);
         iv_back_payment.setOnClickListener(this);
         recyclerPayment.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        getAllPlaymentMethod();
+
+        if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_PETROL_PUMP))
+        {
+            getAllPlaymentMethod();
+            Log.e(TAG, "initView: " + sessionManager.getString(SessionManager.SERVICE));
+        }
+        else if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_AMBULANCE))
+        {
+              ActionForAll.myFlash(getApplicationContext(), "pending");
+               Log.e(TAG, "initView: " + sessionManager.getString(SessionManager.SERVICE));
+        }
+        else if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_MECHNIC_PRO))
+        {
+            getAllPlaymentMethodMech();
+            Log.e(TAG, "initView: " + sessionManager.getString(SessionManager.SERVICE));
+
+        }
     }
 
     private void getAllPlaymentMethod()
@@ -77,6 +94,45 @@ public class PaymentMethod extends AppCompatActivity implements View.OnClickList
 
                     List<Payment_array> list = payment.getData();
                     Log.d(TAG, "list size " + list.size()+"");
+                    paymentAdapter = new PaymentAdapter(list, PaymentMethod.this, btnSubmitPayment);
+                    recyclerPayment.setAdapter(paymentAdapter);
+                    paymentAdapter.notifyDataSetChanged();
+                }
+                else
+                {
+                    Util.hideProgressDialog(progressDialog);
+                    ActionForAll.alertUserWithCloseActivity("VahanWire", "Low Internet Connection, Please Try after some time", "OK", PaymentMethod.this);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Payment> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void getAllPlaymentMethodMech()
+    {
+        final ProgressDialog progressDialog = Util.showProgressDialog(this);
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("mobile", sessionManager.getString(SessionManager.PROVIDER_MOBILE));
+
+        Call<Payment> call = apiService.getAllPaymentMethodMech(params);
+        call.enqueue(new Callback<Payment>() {
+            @Override
+            public void onResponse(Call<Payment> call, Response<Payment> response) {
+
+                if(response!=null && response.isSuccessful())
+                {
+                    Util.hideProgressDialog(progressDialog);
+                    Payment payment = response.body();
+                    Log.d(TAG, "list size mech "+ payment.getStatus());
+
+                    List<Payment_array> list = payment.getData();
+                    Log.d(TAG, "list size mech " + list.size()+"");
                     paymentAdapter = new PaymentAdapter(list, PaymentMethod.this, btnSubmitPayment);
                     recyclerPayment.setAdapter(paymentAdapter);
                     paymentAdapter.notifyDataSetChanged();

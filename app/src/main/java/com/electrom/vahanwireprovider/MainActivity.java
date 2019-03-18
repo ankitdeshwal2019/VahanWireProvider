@@ -39,6 +39,7 @@ import com.electrom.vahanwireprovider.retrofit_lib.ApiClient;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiInterface;
 import com.electrom.vahanwireprovider.utility.ActionForAll;
 import com.electrom.vahanwireprovider.utility.CodeMinimisations;
+import com.electrom.vahanwireprovider.utility.Constant;
 import com.electrom.vahanwireprovider.utility.CustomButton;
 import com.electrom.vahanwireprovider.utility.CustomTextView;
 import com.electrom.vahanwireprovider.utility.MyHandler;
@@ -128,6 +129,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         nav_name.setText(sessionManager.getString(SessionManager.REGISTER_NAME));
         nav_email.setText(sessionManager.getString(SessionManager.EMAIL));
 
+
+        Menu nav_Menu = mNavigationView.getMenu();
+        if(sessionManager.getString(SessionManager.SERVICE).equalsIgnoreCase(Constant.SERVICE_PETROL_PUMP))
+        {
+            nav_Menu.findItem(R.id.nav_booking).setVisible(false);
+            nav_Menu.findItem(R.id.nav_Serviceable_brand).setVisible(false);
+            nav_Menu.findItem(R.id.nav_Service).setVisible(false);
+        }
+        else
+        {
+            nav_Menu.findItem(R.id.nav_profile).setVisible(true);
+        }
+
         DrawerLayout mDrawerLayout = findViewById(R.id.drawer_layout);
         CodeMinimisations.navListener(nav, mNavigationView, mDrawerLayout, this);
         CodeMinimisations.navigationItemListener(mNavigationView, this);
@@ -153,15 +167,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     count_navitaion_user = detail.getData().getNavigatedUsers().size();
                     tvTotalVisitorsCount.setText(String.valueOf(count_navitaion_user));
                     List<Offer> offers = detail.getData().getOffers();
+                     Offer offer = null;
+                    SharedPreferences appSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     if (offers.size() > 0) {
-                        Offer offer = offers.get(offers.size() - 1);
-                        SharedPreferences appSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                        offer = offers.get(offers.size() - 1);
+
                         SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
                         Gson gson = new Gson();
                         String json = gson.toJson(offer);
                         prefsEditor.putString("Offer", json);
                         prefsEditor.apply();
                         //sessionManager.setObject("Myobj", offer);
+                    }
+                    else
+                    {
+                        appSharedPrefs.edit().remove("Offer").commit();
+
                     }
                 } else {
                     Util.hideProgressDialog(progressDialog);

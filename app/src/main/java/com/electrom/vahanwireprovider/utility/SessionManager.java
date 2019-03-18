@@ -15,7 +15,6 @@ public class SessionManager {
 
     public static final String TAG = SessionManager.class.getSimpleName();
 
-
     public static final String PROVIDER_MOBILE = "provider_mobile";
     public static final String DEVICE_ID = "device_id";
     public static final String NOTIFICATION_TOKEN = "notification_token";
@@ -40,6 +39,11 @@ public class SessionManager {
     public static final String STATE_TAG = "state_tag";
     public static final String COUNRTY_TAG = "country_tag";
     public static final String BOOKING_ID = "booking_id";
+    public static final String BOOKING_STATUS = "booking_status";
+    public static final String BOOKING_STATUS_USER = "b_status_user";
+    public static final String MAIN_PROVIDER = "main_provider";
+    public static final String NOTI_NAME = "notification_name" ;
+    public static final String NOTI_ISSUE = "notification issue" ;
     private static String SHARED_PREFERENCE_PROVIDER = "shared_provider_electrom";
     ///public static final String COUNT_COMPARE = "count_compare";
     private static SharedPreferences sharedPref;

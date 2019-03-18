@@ -200,8 +200,8 @@ public class ActionForAll {
     }
 
     public static boolean validPassword(EditText edit , String text, Activity act) {
-        if (edit.getText().toString().trim().length() < 6) {
-            edit.setError("Please enter minimum 6 digit " + text + " here!");
+        if (edit.getText().toString().trim().length() != 4) {
+            edit.setError("Please enter minimum 4 digit " + text + " here!");
             requestFocus(edit, act);
             return false;
         }

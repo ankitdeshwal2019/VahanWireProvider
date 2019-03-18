@@ -12,9 +12,11 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.electrom.vahanwireprovider.R;
 import com.electrom.vahanwireprovider.location_service.GPSTracker;
+import com.electrom.vahanwireprovider.models.pro_update_mech.ProfileUpdateMech;
 import com.electrom.vahanwireprovider.models.update_profile.Update;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiClient;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiInterface;
@@ -45,6 +47,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
     GPSTracker gps;
     Double Latitude, Longitude;
     String service;
+    ImageView back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,11 +81,14 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
         etRegisterLandLine = findViewById(R.id.etRegisterLandLine);
         etRegisterEmail = findViewById(R.id.etRegisterEmail);
         etRegisterPassword = findViewById(R.id.etRegisterPassword);
+        back = findViewById(R.id.back);
         etRegisterAddress = findViewById(R.id.etRegisterAddress);
         service = sessionManager.getString(SessionManager.SERVICE);
+
         Log.e(TAG, "service: registration Act " + service );
         getLocation();
         btnRegisterFinal.setOnClickListener(this);
+        back.setOnClickListener(this);
         etRegisterAddress.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -118,8 +124,11 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
         switch (v.getId())
         {
             case R.id.btnRegisterFinal:
-
                 isNotEmptyFields();
+                break;
+            case R.id.back:
+                finish();
+                break;
         }
     }
 
@@ -188,7 +197,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
 
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
 
-        Call<ResponseBody> call = apiService.registrationUpdateMechanic(
+        Call<ProfileUpdateMech> call = apiService.registrationUpdateMechanic(
                 sessionManager.getString(SessionManager.PROVIDER_MOBILE),
                 etContactPerson.getText().toString(),
                 etRegisterPassword.getText().toString(),
@@ -203,40 +212,37 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
                 "", "", "", "");
 
 
-        call.enqueue(new Callback<ResponseBody>() {
+        call.enqueue(new Callback<ProfileUpdateMech>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(Call<ProfileUpdateMech> call, Response<ProfileUpdateMech> response) {
 
+                Util.hideProgressDialog(progressDialog);
+                ProfileUpdateMech responseBody = response.body();
 
+                if(response.isSuccessful())
+                {
+                    if(responseBody.getStatus().equals("200"))
+                    {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
 
-                ResponseBody responseBody = response.body();
-
-                try {
-                    JSONObject obj = new JSONObject(responseBody.string());
-                    obj.getString("status");
-                    Log.e(TAG, "onResponse: "+  obj.getString("status"));
-
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            Util.hideProgressDialog(progressDialog);
-                            sessionManager.setString(SessionManager.PROVIDER_PIN, etRegisterPassword.getText().toString());
-                            Intent logout= new Intent(RegistrationActivity.this, ProviderLogin.class);
-                            logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(logout);
-                        }
-                    }, 300);
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                                sessionManager.setString(SessionManager.PROVIDER_PIN, etRegisterPassword.getText().toString());
+                                Intent logout= new Intent(RegistrationActivity.this, ProviderLogin.class);
+                                logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(logout);
+                            }
+                        }, 300);
+                    }
+                    else
+                    {
+                        ActionForAll.alertUser("VahanWire", responseBody.getMessage(), "OK", RegistrationActivity.this);
+                    }
                 }
-
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(Call<ProfileUpdateMech> call, Throwable t) {
                 Util.hideProgressDialog(progressDialog);
                 ActionForAll.alertUserWithCloseActivity("VahanWire", t.getMessage(), "OK", RegistrationActivity.this);
             }
@@ -258,7 +264,6 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
             {
                 compaleteRegistrationMechanic();
             }
-
         }
 
     }

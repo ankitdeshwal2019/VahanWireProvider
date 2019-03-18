@@ -20,6 +20,7 @@ import com.electrom.vahanwireprovider.models.services.Service;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiClient;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiInterface;
 import com.electrom.vahanwireprovider.utility.ActionForAll;
+import com.electrom.vahanwireprovider.utility.Constant;
 import com.electrom.vahanwireprovider.utility.CustomButton;
 import com.electrom.vahanwireprovider.utility.SessionManager;
 import com.electrom.vahanwireprovider.utility.Util;
@@ -57,7 +58,21 @@ public class FacilitynPaymentMethod extends AppCompatActivity implements View.On
         btnSubmitPaymentnFacility = findViewById(R.id.btnSubmitFacility);
 
         recyclerFacility.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        getAllServices();
+
+        if (sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_PETROL_PUMP))
+        {
+            Log.e(TAG, "initView: " + sessionManager.getString(SessionManager.SERVICE) );
+            getAllServices();
+        }
+        else if (sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_AMBULANCE))
+        {
+            Log.e(TAG, "initView: " + sessionManager.getString(SessionManager.SERVICE) );
+        }
+        else if (sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_MECHNIC_PRO))
+        {
+            Log.e(TAG, "initView: " + sessionManager.getString(SessionManager.SERVICE) );
+            getAllServicesMechanic();
+        }
 
         /*paymentAdapter = new PaymentAdapter(list, this, btnSubmitPaymentnFacility);
         serviceAdapter = new ServiceAdapter(list, this, btnSubmitPaymentnFacility);
@@ -77,6 +92,47 @@ public class FacilitynPaymentMethod extends AppCompatActivity implements View.On
         params.put("mobile", sessionManager.getString(SessionManager.PROVIDER_MOBILE));
 
         Call<Service> call = apiService.getAllServices(params);
+
+        call.enqueue(new Callback<Service>() {
+            @Override
+            public void onResponse(Call<Service> call, Response<Service> response) {
+
+                if(response!=null && response.isSuccessful())
+                {
+                    Util.hideProgressDialog(progressDialog);
+                    Service service = response.body();
+                    Log.d(TAG, service.getStatus());
+
+                    List<Datum> list = service.getData();
+                    Log.d(TAG, "list size " + list.size()+"");
+                    serviceAdapter = new ServiceAdapter(list, FacilitynPaymentMethod.this, btnSubmitPaymentnFacility);
+                    recyclerFacility.setAdapter(serviceAdapter);
+                    serviceAdapter.notifyDataSetChanged();
+                }
+                else
+                {
+                    Util.hideProgressDialog(progressDialog);
+                    ActionForAll.alertUserWithCloseActivity("VahanWire", "Low Internet Connection, Please Try after some time", "OK", FacilitynPaymentMethod.this);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Service> call, Throwable t) {
+                Util.hideProgressDialog(progressDialog);
+                ActionForAll.alertUserWithCloseActivity("VahanWire", "Low Internet Connection, Please Try after some time", "OK", FacilitynPaymentMethod.this);
+            }
+        });
+    }
+
+    private void getAllServicesMechanic() {
+
+        final ProgressDialog progressDialog = Util.showProgressDialog(this);
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("mobile", sessionManager.getString(SessionManager.PROVIDER_MOBILE));
+
+        Call<Service> call = apiService.getAllServicesMechanic(params);
 
         call.enqueue(new Callback<Service>() {
             @Override

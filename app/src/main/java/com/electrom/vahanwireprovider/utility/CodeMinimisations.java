@@ -14,10 +14,14 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.electrom.vahanwireprovider.MainActivity;
+import com.electrom.vahanwireprovider.features.BookingHistory;
+import com.electrom.vahanwireprovider.features.BookingStatusMechanic;
 import com.electrom.vahanwireprovider.features.FacilitynPaymentMethod;
 import com.electrom.vahanwireprovider.features.OfferActivity;
 import com.electrom.vahanwireprovider.features.PaymentMethod;
 import com.electrom.vahanwireprovider.features.ProfileActivity;
+import com.electrom.vahanwireprovider.features.SelectBrand;
+import com.electrom.vahanwireprovider.features.SelectIssue;
 import com.electrom.vahanwireprovider.features.WorkingHours;
 import com.electrom.vahanwireprovider.ragistration.BeforeLogin;
 import com.electrom.vahanwireprovider.ragistration.ProviderLogin;
@@ -42,6 +46,11 @@ public class CodeMinimisations {
 
         switch (menuItem) {
 
+            case "Booking History":
+                in = new Intent(context, BookingHistory.class);
+                context.startActivity(in);
+                break;
+
             case "Home":
                 // ActionForAll.myFlash(context, "home page");
                 in = new Intent(context, MainActivity.class);
@@ -54,7 +63,7 @@ public class CodeMinimisations {
                 context.startActivity(in);
                 break;
 
-            case "Offer":
+            case "Offers":
                 // ActionForAll.myFlash(context, "Offer page");
                 in = new Intent(context, OfferActivity.class);
                 context.startActivity(in);
@@ -66,15 +75,27 @@ public class CodeMinimisations {
                 context.startActivity(in);
                 break;
 
-            case "Facility":
+            case "Facilities":
                 // ActionForAll.myFlash(context, "Facility and Payment method page");
                 in = new Intent(context, FacilitynPaymentMethod.class);
                 context.startActivity(in);
                 break;
 
-                case "Payment method":
+                case "Payments":
                 // ActionForAll.myFlash(context, "Facility and Payment method page");
                 in = new Intent(context, PaymentMethod.class);
+                context.startActivity(in);
+                break;
+
+                case "Select Serviceable brand":
+                // ActionForAll.myFlash(context, "Facility and Payment method page");
+                in = new Intent(context, SelectBrand.class);
+                context.startActivity(in);
+                break;
+
+                case "Select Services":
+                // ActionForAll.myFlash(context, "Facility and Payment method page");
+                in = new Intent(context, SelectIssue.class);
                 context.startActivity(in);
                 break;
 
@@ -116,6 +137,12 @@ public class CodeMinimisations {
                         sessionManager.setString(SessionManager.CITY_TAG, "");
                         sessionManager.setString(SessionManager.STATE_TAG, "");
                         sessionManager.setString(SessionManager.COUNRTY_TAG, "");
+                        sessionManager.setString(SessionManager.BOOKING_ID, "");
+                        sessionManager.setString(SessionManager.BOOKING_STATUS, "");
+                        sessionManager.setString(SessionManager.BOOKING_STATUS_USER, "");
+                        sessionManager.setString(SessionManager.MAIN_PROVIDER, "");
+                        sessionManager.setString(SessionManager.NOTI_NAME, "");
+                        sessionManager.setString(SessionManager.NOTI_ISSUE, "");
 
                         dialog.dismiss();
                         Intent logout= new Intent(context, BeforeLogin.class);

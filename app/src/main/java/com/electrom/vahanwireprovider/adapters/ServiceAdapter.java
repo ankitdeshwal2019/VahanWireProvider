@@ -24,6 +24,7 @@ import com.electrom.vahanwireprovider.models.services.Service;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiClient;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiInterface;
 import com.electrom.vahanwireprovider.utility.ActionForAll;
+import com.electrom.vahanwireprovider.utility.Constant;
 import com.electrom.vahanwireprovider.utility.CustomButton;
 import com.electrom.vahanwireprovider.utility.NoInternet;
 import com.electrom.vahanwireprovider.utility.SessionManager;
@@ -128,7 +129,22 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ViewHold
                 ids = finalIds(builder.toString());
                 if(ids != null)
                 {
-                    updateserviceInfo(ids);
+                    if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_PETROL_PUMP))
+                    {
+                        Log.e(TAG, "adapter: " + sessionManager.getString(SessionManager.SERVICE) );
+                        updateserviceInfo(ids);
+                    }
+                    else if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_AMBULANCE))
+                    {
+                        Log.e(TAG, "adapter " + sessionManager.getString(SessionManager.SERVICE) );
+                        ActionForAll.myFlash(context, "API not set");
+                    }
+                    else if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_MECHNIC_PRO))
+                    {
+                        Log.e(TAG, "adapter: " + sessionManager.getString(SessionManager.SERVICE) );
+                        updateserviceInfoMech(ids);
+                    }
+
                 }
 
                 Log.d(TAG, "final ids :: " +ids);
@@ -210,6 +226,55 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ViewHold
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
 
         Call<ResponseBody> call = apiService.service_update(sessionManager.getString(SessionManager.PROVIDER_MOBILE),
+                service_ids);
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response != null && response.isSuccessful()) {
+                    Util.hideProgressDialog(progressDialog);
+                    try {
+
+                        String jsonResponse = response.body().string();
+                        Log.d(TAG, jsonResponse);
+                        JSONObject object = new JSONObject(jsonResponse);
+                        Log.d(TAG, object.getString("status"));
+
+                        if(object.getString("status").equals("200"))
+                        {
+                            ActionForAll.alertUserWithCloseActivity("VahanWire", object.getString("message"), "OK", (FacilitynPaymentMethod)context);
+                        }
+                        else
+                        {
+                            ActionForAll.alertUser("VahanWire", object.getString("message"), "OK", (FacilitynPaymentMethod)context);
+                        }
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Util.hideProgressDialog(progressDialog);
+                    ActionForAll.alertUserWithCloseActivity("VahanWire", "Network busy, Please try after some time", "OK", (FacilitynPaymentMethod)context);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Util.hideProgressDialog(progressDialog);
+                Log.d(TAG, "onFailure: " + t.getMessage());
+            }
+        });
+    }
+
+    private void updateserviceInfoMech(String service_ids){
+
+        final ProgressDialog progressDialog = Util.showProgressDialog(context);
+
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        Call<ResponseBody> call = apiService.service_update_mech(sessionManager.getString(SessionManager.PROVIDER_MOBILE),
                 service_ids);
 
         call.enqueue(new Callback<ResponseBody>() {

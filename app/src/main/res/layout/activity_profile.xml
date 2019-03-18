@@ -135,18 +135,20 @@
                     android:layout_marginTop="10dp"
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:layout_marginRight="@dimen/size_5dp"
+                    android:layout_marginLeft="@dimen/size_5dp"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_alignParentRight="true"
-                    android:background="@drawable/round_transparent">
+                    android:layout_alignParentRight="true">
 
-                    <Spinner
-                        android:pointerIcon="cell"
-                        style="@style/Widget.AppCompat.DropDownItem.Spinner"
+                    <com.electrom.vahanwireprovider.utility.CustomEditText
+                        android:id="@+id/etCountry"
+                        android:paddingLeft="@dimen/size_15dp"
                         android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:id="@+id/spinCountry"/>
+                        android:background="@drawable/round_transparent"
+                        android:hint="Country"
+                        android:inputType="text"
+                        android:textSize="14sp"
+                        android:layout_height="40dp" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -156,15 +158,19 @@
                     android:layout_marginLeft="@dimen/size_5dp"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_alignParentRight="true"
-                    android:background="@drawable/round_transparent">
+                    android:layout_alignParentRight="true">
 
-                    <Spinner
-                        android:pointerIcon="cell"
-                        style="@style/Widget.AppCompat.DropDownItem.Spinner"
+                    <com.electrom.vahanwireprovider.utility.CustomEditText
+                        android:id="@+id/etState"
+                        android:paddingLeft="@dimen/size_15dp"
                         android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:id="@+id/spinState"/>
+                        android:background="@drawable/round_transparent"
+                        android:hint="State"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:inputType="text"
+                        android:textSize="14sp"
+                        android:layout_height="40dp" />
                 </RelativeLayout>
 
             </LinearLayout>
@@ -181,18 +187,20 @@
                     android:layout_marginTop="10dp"
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:layout_marginRight="@dimen/size_5dp"
+                    android:layout_marginLeft="@dimen/size_5dp"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_alignParentRight="true"
-                    android:background="@drawable/round_transparent">
+                    android:layout_alignParentRight="true">
 
-                    <Spinner
-                        android:pointerIcon="cell"
-                        style="@style/Widget.AppCompat.DropDownItem.Spinner"
+                    <com.electrom.vahanwireprovider.utility.CustomEditText
+                        android:id="@+id/etCity"
+                        android:paddingLeft="@dimen/size_15dp"
                         android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:id="@+id/spinCity"/>
+                        android:background="@drawable/round_transparent"
+                        android:hint="City"
+                        android:inputType="text"
+                        android:textSize="14sp"
+                        android:layout_height="40dp" />
                 </RelativeLayout>
 
                 <RelativeLayout

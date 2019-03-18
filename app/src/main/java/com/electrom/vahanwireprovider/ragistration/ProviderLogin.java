@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -20,8 +21,10 @@ import com.electrom.vahanwireprovider.models.mechanic.MechanicLogin;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiClient;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiInterface;
 import com.electrom.vahanwireprovider.utility.ActionForAll;
+import com.electrom.vahanwireprovider.utility.Constant;
 import com.electrom.vahanwireprovider.utility.CustomButton;
 import com.electrom.vahanwireprovider.utility.CustomEditText;
+import com.electrom.vahanwireprovider.utility.CustomTextView;
 import com.electrom.vahanwireprovider.utility.SessionManager;
 import com.electrom.vahanwireprovider.utility.Util;
 
@@ -37,6 +40,7 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
     CustomButton btnRegister, btnLogin;
     CustomEditText etLoginMobile, etLoginPassword;
     SessionManager sessionManager;
+    CustomTextView tvForgotPin,extra;
     String service = "";
     ImageView ivBackLogin;
     @Override
@@ -53,11 +57,21 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
         etLoginMobile = findViewById(R.id.etLoginMobile);
         etLoginPassword = findViewById(R.id.etLoginPassword);
         ivBackLogin = findViewById(R.id.ivBackLogin);
+        extra = findViewById(R.id.extra);
+        tvForgotPin = findViewById(R.id.tvForgotPin);
+        tvForgotPin.setOnClickListener(this);
         btnRegister.setOnClickListener(this);
         btnLogin.setOnClickListener(this);
         ivBackLogin.setOnClickListener(this);
         service = sessionManager.getString(SessionManager.SERVICE);
         Log.e(TAG, "service: provider login " + service );
+
+        if(service.equals(Constant.SERVICE_AMBULANCE))
+        {
+            btnRegister.setVisibility(View.INVISIBLE);
+            tvForgotPin.setVisibility(View.INVISIBLE);
+            extra.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -91,10 +105,23 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
                 break;
 
             case R.id.btnRegister:
+                if(service.contains(Constant.SERVICE_MECHNIC_PRO))
                 startActivity(new Intent(getApplicationContext(), RegisterMobile.class));
+                else if(service.contains(Constant.SERVICE_AMBULANCE))
+                    ActionForAll.myFlash(getApplicationContext(), "Abmulance user can't register by app");
+                else if(service.contains(Constant.SERVICE_PETROL_PUMP))
+                    startActivity(new Intent(getApplicationContext(), RegisterMobile.class));
                 break;
 
-            case R.id.ivBackLogin:
+                case R.id.tvForgotPin:
+                    if(service.contains(Constant.SERVICE_MECHNIC_PRO))
+                        startActivity(new Intent(getApplicationContext(), RegisterMobileForPin.class));
+                    else if(service.contains(Constant.SERVICE_AMBULANCE))
+                        ActionForAll.myFlash(getApplicationContext(), "Please contact administrator");
+                    else if(service.contains(Constant.SERVICE_PETROL_PUMP))
+                        startActivity(new Intent(getApplicationContext(), RegisterMobileForPin.class));
+                    break;
+                 case R.id.ivBackLogin:
                 finish();
                 break;
 
@@ -134,6 +161,8 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
                         Log.d(TAG, "onResponse: " + " first address " + "--" + login.getData().getOrganisation().getRegAddress().getFirstAddress());
                         Log.d(TAG, "onResponse: " + "contact person " + "--" + login.getData().getOrganisation().getContactPerson());
                         Log.d(TAG, "onResponse: " + "phone number" + "--" + login.getData().getOrganisation().getMobile());
+
+                        sessionManager.setString(SessionManager.MAIN_PROVIDER, String.valueOf(login.getData().getMainproviderStatus()));
                         List<Double> list = login.getData().getLocation().getCoordinates();
                         Double longitude = list.get(0).doubleValue();
                         Double latitude = list.get(1).doubleValue();
@@ -143,7 +172,7 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
 
                         sessionManager.setString(SessionManager.PROVIDER_MOBILE, login.getData().getMobile());
                         sessionManager.setString(SessionManager.PROVIDER_PIN, login.getData().getMobilePin());
-                        sessionManager.setString(SessionManager.REGISTER_NAME, login.getData().getOrganisation().getOrganisationName());
+                        sessionManager.setString(SessionManager.REGISTER_NAME, login.getData().getName());
                         sessionManager.setString(SessionManager.EMAIL, login.getData().getOrganisation().getEmail());
                         sessionManager.setString(SessionManager.ADDRESS, login.getData().getOrganisation().getRegAddress().getFirstAddress());
                         sessionManager.setString(SessionManager.CONTACT_PERSON,login.getData().getOrganisation().getContactPerson());
@@ -153,9 +182,11 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
                         sessionManager.setString(SessionManager.PROVIDER_IMAGE, login.getData().getProfilePic());
                         sessionManager.setString(SessionManager.PROVIDER_ID, login.getData().getId());
 
-                        Intent logout= new Intent(getApplicationContext(), MachanicHomePage.class);
-                        logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(logout);
+
+                        Intent intent= new Intent(getApplicationContext(), MachanicHomePage.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        //intent.putExtra("count", login.getData().getRequestedUsers().size());
+                        startActivity(intent);
                         finish();
                     }
 
@@ -174,7 +205,7 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
             public void onFailure(Call<MechanicLogin> call, Throwable t) {
                 etLoginPassword.setText("");
                 Util.hideProgressDialog(progressDialog);
-                ActionForAll.alertUser("VahanWire", "Invalid credentials, Please check :: " + t.getMessage(), "OK", ProviderLogin.this);
+                ActionForAll.alertUser("VahanWire", "Invalid credentials", "OK", ProviderLogin.this);
             }
         });
 
@@ -224,6 +255,11 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
                         sessionManager.setString(SessionManager.LONGITUDE, longitude+"");
                         sessionManager.setString(SessionManager.PROVIDER_IMAGE, login.getData().getProfilePic());
                         sessionManager.setString(SessionManager.SERVICE, service);
+
+                        sessionManager.setString(SessionManager.CITY, login.getData().getAddress().getCity());
+                        sessionManager.setString(SessionManager.STATE, login.getData().getAddress().getState());
+                        sessionManager.setString(SessionManager.COUNRTY, login.getData().getAddress().getCountry());
+                        sessionManager.setString(SessionManager.PINCODE, login.getData().getAddress().getPincode());
 
                         Intent logout= new Intent(getApplicationContext(), MainActivity.class);
                         logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -283,8 +319,11 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
                         sessionManager.setString(SessionManager.PROVIDER_ID, data.getId());
                         Log.e(TAG, "onResponse: image " + sessionManager.getString(SessionManager.PROVIDER_IMAGE));
 
+
                         Intent intent= new Intent(getApplicationContext(), AmbulanceProvider.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        //intent.putExtra("count", login.getData().getRequestedUsers().size());
+                        //Log.e(TAG, "onResponse: "+ login.getData().getRequestedUsers().size());
                         startActivity(intent);
                         finish();
 

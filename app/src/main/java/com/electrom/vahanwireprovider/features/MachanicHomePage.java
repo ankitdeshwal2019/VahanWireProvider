@@ -1,31 +1,61 @@
 package com.electrom.vahanwireprovider.features;
 
+import android.Manifest;
+import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.electrom.vahanwireprovider.MainActivity;
 import com.electrom.vahanwireprovider.R;
+import com.electrom.vahanwireprovider.adapters.CityAdapter;
+import com.electrom.vahanwireprovider.adapters.SpinnerAdapter;
+import com.electrom.vahanwireprovider.location_service_update_track.MyForeGroundService;
+import com.electrom.vahanwireprovider.models.booking_details.BookingDetails;
+import com.electrom.vahanwireprovider.models.booking_details.Data;
+import com.electrom.vahanwireprovider.models.booking_details.Details;
+import com.electrom.vahanwireprovider.models.booking_details.UserDetails;
+import com.electrom.vahanwireprovider.models.cancel_reason_mech.CancelReason;
+import com.electrom.vahanwireprovider.models.cancel_reason_mech.Datum;
 import com.electrom.vahanwireprovider.models.cancel_request.CancelRequest;
+import com.electrom.vahanwireprovider.models.city.City;
+import com.electrom.vahanwireprovider.models.city.CityData;
+import com.electrom.vahanwireprovider.models.country.Country;
+import com.electrom.vahanwireprovider.models.detail.Detail;
 import com.electrom.vahanwireprovider.models.mech_status.MechanicStatus;
+import com.electrom.vahanwireprovider.models.mechanic_detail.MechanicDetail;
+import com.electrom.vahanwireprovider.models.mechanic_detail.Offer;
 import com.electrom.vahanwireprovider.models.request_accept.RequestAccept;
 import com.electrom.vahanwireprovider.models.status_user.StatusUser;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiClient;
@@ -38,6 +68,19 @@ import com.electrom.vahanwireprovider.utility.MyHandler;
 import com.electrom.vahanwireprovider.utility.PicassoClient;
 import com.electrom.vahanwireprovider.utility.SessionManager;
 import com.electrom.vahanwireprovider.utility.Util;
+import com.google.gson.Gson;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.DexterError;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.PermissionRequestErrorListener;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
@@ -58,19 +101,20 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
     String faltuCheck = "auto", cancelReason;
     Dialog requestPopup,cancelDiolog;
     CountDownTimer timer;
+    List<Datum> data;
+    ArrayList<String> reason = new ArrayList();
+    public static String id1 = "provider_location_update";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_machanic_home_page_nav);
         initView();
+        getDetail();
         try{
             setUpLayoutWithToolbar();
         }
         catch (IllegalArgumentException e){}
-
-
-
     }
 
     private void initView() {
@@ -83,32 +127,58 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
         banStatusOnMechanic.setOnClickListener(this);
         tvStatusMechanic = findViewById(R.id.tvStatusMechanic);
         loginStatus = sessionManager.getString(SessionManager.ACTIVE_STATUS);
+        createchannel();
         Log.e(TAG, sessionManager.getString(SessionManager.NOTIFICATION_TOKEN));
         Log.e(TAG, "initView: pro_id " + sessionManager.getString(SessionManager.PROVIDER_ID));
-
+        getreason();
 
         if(loginStatus.equals("1"))
         {
             banStatusOnMechanic.setVisibility(View.GONE);
             banStatusOffMechanic.setVisibility(View.VISIBLE);
             tvStatusMechanic.setText(ACTIVE_STATUS_ON);
+            tvStatusMechanic.setTextColor(Color.GREEN);
+            if (!isMyServiceRunning(MyForeGroundService.class))
+            {
+                Intent locationIntent = new Intent(getBaseContext(), MyForeGroundService.class);
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+
+                    startForegroundService(locationIntent);
+                } else {
+                    //lower then Oreo, just start the service.
+                    startService(locationIntent);
+                }
+            }
+
         }
         else
         {
             banStatusOnMechanic.setVisibility(View.VISIBLE);
             banStatusOffMechanic.setVisibility(View.GONE);
             tvStatusMechanic.setText(ACTIVE_STATUS_OFF);
+            tvStatusMechanic.setTextColor(Color.RED);
         }
 
-        if(sessionManager.getString(SessionManager.BOOKING_ID).length() > 0)
+        if(sessionManager.getString(SessionManager.BOOKING_STATUS).equals("0") && !sessionManager.getString(SessionManager.BOOKING_STATUS_USER).equals("2"))
         {
             Log.e(TAG, "initView: "+sessionManager.getString(SessionManager.BOOKING_ID));
+            Log.e(TAG, "initView: "+sessionManager.getString(SessionManager.BOOKING_STATUS));
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     requestPopup();
                 }
             }, 500);
+        }
+        else if(sessionManager.getString(SessionManager.BOOKING_STATUS_USER).equals("2"))
+        {
+
+            new Handler().postDelayed(new Runnable() {
+                                          @Override
+                                          public void run() {
+                                              ActionForAll.alertUserWithCloseActivity("VahanWire", "Request cancelled by user.", "OK", MachanicHomePage.this);
+                                          }
+                                      },500);
         }
     }
 
@@ -120,8 +190,8 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
     private void setUpLayoutWithToolbar() {
 
         initToolbar();
-        ImageView nav = findViewById(R.id.ivDrawer);
-        /*CustomTextView title = findViewById(R.id.tvToolClick);
+        ImageView nav = findViewById(R.id.ivDrawer);/*CustomTextView title = findViewById(R.id.tvToolClick);
+
         title.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -143,6 +213,22 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
         DrawerLayout mDrawerLayout = findViewById(R.id.drawer_layout);
         CodeMinimisations.navListener(nav, mNavigationView, mDrawerLayout, this);
         CodeMinimisations.navigationItemListener(mNavigationView, this);
+
+
+        Menu nav_Menu = mNavigationView.getMenu();
+
+        if(sessionManager.getString(SessionManager.MAIN_PROVIDER).equals("1"))
+        {
+            /*nav_Menu.findItem(R.id.nav_Service).setVisible(false);
+            nav_Menu.findItem(R.id.nav_Serviceable_brand).setVisible(false);*/
+        }
+        else
+        {
+            nav_Menu.findItem(R.id.nav_profile).setVisible(false);
+            nav_Menu.findItem(R.id.nav_offer).setVisible(false);
+            nav_Menu.findItem(R.id.nav_time_n_schedule).setVisible(false);
+            nav_Menu.findItem(R.id.nav_payment_method).setVisible(false);
+        }
     }
 
     @Override
@@ -150,13 +236,49 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
         switch (v.getId())
         {
             case R.id.banStatusOnMechanic:
-                updateserviceInfo("1");
+
+                Dexter.withActivity(MachanicHomePage.this)
+                        .withPermissions(
+                                Manifest.permission.ACCESS_COARSE_LOCATION,
+                                Manifest.permission.ACCESS_FINE_LOCATION)
+                        .withListener(new MultiplePermissionsListener() {
+                            @Override
+                            public void onPermissionsChecked(MultiplePermissionsReport report) {
+                                // check if all permissions are granted
+                                if (report.areAllPermissionsGranted()) {
+
+                                    updateserviceInfo("1");
+
+                                }
+                                // check for permanent denial of any permission
+                                if (report.isAnyPermissionPermanentlyDenied()) {
+
+                                }
+                            }
+
+                            @Override
+                            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                                token.continuePermissionRequest();
+                            }
+                        }).
+                        withErrorListener(new PermissionRequestErrorListener() {
+
+
+                            @Override
+                            public void onError(DexterError error) {
+                                Log.d(TAG, "onError: " + error);
+                            }
+                        })
+                        .onSameThread()
+                        .check();
+
+
                 break;
 
             case R.id.banStatusOffMechanic:
-
                 updateserviceInfo("0");
                 break;
+
         }
 
     }
@@ -189,13 +311,26 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                             tvStatusMechanic.setText(ACTIVE_STATUS_ON);
                             banStatusOnMechanic.setVisibility(View.GONE);
                             banStatusOffMechanic.setVisibility(View.VISIBLE);
+                            tvStatusMechanic.setTextColor(Color.GREEN);
+
                             sessionManager.setString(SessionManager.ACTIVE_STATUS, "1");
+
+                            Intent locationIntent = new Intent(getBaseContext(), MyForeGroundService.class);
+                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+
+                                startForegroundService(locationIntent);
+                            } else {
+                                //lower then Oreo, just start the service.
+                                startService(locationIntent);
+                            }
+
                         }
                         else
                         {
                             tvStatusMechanic.setText(ACTIVE_STATUS_OFF);
                             banStatusOnMechanic.setVisibility(View.VISIBLE);
                             banStatusOffMechanic.setVisibility(View.GONE);
+                            tvStatusMechanic.setTextColor(Color.RED);
                             sessionManager.setString(SessionManager.ACTIVE_STATUS, "0");
                         }
                     }
@@ -220,14 +355,7 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
     }
 
     public void requestPopup() {
-        //handler.removeCallbacks(n);
-//         handler.removeCallbacksAndMessages(null);
-//         pDialog = new ProgressDialog(getActivity());
-//         //Showing progress dialog before making http request
-//         pDialog.setMessage("Loading...");
-//         pDialog.setCancelable(false);
-//         pDialog.setCanceledOnTouchOutside(false);
-//         pDialog.show();
+
         requestPopup = new Dialog(MachanicHomePage.this);
         // faltuCheck = "auto";
         requestPopup.setContentView(R.layout.dialog_request_popup);
@@ -235,19 +363,20 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
         requestPopup.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         requestPopup.getWindow().getAttributes().windowAnimations = R.style.diologIntertnet;
         requestPopup.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+        requestPopup.getWindow().setGravity(Gravity.CENTER);
         requestPopup.setCanceledOnTouchOutside(false);
         requestPopup.setCancelable(false);
         final CustomTextView tv_popup_request_timer = requestPopup.findViewById(R.id.tv_popup_request_timer);
         final CustomButton btnPopupRequestReject = requestPopup.findViewById(R.id.btnPopupRequestReject);
         final CustomButton btnPopupRequestAccept = requestPopup.findViewById(R.id.btnPopupRequestAccept);
+        final CustomTextView tvMessegePopup = requestPopup.findViewById(R.id.tvMessegePopup);
+        tvMessegePopup.setText("You have new request for " + sessionManager.getString(SessionManager.NOTI_ISSUE) + " by "+
+                sessionManager.getString(SessionManager.NOTI_NAME));
+
         btnPopupRequestAccept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 requestAdd();
-               /* startActivity(new Intent(getApplicationContext(), BookingStatusActivity.class));
-                requestPopup.dismiss();
-                finish();*/
             }
         });
 
@@ -255,86 +384,10 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
             @Override
             public void onClick(View v) {
                 cancelPopup();
-
             }
         });
 
-        /* TextView btnAccpet = requestPopup.findViewById(R.id.txtAccept);
-        TextView btnReject =  requestPopup.findViewById(R.id.txtReject);
-        txtCount =  requestPopup.findViewById(R.id.countdown_text);
-        txtAddress = requestPopup.findViewById(R.id.txtAddress);
-        txtAccept =  requestPopup.findViewById(R.id.txtAccept);
-        txtReject =  requestPopup.findViewById(R.id.txtReject);
-        pBar2 =  requestPopup.findViewById(R.id.ProgressBar);*/
 
-        /* if(sessionManager.getString(SessionManager.AMB_LOGIN_STATUS).equals("1"))
-        {
-            HomeFragment.btnEnable.setVisibility(View.INVISIBLE);
-            HomeFragment.btnDisable.setVisibility(View.VISIBLE);
-        }
-        else
-        {
-            HomeFragment.btnEnable.setVisibility(View.VISIBLE);
-            HomeFragment.btnDisable.setVisibility(View.INVISIBLE);
-        }*/
-
-        /*
-        btnAccpet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                requestPopup.dismiss();
-            }
-        });
-        btnReject.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                requestPopup.dismiss();
-
-            }
-        });
-        txtAddress.setText(cust_search_area);
-        txtAccept.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!ConnectionDetector.networkStatus(getApplicationContext())) {
-                    diologInternet.show();
-                } else {
-                    acceptByProvider();
-                    HomeFragment.layCustomerDetails.setVisibility(View.VISIBLE);
-                    HomeFragment.txtUSerReq.setText("EMERGENCY - AMBULANCE REQUEST");
-                    HomeFragment.txtReqStatus.setText("Accepted");
-                    HomeFragment.txtUSerName.setText(sessionManager.getString(SessionManager.BOOKING_CUSTOMER));
-                    HomeFragment.txtUSerAddress.setText(sessionManager.getString(SessionManager.BOOKING_ADDRESS));
-                    HomeFragment.txtUSerJobID.setText("Booking Id - " + sessionManager.getString(SessionManager.BOOKING_ID));
-                    HomeFragment.btnDisable.setVisibility(View.INVISIBLE);
-                    HomeFragment.btnEnable.setVisibility(View.INVISIBLE);
-                    HomeFragment.layCustomerDet.setVisibility(View.VISIBLE);
-                    HomeFragment.layUser.setVisibility(View.VISIBLE);
-                    requestPopup.dismiss();
-                }
-            }
-        });
-        txtReject.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!ConnectionDetector.networkStatus(getApplicationContext())) {
-                    diologInternet.show();
-                } else {
-                    cancelByProvider();
-                    HomeFragment.layCustomerDetails.setVisibility(View.VISIBLE);
-                    HomeFragment.txtUSerReq.setText("EMERGENCY - AMBULANCE REQUEST");
-                    HomeFragment.txtUSerName.setText(sessionManager.getString(SessionManager.BOOKING_CUSTOMER));
-                    HomeFragment.txtUSerAddress.setText(sessionManager.getString(SessionManager.BOOKING_ADDRESS));
-                    HomeFragment.txtUSerJobID.setText("Booking Id - " + sessionManager.getString(SessionManager.BOOKING_ID));
-                    HomeFragment.txtReqStatus.setText("Canceled");
-                    HomeFragment.btnDisable.setVisibility(View.INVISIBLE);
-                    HomeFragment.btnEnable.setVisibility(View.INVISIBLE);
-                    HomeFragment.layCustomerDet.setVisibility(View.VISIBLE);
-                    HomeFragment.layUser.setVisibility(View.VISIBLE);
-                    requestPopup.dismiss();
-                }
-            }
-        });*/
 
         if(sessionManager.getString(SessionManager.BOOKING_ID).length()>0)
         {
@@ -353,8 +406,11 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                             requestPopup.dismiss();
                             cancelReason = "auto";
                             handler.removeCallbacks(null);
-                            requestCancelAuto(cancelReason);
-                        } else {
+                            getAllBookingDetail();
+                            //requestCancelAuto(cancelReason);
+                        }
+                        else {
+
                         }
                     }
                 }
@@ -380,20 +436,33 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
 
                 Util.hideProgressDialog(progressDialog);
 
+                Log.d(TAG, "success " + response.body().getMessage());
+
                 if(response.isSuccessful())
                 {
                     RequestAccept requestAccept = response.body();
                     if(requestAccept.getStatus().equals("200"))
                     {
-                        Log.d(TAG, "success " + requestAccept.getMessage());
-                        ActionForAll.alertUserWithCloseActivity("VahanWire","Request accepted ","OK", MachanicHomePage.this);
+                        sessionManager.setString(SessionManager.BOOKING_STATUS, "");
+
+                        new AlertDialog.Builder(context)
+                                .setTitle("VahanWire")
+                                .setMessage("Request Accepted")
+                                .setCancelable(false)
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        startActivity(new Intent(context, BookingHistory.class));
+                                    }
+                                })
+                                .create().show();
+
                         timer.cancel();
                         faltuCheck = "accepted";
                         if(requestPopup.isShowing())
                         {
                             requestPopup.dismiss();
                         }
-
                     }
                     else
                     {
@@ -437,6 +506,7 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                     CancelRequest cancelRequest = response.body();
                     if(cancelRequest.getStatus().equals("200"))
                     {
+                        sessionManager.setString(SessionManager.BOOKING_STATUS, "");
                         Log.d(TAG, "success " + cancelRequest.getMessage());
                         ActionForAll.alertUserWithCloseActivity("VahanWire","Request cancelled !","OK", MachanicHomePage.this);
                         timer.cancel();
@@ -540,13 +610,13 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
         cancelDiolog.setContentView(R.layout.cancel_popup_lay);
         cancelDiolog.getWindow().getAttributes().windowAnimations = R.style.diologIntertnet;
         cancelDiolog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
-        RelativeLayout layNoCustomer = cancelDiolog.findViewById(R.id.layNoCustomer);
+        /*RelativeLayout layNoCustomer = cancelDiolog.findViewById(R.id.layNoCustomer);
         RelativeLayout layvichelBroke = cancelDiolog.findViewById(R.id.layvichelBroke);
         RelativeLayout layResNoList = cancelDiolog.findViewById(R.id.layResNoList);
-        RelativeLayout layForgotTools = cancelDiolog.findViewById(R.id.layForgotTools);
+        RelativeLayout layForgotTools = cancelDiolog.findViewById(R.id.layForgotTools);*/
         RelativeLayout laySubmit = cancelDiolog.findViewById(R.id.laySubmit);
 
-        final RadioButton radioNoCustomer = cancelDiolog.findViewById(R.id.radioNoCustomer);
+        /*final RadioButton radioNoCustomer = cancelDiolog.findViewById(R.id.radioNoCustomer);
         final RadioButton radioVichelBroker = cancelDiolog.findViewById(R.id.radioVichelBroker);
         final RadioButton radioNoRes =  cancelDiolog.findViewById(R.id.radioNoRes);
         final RadioButton radioForgotTools =  cancelDiolog.findViewById(R.id.radioForgotTools);
@@ -554,9 +624,24 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
         final TextView txtNoCustomer =  cancelDiolog.findViewById(R.id.txtNoCustomer);
         final TextView txtVehicelBroke =  cancelDiolog.findViewById(R.id.txtVehicelBroke);
         final TextView txtNoRes =  cancelDiolog.findViewById(R.id.txtNoRes);
-        final TextView txtForgotTools =  cancelDiolog.findViewById(R.id.txtForgotTools);
+        final TextView txtForgotTools =  cancelDiolog.findViewById(R.id.txtForgotTools);*/
         cancelReason = "";
-        layNoCustomer.setOnClickListener(new View.OnClickListener() {
+
+        ListView list = cancelDiolog.findViewById(R.id.listReason);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(MachanicHomePage.this,android.R.layout.simple_list_item_single_choice, reason);
+        list.setAdapter(adapter);
+
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                cancelReason = parent.getItemAtPosition(position).toString();
+                Log.e(TAG, "onItemClick: " + cancelReason);
+
+            }
+        });
+
+       /* layNoCustomer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 radioNoCustomer.setChecked(true);
@@ -595,8 +680,10 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                 radioForgotTools.setChecked(true);
                 cancelReason = txtForgotTools.getText().toString();
             }
-        });
-        laySubmit.setOnClickListener(new View.OnClickListener() {
+        });*/
+
+
+       laySubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (cancelReason.equalsIgnoreCase("")) {
@@ -611,11 +698,242 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
         cancelDiolog.show();
     }
 
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        sessionManager.setString(SessionManager.BOOKING_ID, "");
+        sessionManager.setString(SessionManager.BOOKING_STATUS_USER, "");
+        sessionManager.setString(SessionManager.BOOKING_STATUS, "");
+    }
+
+    /**
+     * for API 26+ create notification channels
+     */
+    private void createchannel() {
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+            NotificationChannel mChannel = new NotificationChannel(id1,
+                    getString(R.string.channel_name),  //name of the channel
+                    NotificationManager.IMPORTANCE_LOW);   //importance level
+            //important level: default is is high on the phone.  high is urgent on the phone.  low is medium, so none is low?
+            // Configure the notification channel.
+            mChannel.setDescription(getString(R.string.channel_description));
+            mChannel.enableLights(true);
+            // Sets the notification light color for notifications posted to this channel, if the device supports this feature.
+            mChannel.setShowBadge(true);
+            nm.createNotificationChannel(mChannel);
+        }
+    }
+
+    private void getreason(){
+
+        final ProgressDialog progressDialog = Util.showProgressDialog(this);
+
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        Call<CancelReason> call = apiService.cancelReason();
+        call.enqueue(new Callback<CancelReason>() {
+            @Override
+            public void onResponse(Call<CancelReason> call, Response<CancelReason> response) {
+
+                Util.hideProgressDialog(progressDialog);
+
+                CancelReason cancelReason = response.body();
+
+                if(response.isSuccessful())
+                {
+
+                    if(cancelReason.getStatus().equals("200"))
+                    {
+                        data = cancelReason.getData();
+                        for(Datum datum : data)
+                        {
+                            String name = datum.getName();
+                            reason.add(name);
+                            Log.e(TAG, "onResponse: "+ name);
+                        }
+
+                    }
+                    else
+                    {
+
+                    }
+                }
+                else
+                {
+
+                }
+
+                Log.e("service", response.body().getStatus());
+
+            }
+
+            @Override
+            public void onFailure(Call<CancelReason> call, Throwable t) {
+                Log.e("service failier", t.getMessage());
+            }
+        });
+
+    }
+
+
+    private void getDetail() {
+
+        final ProgressDialog progressDialog = Util.showProgressDialog(this);
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("mobile", sessionManager.getString(SessionManager.PROVIDER_MOBILE));
+
+        Call<MechanicDetail> call = apiService.getUpdatedDetailMechanic(params);
+        call.enqueue(new Callback<MechanicDetail>() {
+            @Override
+            public void onResponse(Call<MechanicDetail> call, Response<MechanicDetail> response) {
+                MechanicDetail detail = response.body();
+                Log.d(TAG, detail.getStatus());
+                if (detail.getStatus().equals("200")) {
+                    Util.hideProgressDialog(progressDialog);
+                    Log.d(TAG, detail.getData().getMobile() + "-pin-" + detail.getData().getMobilePin());
+
+                    int count_navitaion_user = detail.getData().getRequestedUsers().size();
+                    tvTotalVisitorsCountMechanic.setText(String.valueOf(count_navitaion_user));
+                    List<com.electrom.vahanwireprovider.models.mechanic_detail.Offer> offers = detail.getData().getOrganisation().getOffers();
+                    SharedPreferences appSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    if (offers.size() > 0) {
+                        Offer offer = offers.get(0);
+
+                        SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+                        Gson gson = new Gson();
+                        String json = gson.toJson(offer);
+                        prefsEditor.putString("Offer", json);
+                        prefsEditor.apply();
+                    }
+                    else
+                    {
+                        appSharedPrefs.edit().remove("Offer").commit();
+                    }
+                        //sessionManager.setObject("Myobj", offer);
+
+                        sessionManager.setString(SessionManager.PROVIDER_MOBILE, detail.getData().getMobile());
+                        sessionManager.setString(SessionManager.PROVIDER_PIN, detail.getData().getMobilePin());
+                        sessionManager.setString(SessionManager.REGISTER_NAME, detail.getData().getName());
+                        sessionManager.setString(SessionManager.EMAIL, detail.getData().getOrganisation().getEmail());
+                        sessionManager.setString(SessionManager.ADDRESS, detail.getData().getOrganisation().getRegAddress().getFirstAddress());
+                        sessionManager.setString(SessionManager.CONTACT_PERSON,detail.getData().getOrganisation().getOrganisationName());
+                        sessionManager.setString(SessionManager.LANDLINE, detail.getData().getOrganisation().getPhone());
+                        sessionManager.setString(SessionManager.PROVIDER_IMAGE, detail.getData().getProfilePic());
+                        sessionManager.setString(SessionManager.PROVIDER_ID, detail.getData().getId());
+                        sessionManager.setString(SessionManager.COUNRTY, detail.getData().getOrganisation().getRegAddress().getCountry());
+                        sessionManager.setString(SessionManager.STATE, detail.getData().getOrganisation().getRegAddress().getState());
+                        sessionManager.setString(SessionManager.CITY, detail.getData().getOrganisation().getRegAddress().getCity());
+                        sessionManager.setString(SessionManager.PINCODE, detail.getData().getOrganisation().getRegAddress().getPincode());
+
+                        Log.e(TAG, "onResponse: done ");
+
+                } else {
+                    Util.hideProgressDialog(progressDialog);
+                    ActionForAll.alertUserWithCloseActivity("VahanWire", "Network busy, Please try after some time", "OK", MachanicHomePage.this);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MechanicDetail> call, Throwable t) {
+                Util.hideProgressDialog(progressDialog);
+                Log.d(TAG, "error" + t.getMessage());
+            }
+        });
+    }
+
+    private void getAllBookingDetail(){
+
+        final ProgressDialog progressDialog = Util.showProgressDialog(this);
+
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("id", sessionManager.getString(SessionManager.PROVIDER_ID));
+        params.put("booking_id", sessionManager.getString(SessionManager.BOOKING_ID));
+
+        Call<BookingDetails> call = apiService.getMechBooking(params);
+
+        call.enqueue(new Callback<BookingDetails>() {
+            @Override
+            public void onResponse(Call<BookingDetails> call, Response<BookingDetails> response) {
+
+                Util.hideProgressDialog(progressDialog);
+
+                BookingDetails bookingDetails = response.body();
+
+                Log.e(TAG, "onResponse: " + bookingDetails.getStatus());
+
+                if(response.isSuccessful())
+                {
+
+                    if(bookingDetails.getStatus().equals("200"))
+                    {
+                        Data data = bookingDetails.getData();
+
+                        String status  = data.getDetails().getBookingStatus().getMechanic().getStatus();
+                        if(status.contains("0") || status.contains("2"))
+                        {
+
+                        }
+                        else
+                        {
+                            new AlertDialog.Builder(context)
+                                    .setTitle("VahanWire")
+                                    .setMessage("")
+                                    .setCancelable(false)
+                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Log.e(TAG , "done");
+                                        }
+                                    }).create().show();
+                        }
+                    }
+
+                    else if(bookingDetails.getStatus().equals("404"))
+                    {
+                        ActionForAll.alertUserWithCloseActivity("VahanWire","No booking found", "OK", MachanicHomePage.this);
+                    }
+                    else
+                    {
+                        ActionForAll.alertUserWithCloseActivity("VahanWire", bookingDetails.getMessage(), "OK", MachanicHomePage.this);
+                    }
+
+                }
+                else
+                {
+                    ActionForAll.alertUserWithCloseActivity("VahanWire", bookingDetails.getMessage(), "OK", MachanicHomePage.this);
+                }
+
+                Log.e("service", response.body().getStatus());
+
+            }
+
+            @Override
+            public void onFailure(Call<BookingDetails> call, Throwable t) {
+                Util.hideProgressDialog(progressDialog);
+                Log.e("service failier", t.getMessage());
+                t.printStackTrace();
+                ActionForAll.alertUserWithCloseActivity("VahanWire", "No active bookin found", "OK", MachanicHomePage.this);
+
+            }
+        });
+
+    }
+
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

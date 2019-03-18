@@ -34,13 +34,17 @@ import com.electrom.vahanwireprovider.adapters.StateAdapter;
 import com.electrom.vahanwireprovider.models.city.City;
 import com.electrom.vahanwireprovider.models.city.CityData;
 import com.electrom.vahanwireprovider.models.country.Country;
+import com.electrom.vahanwireprovider.models.pro_update_mech.ProfileUpdateMech;
 import com.electrom.vahanwireprovider.models.state.DateState;
 import com.electrom.vahanwireprovider.models.state.State;
 import com.electrom.vahanwireprovider.models.update_profile.Datum;
 import com.electrom.vahanwireprovider.models.update_profile.Update;
+import com.electrom.vahanwireprovider.ragistration.ProviderLogin;
+import com.electrom.vahanwireprovider.ragistration.RegistrationActivity;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiClient;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiInterface;
 import com.electrom.vahanwireprovider.utility.ActionForAll;
+import com.electrom.vahanwireprovider.utility.Constant;
 import com.electrom.vahanwireprovider.utility.CustomButton;
 import com.electrom.vahanwireprovider.utility.CustomEditText;
 import com.electrom.vahanwireprovider.utility.PicassoClient;
@@ -68,6 +72,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -81,7 +86,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     CustomButton btnProfileSubmit;
     SessionManager sessionManager;
     String country, state_name, city_name, pincode = "";
-    Spinner spinCountry, spinState, spinCity;
+    CustomEditText spinCountry, spinState, spinCity;
     private int REQUEST_CAMERA = 0, SELECT_FILE = 1;
     String imgUSerString = "", userChoosenTask, service;
 
@@ -94,7 +99,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void initView() {
-        getCountry();
+        //getCountry();
         sessionManager = SessionManager.getInstance(this);
         iv_Profile_back = findViewById(R.id.iv_Profile_back);
         iv_profile_image = findViewById(R.id.iv_profile_image);
@@ -103,9 +108,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         etProfileMobileNumber = findViewById(R.id.etProfileMobileNumber);
         etProfileLandLine = findViewById(R.id.etProfileLandLine);
         etProfileAddress = findViewById(R.id.etProfileAddress);
-        spinCountry = findViewById(R.id.spinCountry);
-        spinState = findViewById(R.id.spinState);
-        spinCity = findViewById(R.id.spinCity);
+        spinCountry = findViewById(R.id.etCountry);
+        spinState = findViewById(R.id.etState);
+        spinCity = findViewById(R.id.etCity);
         //etProfilePincode = findViewById(R.id.etProfilePincode);
         btnProfileSubmit = findViewById(R.id.btnProfileSubmit);
         ivProfileContainer = findViewById(R.id.ivProfileContainer);
@@ -115,24 +120,18 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         ivProfileContainer.setOnClickListener(this);
         setAllFielda();
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                spinCountry.setSelection(sessionManager.getInt(SessionManager.COUNRTY_TAG));
-                spinState.setSelection(sessionManager.getInt(SessionManager.STATE_TAG));
-                spinCity.setSelection(sessionManager.getInt(SessionManager.CITY_TAG));
-            }
-        }, 3000);
-
     }
 
     private void setAllFielda() {
 
-        etProfileCompanyName.setText(sessionManager.getString(SessionManager.REGISTER_NAME));
-        etProfilePersonName.setText(sessionManager.getString(SessionManager.CONTACT_PERSON));
+        etProfileCompanyName.setText(sessionManager.getString(SessionManager.CONTACT_PERSON));
+        etProfilePersonName.setText(sessionManager.getString(SessionManager.REGISTER_NAME));
         etProfileMobileNumber.setText(sessionManager.getString(SessionManager.PROVIDER_MOBILE));
         etProfileLandLine.setText(sessionManager.getString(SessionManager.LANDLINE));
         etProfileAddress.setText(sessionManager.getString(SessionManager.ADDRESS));
+        spinCity.setText(sessionManager.getString(SessionManager.CITY));
+        spinState.setText(sessionManager.getString(SessionManager.STATE));
+        spinCountry.setText(sessionManager.getString(SessionManager.COUNRTY));
         etPinCode.setText(sessionManager.getString(SessionManager.PINCODE));
         PicassoClient.downloadImage(this, sessionManager.getString(SessionManager.PROVIDER_IMAGE), iv_profile_image);
 
@@ -170,9 +169,22 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 etProfilePersonName.getText().toString(),
                 etProfileLandLine.getText().toString(),
                 "","","","","","",etProfileAddress.getText().toString(),
-                city_name, state_name, country, etPinCode.getText().toString(),"","","","","","","","",
+                spinCity.getText().toString(), spinState.getText().toString(), spinCountry.getText().toString(), etPinCode.getText().toString(),"","","","","","","","",
                 "","","","","","","","","","" +
                         "","","","","","","","");
+
+
+        Log.e(TAG, "compaleteRegistration: mob "+  sessionManager.getString(SessionManager.PROVIDER_MOBILE));
+        Log.e(TAG, "compaleteRegistration: pin "+  sessionManager.getString(SessionManager.PROVIDER_PIN));
+        Log.e(TAG, "compaleteRegistration: name "+  etProfileCompanyName.getText().toString());
+        Log.e(TAG, "compaleteRegistration: penson  "+   etProfilePersonName.getText().toString());
+        Log.e(TAG, "compaleteRegistration: address "+  etProfileAddress.getText().toString());
+        Log.e(TAG, "compaleteRegistration: "+  city_name);
+        Log.e(TAG, "compaleteRegistration: "+  state_name);
+        Log.e(TAG, "compaleteRegistration: "+  country);
+        Log.e(TAG, "compaleteRegistration: "+  etPinCode.getText().toString());
+
+
 
         call.enqueue(new Callback<Update>() {
             @Override
@@ -187,20 +199,18 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         List<Datum> list = update.getData();
                         sessionManager.setString(SessionManager.PROVIDER_MOBILE, list.get(0).getMobile());
                         sessionManager.setString(SessionManager.PROVIDER_PIN, list.get(0).getMobilePin());
-                        sessionManager.setString(SessionManager.REGISTER_NAME, list.get(0).getRegisteredName());
+                        sessionManager.setString(SessionManager.CONTACT_PERSON, list.get(0).getRegisteredName());
                         sessionManager.setString(SessionManager.EMAIL, list.get(0).getEmail());
                         sessionManager.setString(SessionManager.ADDRESS, list.get(0).getAddress().getFirstAddress());
-                        sessionManager.setString(SessionManager.CONTACT_PERSON,list.get(0).getContactPerson());
+                        sessionManager.setString(SessionManager.REGISTER_NAME,list.get(0).getContactPerson());
                         sessionManager.setString(SessionManager.LANDLINE, list.get(0).getPhone());
                         sessionManager.setString(SessionManager.PROVIDER_IMAGE, list.get(0).getProfilePic());
                         sessionManager.setString(SessionManager.COUNRTY, list.get(0).getAddress().getCountry());
                         sessionManager.setString(SessionManager.STATE, list.get(0).getAddress().getState());
                         sessionManager.setString(SessionManager.CITY, list.get(0).getAddress().getCity());
                         sessionManager.setString(SessionManager.PINCODE, list.get(0).getAddress().getPincode());
-
-                        //PicassoClient.downloadImage(this, sessionManager.getString(SessionManager.PROVIDER_IMAGE),iv_profile_image);
-                        etProfileCompanyName.setText(sessionManager.getString(SessionManager.REGISTER_NAME));
-                        etProfilePersonName.setText(sessionManager.getString(SessionManager.CONTACT_PERSON));
+                        etProfileCompanyName.setText(sessionManager.getString(SessionManager.CONTACT_PERSON));
+                        etProfilePersonName.setText(sessionManager.getString(SessionManager.REGISTER_NAME));
                         etProfileMobileNumber.setText(sessionManager.getString(SessionManager.PROVIDER_MOBILE));
                         etProfileLandLine.setText(sessionManager.getString(SessionManager.LANDLINE));
                         etProfileAddress.setText(sessionManager.getString(SessionManager.ADDRESS));
@@ -227,17 +237,103 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         });
     }
 
+    private void compaleteRegistrationMechanic() {
+        Log.e(TAG, "service: regstration for mechanic ");
+        final ProgressDialog progressDialog = Util.showProgressDialog(this);
+
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        Call<ProfileUpdateMech> call = apiService.registrationUpdateMechanic(
+                sessionManager.getString(SessionManager.PROVIDER_MOBILE),
+                etProfilePersonName.getText().toString(),
+                "",
+                etProfileCompanyName.getText().toString(),
+                sessionManager.getString(SessionManager.LATITUDE),
+                sessionManager.getString(SessionManager.LONGITUDE),
+                "",
+                "",
+                "",
+                etProfileLandLine.getText().toString(),
+                etProfileAddress.getText().toString(),
+                spinCity.getText().toString(), spinState.getText().toString(), spinCountry.getText().toString(), etPinCode.getText().toString());
+
+
+        call.enqueue(new Callback<ProfileUpdateMech>() {
+            @Override
+            public void onResponse(Call<ProfileUpdateMech> call, Response<ProfileUpdateMech> response) {
+
+                final ProfileUpdateMech detail = response.body();
+                if(response.isSuccessful())
+                {
+                   if(detail.getStatus().equals("200"))
+                   {
+
+                       detail.getData().getName();
+                       new Handler().postDelayed(new Runnable() {
+                           @Override
+                           public void run() {
+                               Util.hideProgressDialog(progressDialog);
+
+                               sessionManager.setString(SessionManager.PROVIDER_MOBILE, detail.getData().getMobile());
+                               sessionManager.setString(SessionManager.PROVIDER_PIN, detail.getData().getMobilePin());
+                               sessionManager.setString(SessionManager.REGISTER_NAME, detail.getData().getName());
+                               sessionManager.setString(SessionManager.EMAIL, detail.getData().getOrganisation().getEmail());
+                               sessionManager.setString(SessionManager.ADDRESS, detail.getData().getOrganisation().getRegAddress().getFirstAddress());
+                               sessionManager.setString(SessionManager.CONTACT_PERSON,detail.getData().getOrganisation().getOrganisationName());
+                               sessionManager.setString(SessionManager.LANDLINE, detail.getData().getOrganisation().getPhone());
+                               sessionManager.setString(SessionManager.PROVIDER_IMAGE, detail.getData().getProfilePic());
+                               sessionManager.setString(SessionManager.PROVIDER_ID, detail.getData().getId());
+                               sessionManager.setString(SessionManager.COUNRTY, detail.getData().getOrganisation().getRegAddress().getCountry());
+                               sessionManager.setString(SessionManager.STATE, detail.getData().getOrganisation().getRegAddress().getState());
+                               sessionManager.setString(SessionManager.CITY, detail.getData().getOrganisation().getRegAddress().getCity());
+                               sessionManager.setString(SessionManager.PINCODE, detail.getData().getOrganisation().getRegAddress().getPincode());
+
+                               Intent logout= new Intent(ProfileActivity.this, ProfileActivity.class);
+                               logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                               startActivity(logout);
+                               ActionForAll.alertUser("VahanWire", "Profile updated Mechanic", "OK", ProfileActivity.this);
+                           }
+                       }, 300);
+                   }
+                   else
+                   {
+                       ActionForAll.alertUser("VahanWire", detail.getMessage(), "OK", ProfileActivity.this);
+                   }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ProfileUpdateMech> call, Throwable t) {
+                Util.hideProgressDialog(progressDialog);
+                ActionForAll.alertUserWithCloseActivity("VahanWire", t.getMessage(), "OK", ProfileActivity.this);
+            }
+        });
+    }
+
     private void isNotEmptyFields(){
         if(ActionForAll.validMobileEditText(etProfileMobileNumber,"mobile Number", ProfileActivity.this))
         {
-            compaleteRegistration();
+            if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_PETROL_PUMP))
+            {
+                Log.e(TAG, "isNotEmptyFields: " + sessionManager.getString(SessionManager.SERVICE));
+                compaleteRegistration();
+            }
+            else  if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_AMBULANCE))
+            {
+                Log.e(TAG, "isNotEmptyFields: " + sessionManager.getString(SessionManager.SERVICE));
+            }
+            else if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_MECHNIC_PRO))
+            {
+                compaleteRegistrationMechanic();
+                Log.e(TAG, "isNotEmptyFields: " + sessionManager.getString(SessionManager.SERVICE));
+            }
+
         }
         else
         {
             ActionForAll.alertUserWithCloseActivity("VahanWire", "There is some issue, Try after sometime", "OK", ProfileActivity.this);
         }
     }
-
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event)
@@ -305,7 +401,15 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        profileUpdate();
+                        Log.e(TAG, "run: " + imgUSerString);
+
+                        if(imgUSerString.contains("jpg") || imgUSerString.contains("png") || imgUSerString.contains("jpeg"))
+                            profileUpdate();
+                        else
+                        {
+                            PicassoClient.downloadImage(ProfileActivity.this, sessionManager.getString(SessionManager.PROVIDER_IMAGE), iv_profile_image);
+                            ActionForAll.alertUser("VahanWire", "The selected image can not be uploaded.", "OK", ProfileActivity.this);
+                        }
                     }
                 },300);
 
@@ -386,7 +490,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             req = new MultipartRequest(URL, new com.android.volley.Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Log.d("Error", error.getMessage());
+                    ActionForAll.alertUserWithCloseActivity("VahanVire", "The selected image can not be uploaded.", "OK", ProfileActivity.this);
+                    if(pDialog.isShowing())
+                        pDialog.dismiss();
                     return;
                 }
             }, new com.android.volley.Response.Listener<String>() {
@@ -427,12 +533,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             pDialog.dismiss();
 
 
-            e.printStackTrace();
+            //e.printStackTrace();
         } catch (NullPointerException e) {
             pDialog.dismiss();
-
             e.printStackTrace();
+            ActionForAll.alertUserWithCloseActivity("VahanVire", "The selected image can not be uploaded.", "OK", ProfileActivity.this);
         }
+
 
     }
 
@@ -559,7 +666,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         builder.show();
     }
 
-    private void getCountry(){
+   /* private void getCountry(){
 
         final ProgressDialog progressDialog = Util.showProgressDialog(this);
 
@@ -585,6 +692,14 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         // CountryAdapter adapter = new CountryAdapter(ProfileActivity.this, list);
                         SpinnerAdapter adapter = new SpinnerAdapter(ProfileActivity.this, list);
                         spinCountry.setAdapter(adapter);
+                        for(com.electrom.vahanwireprovider.models.country.Datum datum : list)
+                        {
+                            if(datum.getName().equals(sessionManager.getString(SessionManager.COUNRTY)))
+                            {
+                                country = datum.getName();
+                                spinCountry.setSelection(spinCountry.getSelectedItemPosition());
+                            }
+                        }
                         spinCountry.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                             @Override
                             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -655,6 +770,15 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         // CountryAdapter adapter = new CountryAdapter(ProfileActivity.this, list);
                         StateAdapter adapter = new StateAdapter(ProfileActivity.this, list);
                         spinState.setAdapter(adapter);
+
+                        for(DateState states : list)
+                        {
+                            if(states.getName().equals(sessionManager.getString(SessionManager.STATE)))
+                            {
+                                state_name = states.getName();
+                                spinState.setSelection(spinCountry.getSelectedItemPosition());
+                            }
+                        }
                         spinState.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                             @Override
                             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -727,6 +851,16 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         // CountryAdapter adapter = new CountryAdapter(ProfileActivity.this, list);
                         CityAdapter adapter = new CityAdapter(ProfileActivity.this, list);
                         spinCity.setAdapter(adapter);
+
+                        for(CityData data : list)
+                        {
+                            city_name = data.getName();
+                            if(data.getName().equals(sessionManager.getString(SessionManager.CITY)))
+                            {
+                                spinState.setSelection(spinCountry.getSelectedItemPosition());
+                            }
+                        }
+
                         spinCity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                             @Override
                             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -762,6 +896,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
 
-    }
+    }*/
 
 }

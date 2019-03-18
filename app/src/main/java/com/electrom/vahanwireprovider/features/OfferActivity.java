@@ -24,6 +24,7 @@ import com.electrom.vahanwireprovider.models.detail.Offer;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiClient;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiInterface;
 import com.electrom.vahanwireprovider.utility.ActionForAll;
+import com.electrom.vahanwireprovider.utility.Constant;
 import com.electrom.vahanwireprovider.utility.CustomButton;
 import com.electrom.vahanwireprovider.utility.CustomEditText;
 import com.electrom.vahanwireprovider.utility.SessionManager;
@@ -107,7 +108,23 @@ public class OfferActivity extends AppCompatActivity implements View.OnClickList
 
             case R.id.btnSubmitOffer:
                 if(isNotEmptyFields()){
-                    addOffer();
+
+                    if(sessionManager.getString(SessionManager.SERVICE).contains(Constant.SERVICE_PETROL_PUMP))
+                    {
+                        Log.e(TAG, "onClick: " + sessionManager.getString(SessionManager.SERVICE));
+                        addOffer();
+                    }
+                    else if(sessionManager.getString(SessionManager.SERVICE).contains(Constant.SERVICE_AMBULANCE))
+                    {
+                        Log.e(TAG, "onClick: " + sessionManager.getString(SessionManager.SERVICE));
+                    }
+                    else if(sessionManager.getString(SessionManager.SERVICE).contains(Constant.SERVICE_MECHNIC_PRO))
+                    {
+                        Log.e(TAG, "onClick: " + sessionManager.getString(SessionManager.SERVICE));
+                        addOffermech();
+                    }
+
+                        //
                 }
                 break;
 
@@ -178,6 +195,70 @@ public class OfferActivity extends AppCompatActivity implements View.OnClickList
         });
     }
 
+    private void addOffermech() {
+
+        final ProgressDialog progressDialog = Util.showProgressDialog(this);
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        Call<ResponseBody> call = apiService.offerAdd_mech(
+                sessionManager.getString(SessionManager.PROVIDER_MOBILE),
+                etOfferTitle.getText().toString(), etOfferDescription.getText().toString(),
+                btnStartDate.getText().toString(),
+                btnEndDate.getText().toString());
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response != null && response.isSuccessful()) {
+                    Util.hideProgressDialog(progressDialog);
+                    try {
+                        String jsonResponse = response.body().string();
+                        Log.d(TAG, jsonResponse);
+                        final JSONObject object = new JSONObject(jsonResponse);
+                        Log.d(TAG, object.getString("status"));
+
+                        if (object.getString("status").equals("200")) {
+                            final String message = object.getString("message");
+
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    new AlertDialog.Builder(OfferActivity.this)
+                                            .setTitle("VahanWire")
+                                            .setMessage(message)
+                                            .setCancelable(false)
+                                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dialog.dismiss();
+                                                    Intent logout= new Intent(getApplicationContext(), MachanicHomePage.class);
+                                                    logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                    startActivity(logout);
+                                                }
+                                            }).create().show();
+                                    //ActionForAll.alertUserWithCloseActivity("VahanWire", message,"OK", OfferActivity.this);
+                                }
+                            }, 300);
+                        } else {
+                            ActionForAll.alertUser("VahanWire", object.getString("message"), "OK", OfferActivity.this);
+                        }
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Util.hideProgressDialog(progressDialog);
+                Log.d(TAG, "onFailure: " + t.getMessage());
+            }
+        });
+    }
+
 
     private boolean isNotEmptyFields()
     {
@@ -209,9 +290,9 @@ public class OfferActivity extends AppCompatActivity implements View.OnClickList
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
             String date = year + "-" + setStringMonth(month) + "-" + setStringDay(day);
-            if(check_btn==1)
+            if(check_btn == 1)
                 btnStartDate.setText(date);
-            if(check_btn==2)
+            if(check_btn == 2)
                 btnEndDate.setText(date);
         }
     }
@@ -228,7 +309,7 @@ public class OfferActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private static String setStringMonth(int month){
-        if((month + 1)<=9)
+        if((month + 1) <= 9)
         return "0"+ (month + 1);
         else
         return (month +1)+"";

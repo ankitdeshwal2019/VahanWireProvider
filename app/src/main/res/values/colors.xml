@@ -11,4 +11,5 @@
     <color name="colorGreenApp">#00A600</color>
     <color name="colorBlueApp">#4484EF</color>
     <color name="colorGreyApp">#666666</color>
+    <color name="white">#ffffff</color>
 </resources>

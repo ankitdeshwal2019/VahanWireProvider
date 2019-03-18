@@ -18,6 +18,7 @@ import com.electrom.vahanwireprovider.models.payment.Payment_array;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiClient;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiInterface;
 import com.electrom.vahanwireprovider.utility.ActionForAll;
+import com.electrom.vahanwireprovider.utility.Constant;
 import com.electrom.vahanwireprovider.utility.NoInternet;
 import com.electrom.vahanwireprovider.utility.SessionManager;
 import com.electrom.vahanwireprovider.utility.Util;
@@ -120,7 +121,22 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.ViewHold
                 ids = finalIds(builder.toString());
                 if(ids != null)
                 {
-                    updateserviceInfo(ids);
+                    if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_PETROL_PUMP))
+                    {
+                        updateserviceInfo(ids);
+                        Log.e(TAG, "adapter: petrol " + sessionManager.getString(SessionManager.SERVICE));
+                    }
+                    else if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_AMBULANCE))
+                    {
+                        ActionForAll.myFlash(context, "pending");
+                        Log.e(TAG, "adapter " + sessionManager.getString(SessionManager.SERVICE));
+                    }
+
+                    else if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_MECHNIC_PRO))
+                    {
+                        updateserviceInfomech(ids);
+                        Log.e(TAG, "adapter: mech " + sessionManager.getString(SessionManager.SERVICE));
+                    }
                 }
 
                 Log.d(TAG, "final ids :: " +ids);
@@ -181,6 +197,56 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.ViewHold
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
 
         Call<ResponseBody> call = apiService.payment_update_method(sessionManager.getString(SessionManager.PROVIDER_MOBILE),
+                service_ids);
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response != null && response.isSuccessful()) {
+                    Util.hideProgressDialog(progressDialog);
+                    try {
+
+                        String jsonResponse = response.body().string();
+                        Log.d(TAG, jsonResponse);
+                        JSONObject object = new JSONObject(jsonResponse);
+                        Log.d(TAG, object.getString("status"));
+
+                        if(object.getString("status").equals("200"))
+                        {
+                            ActionForAll.alertUserWithCloseActivity("VahanWire", object.getString("message"), "OK", (PaymentMethod)context);
+                        }
+                        else
+                        {
+                            ActionForAll.alertUser("VahanWire", object.getString("message"), "OK", (PaymentMethod)context);
+                        }
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Util.hideProgressDialog(progressDialog);
+                    ActionForAll.alertUserWithCloseActivity("VahanWire", "Network busy, Please try after some time", "OK", (PaymentMethod)context);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Util.hideProgressDialog(progressDialog);
+                Log.d(TAG, "onFailure: " + t.getMessage());
+            }
+        });
+    }
+
+    private void updateserviceInfomech(String service_ids){
+
+        final ProgressDialog progressDialog = Util.showProgressDialog(context);
+
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        Call<ResponseBody> call = apiService.payment_update_method_mech(sessionManager.getString(SessionManager.PROVIDER_MOBILE),
                 service_ids);
 
         call.enqueue(new Callback<ResponseBody>() {

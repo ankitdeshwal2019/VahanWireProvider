@@ -10,6 +10,15 @@
     tools:context=".ragistration.RegistrationActivity">
 
     <ImageView
+        android:layout_width="@dimen/size_40dp"
+        android:layout_height="40dp"
+        android:id="@+id/back"
+        android:layout_margin="@dimen/size_5dp"
+        android:padding="@dimen/size_5dp"
+        android:layout_gravity="left"
+        android:src="@drawable/back_wihte"/>
+
+    <ImageView
         android:layout_width="180dp"
         android:layout_height="150dp"
         android:src="@drawable/logo"/>

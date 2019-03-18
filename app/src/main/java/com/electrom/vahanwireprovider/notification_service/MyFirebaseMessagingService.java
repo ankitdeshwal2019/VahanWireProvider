@@ -11,6 +11,7 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -62,19 +63,66 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
             Log.e(TAG, "Message data payload: " + remoteMessage.getData().get("notification_details"));
+            Log.e(TAG, "Message data payload: " + remoteMessage.getData());
             String Obj =  remoteMessage.getData().get("notification_details");
+            String userD =  remoteMessage.getData().get("user_details");
+            final String tag = remoteMessage.getData().get("tag");
             try {
+
+
                 JSONObject data = new JSONObject(Obj);
                 String booking_id = data.getString("booking_id");
+                JSONObject booking_status = data.getJSONObject("booking_status");
                 SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_ID, booking_id);
                 Log.e(TAG, "onMessageReceived: " + booking_id );
-                JSONObject booking_status = data.getJSONObject("booking_status");
-                JSONObject mech = booking_status.getJSONObject("mechanic");
-                String b_s = mech.getString("cancel_reason");
-                String status = mech.getString("status");
-                Log.e(TAG, "onMessageReceived: " + b_s + " - " + status);
+                if(tag.contains("mechanic"))
+                {
+                    String issue = data.getString("issue");
+                    JSONObject mech = booking_status.getJSONObject("mechanic");
+                    String b_s = mech.getString("cancel_reason");
+                    String status = mech.getString("status");
+                    Log.e(TAG, "onMessageReceived: name | essue " + issue);
+                    SessionManager.getInstance(getApplicationContext()).setString(SessionManager.NOTI_ISSUE,  issue);
+                    SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_STATUS, status);
+                }
+
+                if(tag.contains("ambulance"))
+                {
+                    JSONObject ambulance = booking_status.getJSONObject("driver");
+                    String b_s = ambulance.getString("cancel_reason");
+                    String status = ambulance.getString("status");
+                    SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_STATUS, status);
+
+                    Log.e(TAG, "onMessageReceived: name | status" + status + " | " + booking_id);
+                }
+
+                JSONObject user = booking_status.getJSONObject("user");
+                String b_s_user = user.getString("cancel_reason");
+                String status_user = user.getString("status");
+
+                SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_STATUS_USER, status_user);
+
+                JSONObject use = new JSONObject(userD);
+
+                SessionManager.getInstance(getApplicationContext()).setString(SessionManager.NOTI_NAME,  use.getString("fullname"));
+
 
                 sendMyNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("body"), remoteMessage.getData().get("tag"));
+
+                if(remoteMessage.getData()!=null)
+                {
+
+                            if (tag.equalsIgnoreCase("ambulance")) {
+                                startActivity(new Intent(getApplicationContext(), AmbulanceProvider.class));
+                            }
+
+                            if (tag.equalsIgnoreCase("mechanic")) {
+                                startActivity(new Intent(getApplicationContext(), MachanicHomePage.class));
+                            }
+
+                            Log.e(TAG, "onMessageReceived: " + "done" );
+
+                }
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -154,36 +202,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      *
      * @param messageBody FCM message body received.
      */
-    /*private void sendNotification(String messageBody) {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0  , intent,
-                PendingIntent.FLAG_ONE_SHOT);
 
-        String channelId = getString(R.string.default_notification_channel_id);
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-
-        NotificationCompat.Builder notificationBuilder =
-                new NotificationCompat.Builder(this, channelId)
-                        .setSmallIcon(R.drawable.menu_icon)
-                        .setContentTitle(getString(R.string.fcm_message))
-                        .setContentText(messageBody)
-                        .setAutoCancel(true)
-                        .setSound(defaultSoundUri)
-                        .setContentIntent(pendingIntent);
-
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        // Since android Oreo notification channel is needed.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(channelId, "Channel human readable title", NotificationManager.IMPORTANCE_DEFAULT);
-            notificationManager.createNotificationChannel(channel);
-        }
-
-        notificationManager.notify(0   , notificationBuilder.build());
-    }
-*/
     private void sendMyNotification(String title, String body, String tag) {
 
         PendingIntent pendingIntent = null;
@@ -195,6 +214,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
 
         if (tag.equalsIgnoreCase("mechanic")) {
+
             Intent intent = new Intent(this, MachanicHomePage.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
