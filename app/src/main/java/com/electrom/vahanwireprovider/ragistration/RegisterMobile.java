@@ -194,6 +194,7 @@ public class RegisterMobile extends AppCompatActivity implements View.OnClickLis
                     Mechanic mechanic = response.body();
                     if(mechanic.getStatus().equals("200"))
                     {
+                        sessionManager.setString(SessionManager.PROVIDER_MOBILE, etRegisterMobile.getText().toString());
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -224,9 +225,10 @@ public class RegisterMobile extends AppCompatActivity implements View.OnClickLis
 
         Dexter.withActivity(this)
                 .withPermissions(
+                        Manifest.permission.SEND_SMS,
                         Manifest.permission.RECEIVE_SMS,
-                        Manifest.permission.READ_SMS,
-                        Manifest.permission.READ_PHONE_STATE)
+                        Manifest.permission.READ_SMS
+                        )
                 .withListener(new MultiplePermissionsListener() {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {

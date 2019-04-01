@@ -67,12 +67,14 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
     private static final String TAG = BookingStatusMechanic.class.getSimpleName();
     Context context = BookingStatusMechanic.this;
     SessionManager sessionManager;
-    CustomTextView tvBookingMechanicName, tvBookingMechanicMobile;
+    CustomTextView tvBookingMechanicName, tvBookingMechanicMobile, tvTitle;
     List<Datum> data;
     ArrayList<String> reason = new ArrayList();
     String cancelReason;
 
-    LinearLayout llCointainerOnTheWay, llCointainerReachStart, llCointainerServiceDone,llCointainerCompalete, llDiration, llCallCointainer;
+    LinearLayout llCointainerOnTheWay, llCointainerReachStart, llCointainerServiceDone,
+            llCointainerCompalete, llDiration, llCallCointainer;
+
     CircleImageView ivOnTheWay, ivReachStart, ivServiceDone, ivComplete;
     ImageView back;
     Double Latitude, Longitude;
@@ -108,6 +110,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
         tvBookingMechanicMobile = findViewById(R.id.tvBookingMechanicMobile);
         ivMechanicProfile = findViewById(R.id.ivMechanicProfile);
         btnCancelMechanic = findViewById(R.id.btnCancelMechanic);
+        tvTitle = findViewById(R.id.tvTitle);
         ivDir = findViewById(R.id.ivDir);
         back = findViewById(R.id.back);
         llCointainerOnTheWay.setOnClickListener(this);
@@ -227,19 +230,19 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                     }
                     else
                     {
-                        ActionForAll.alertUserWithCloseActivity("VahanWire", bookingStatus.getMessage(), "OK", BookingStatusMechanic.this);
+                        ActionForAll.alertUserWithCloseActivity("VahanProvider", bookingStatus.getMessage(), "OK", BookingStatusMechanic.this);
                     }
                 }
                 else
                 {
-                    ActionForAll.alertUserWithCloseActivity("VahanWire", "Network busy please try after sometime", "OK", BookingStatusMechanic.this);
+                    ActionForAll.alertUserWithCloseActivity("VahanProvider", "Network busy please try after sometime", "OK", BookingStatusMechanic.this);
                 }
             }
 
             @Override
             public void onFailure(Call<B_Status> call, Throwable t) {
                 Util.hideProgressDialog(progressDialog);
-                ActionForAll.alertUser("VahanWire", t.getMessage(), "OK", BookingStatusMechanic.this);
+                ActionForAll.alertUser("VahanProvider", t.getMessage(), "OK", BookingStatusMechanic.this);
             }
         });
 
@@ -272,7 +275,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                         ivOnTheWay.setImageResource(R.drawable.on_the_way_green);
                         ivReachStart.setImageResource(R.drawable.reach_start);
                         llDiration.setVisibility(View.INVISIBLE);
-                        btnCancelMechanic.setVisibility(View.INVISIBLE);
+                        btnCancelMechanic.setVisibility(View.VISIBLE);
                         llCointainerOnTheWay.setClickable(false);
                         llCointainerReachStart.setClickable(false);
                         llDiration.setVisibility(View.VISIBLE);
@@ -484,7 +487,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                             ivComplete.setImageResource(R.drawable.complete);
                             tvBookingMechanicDirection.setText("Direction");
                             llDiration.setVisibility(View.INVISIBLE);
-                            btnCancelMechanic.setVisibility(View.INVISIBLE);
+                            btnCancelMechanic.setVisibility(View.VISIBLE);
                             llCointainerOnTheWay.setClickable(false);
                             llCointainerReachStart.setClickable(false);
                             llCointainerServiceDone.setClickable(true);
@@ -518,6 +521,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                             llCointainerReachStart.setClickable(false);
                             llCointainerServiceDone.setClickable(false);
                             llCointainerCompalete.setClickable(false);
+                            tvTitle.setText("Completed / Cancelled service");
 
                         }
                         tvBookingMechanicName.setText(userDetails.getFullname());
@@ -533,6 +537,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                             llCointainerServiceDone.setClickable(false);
                             llCointainerCompalete.setClickable(false);
                             btnCancelMechanic.setVisibility(View.INVISIBLE);
+                            tvTitle.setText("Completed / Cancelled service");
                         }
                         else if(bookingDetails.getData().getDetails().getBookingStatus().getMechanic().getStatus().equals("2"))
                         {
@@ -545,6 +550,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                             llCointainerServiceDone.setClickable(false);
                             llCointainerCompalete.setClickable(false);
                             btnCancelMechanic.setVisibility(View.INVISIBLE);
+                            tvTitle.setText("Completed / Cancelled service");
                         }
                         // CountryAdapter adapter = new CountryAdapter(ProfileActivity.this, list);
                     }
@@ -565,7 +571,6 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                 }
 
                 Log.e("service", response.body().getStatus());
-
             }
 
             @Override
@@ -612,11 +617,15 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
 
     private void getreason(){
 
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("id", sessionManager.getString(SessionManager.PROVIDER_ID));
+        params.put("booking_id", sessionManager.getString(SessionManager.BOOKING_ID));
+
         final ProgressDialog progressDialog = Util.showProgressDialog(this);
 
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
 
-        Call<CancelReason> call = apiService.cancelReason();
+        Call<CancelReason> call = apiService.cancelReasonBooking(params);
         call.enqueue(new Callback<CancelReason>() {
             @Override
             public void onResponse(Call<CancelReason> call, Response<CancelReason> response) {

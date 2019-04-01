@@ -1,32 +1,31 @@
 package com.electrom.vahanwireprovider.retrofit_lib;
 
-import com.electrom.vahanwireprovider.models.amb_all_booking.ABookingStatus;
 import com.electrom.vahanwireprovider.models.amb_book_list.AmbBookList;
 import com.electrom.vahanwireprovider.models.amb_booking_his.BookingHistory;
-import com.electrom.vahanwireprovider.models.ambulance_detail.AmbulanceDetail;
+import com.electrom.vahanwireprovider.models.b_detail.BDetail;
 import com.electrom.vahanwireprovider.models.booking_details.BookingDetails;
 import com.electrom.vahanwireprovider.models.booking_status.B_Status;
 import com.electrom.vahanwireprovider.models.brands.Brand;
 import com.electrom.vahanwireprovider.models.cancel_reason_mech.CancelReason;
 import com.electrom.vahanwireprovider.models.cancel_request.CancelRequest;
 import com.electrom.vahanwireprovider.models.city.City;
-import com.electrom.vahanwireprovider.models.country.Country;
 import com.electrom.vahanwireprovider.models.detail.Detail;
 import com.electrom.vahanwireprovider.models.issues.Issue;
 import com.electrom.vahanwireprovider.models.location_update.LocUpdate;
-import com.electrom.vahanwireprovider.models.login.Login;
+import com.electrom.vahanwireprovider.models.login.LoginPP;
 import com.electrom.vahanwireprovider.models.login_ambulance.LoginAmbulance;
+import com.electrom.vahanwireprovider.models.logout.Logout;
 import com.electrom.vahanwireprovider.models.mech_history.MechanicHistory;
 import com.electrom.vahanwireprovider.models.mech_status.MechanicStatus;
+import com.electrom.vahanwireprovider.models.mechainc_detail.MechanicDetail;
 import com.electrom.vahanwireprovider.models.mechanic.MechanicLogin;
-import com.electrom.vahanwireprovider.models.mechanic_detail.MechanicDetail;
 import com.electrom.vahanwireprovider.models.mechanic_registration.Mechanic;
 import com.electrom.vahanwireprovider.models.payment.Payment;
+import com.electrom.vahanwireprovider.models.petrol_status.PetrolStatus;
 import com.electrom.vahanwireprovider.models.pro_update_mech.ProfileUpdateMech;
 import com.electrom.vahanwireprovider.models.request_accept.RequestAccept;
 import com.electrom.vahanwireprovider.models.services.Service;
 import com.electrom.vahanwireprovider.models.state.State;
-import com.electrom.vahanwireprovider.models.status_user.BookingStatus;
 import com.electrom.vahanwireprovider.models.status_user.StatusUser;
 import com.electrom.vahanwireprovider.models.update_profile.Update;
 import com.electrom.vahanwireprovider.utility.UrlConstants;
@@ -48,6 +47,7 @@ public interface ApiInterface {
     Call<ResponseBody> registerProvider(@Field("mobile") String mobile,
                                         @Field("device_type") String device_type,
                                         @Field("notification_id") String notification_id);
+
     @POST(UrlConstants.MECHANIC_MOBILE_REGISTRATION)
     @FormUrlEncoded
     Call<Mechanic> registration_mechanic(@Field("device_id") String device_id,
@@ -63,20 +63,20 @@ public interface ApiInterface {
     @POST(UrlConstants.MECHANIC_MOBILE_VERIFY)
     @FormUrlEncoded
     Call<ResponseBody> verifyProviderMecanic(@Field("mobile") String mobile,
-                                      @Field("otp") String otp);
+                                             @Field("otp") String otp);
 
     @POST(UrlConstants.LOGIN)
     @FormUrlEncoded
-    Call<Login> login(@Field("mobile") String mobile,
-                      @Field("pin") String pin,
-                      @Field("device_type") String device_type,
-                      @Field("notification_id") String notification_id);
+    Call<LoginPP> login(@Field("mobile") String mobile,
+                        @Field("pin") String pin,
+                        @Field("device_type") String device_type,
+                        @Field("notification_id") String notification_id);
 
     @GET(UrlConstants.PROVIDER_DETAIL)
     Call<Detail> getUpdatedDetail(@QueryMap Map<String, String> params);
 
     @GET(UrlConstants.AMBULANCE_DETAIL)
-    Call<AmbulanceDetail> getUpdatedDetailAmbulance(@QueryMap Map<String, String> params);
+    Call<BDetail> getUpdatedDetailAmbulance(@QueryMap Map<String, String> params);
 
     @GET(UrlConstants.MECHANIC_BOOKING_HISTORY)
     Call<MechanicHistory> getBookingHistoryMech(@QueryMap Map<String, String> params);
@@ -89,7 +89,6 @@ public interface ApiInterface {
 
     @GET(UrlConstants.ALL_SERVICES)
     Call<Service> getAllServices(@QueryMap Map<String, String> params);
-
 
     @GET(UrlConstants.ALL_SERVICES_MECHANIC)
     Call<Service> getAllServicesMechanic(@QueryMap Map<String, String> params);
@@ -147,22 +146,21 @@ public interface ApiInterface {
                                     @Field("saturday_from") String saturday_from,
                                     @Field("saturday_to") String saturday_to);
 
-
     @POST(UrlConstants.OFFER_ADD)
     @FormUrlEncoded
     Call<ResponseBody> offerAdd(@Field("mobile") String mobile,
-                                        @Field("title") String device_type,
-                                        @Field("description") String notification_id,
-                                        @Field("from") String from,
-                                        @Field("to") String to);
+                                @Field("title") String device_type,
+                                @Field("description") String notification_id,
+                                @Field("from") String from,
+                                @Field("to") String to);
 
     @POST(UrlConstants.OFFER_ADD_MECHANIC)
     @FormUrlEncoded
     Call<ResponseBody> offerAdd_mech(@Field("mobile") String mobile,
-                                        @Field("title") String device_type,
-                                        @Field("description") String notification_id,
-                                        @Field("from") String from,
-                                        @Field("to") String to);
+                                     @Field("title") String device_type,
+                                     @Field("description") String notification_id,
+                                     @Field("from") String from,
+                                     @Field("to") String to);
 
     @POST(UrlConstants.PAYMENT_METHOD_UPDATE)
     @FormUrlEncoded
@@ -172,7 +170,7 @@ public interface ApiInterface {
     @POST(UrlConstants.PAYMENT_METHOD_UPDATE_MECH)
     @FormUrlEncoded
     Call<ResponseBody> payment_update_method_mech(@Field("mobile") String mobile,
-                                             @Field("method") String method);
+                                                  @Field("method") String method);
 
     @POST(UrlConstants.SERVICE_UPDATE)
     @FormUrlEncoded
@@ -182,18 +180,18 @@ public interface ApiInterface {
     @POST(UrlConstants.SERVICE_UPDATE_MECHANIC)
     @FormUrlEncoded
     Call<ResponseBody> service_update_mech(@Field("mobile") String mobile,
-                                      @Field("service") String service);
+                                           @Field("service") String service);
 
 
     @POST(UrlConstants.ISSUE_UPDATE_MECHANIC)
     @FormUrlEncoded
     Call<ResponseBody> issue_update_mech(@Field("mobile") String mobile,
-                                      @Field("vehicle_issue") String issue);
+                                         @Field("vehicle_issue") String issue);
 
     @POST(UrlConstants.BRAND_UPDATE_MECHANIC)
     @FormUrlEncoded
     Call<ResponseBody> brand_update_mech(@Field("mobile") String mobile,
-                                      @Field("vehicle_brand") String vehicle_brand);
+                                         @Field("vehicle_brand") String vehicle_brand);
 
     @POST(UrlConstants.AMB_USER_STATUS)
     @FormUrlEncoded
@@ -205,10 +203,28 @@ public interface ApiInterface {
     Call<MechanicStatus> update_status_mechanic(@Field("id") String id,
                                                 @Field("status") String status);
 
-    @POST(UrlConstants.PETROL_PUMP_UPLOAD)
+
+    @POST(UrlConstants.PETROLPUMP_STATUS)
+    @FormUrlEncoded
+    Call<PetrolStatus> update_status_petrol_pump(@Field("mobile") String mobile,
+                                                 @Field("closed_status") String close_status);
+
+    @POST(UrlConstants.PETROL_TIME_UPDATE)
+    @FormUrlEncoded
+    Call<ResponseBody> petrol_pump_time_update(@Field("mobile") String mobile,
+                                                @Field("from") String from,
+                                                @Field("to") String to);
+
+    @POST(UrlConstants.MECH_TIME_UPDATE)
+    @FormUrlEncoded
+    Call<ResponseBody> mech_time_update(@Field("mobile") String mobile,
+                                                @Field("from") String from,
+                                                @Field("to") String to);
+
+   /* @POST(UrlConstants.PETROL_PUMP_UPLOAD)
     @FormUrlEncoded
     Call<StatusUser> petrol_pump_upload(@Field("id") String id,
-                                        @Field("status") String status);
+                                        @Field("status") String status);*/
 
     @POST(UrlConstants.AMB_USER_LOGIN)
     @FormUrlEncoded
@@ -222,21 +238,21 @@ public interface ApiInterface {
     @POST(UrlConstants.MECHANIC_REGISTRATION_UPDATE)
     @FormUrlEncoded
     Call<ProfileUpdateMech> registrationUpdateMechanic(
-                                         @Field("mobile") String mobile,
-                                         @Field("name") String name,
-                                         @Field("mobile_pin") String mobile_pin,
-                                         @Field("organisation_name") String organisation_name,
-                                         @Field("latitude") String latitude,
-                                         @Field("longitude") String longitude,
-                                         @Field("email") String email,
-                                         @Field("gst_number") String gst_number,
-                                         @Field("pan_number") String pan_number,
-                                         @Field("phone") String phone,
-                                         @Field("first_address") String first_address,
-                                         @Field("city") String city,
-                                         @Field("state") String state,
-                                         @Field("country") String country,
-                                         @Field("pincode") String pincode);
+            @Field("mobile") String mobile,
+            @Field("name") String name,
+            @Field("mobile_pin") String mobile_pin,
+            @Field("organisation_name") String organisation_name,
+            @Field("latitude") String latitude,
+            @Field("longitude") String longitude,
+            @Field("email") String email,
+            @Field("gst_number") String gst_number,
+            @Field("pan_number") String pan_number,
+            @Field("phone") String phone,
+            @Field("first_address") String first_address,
+            @Field("city") String city,
+            @Field("state") String state,
+            @Field("country") String country,
+            @Field("pincode") String pincode);
 
 
     @POST(UrlConstants.MECHANIC_LOGIN)
@@ -247,14 +263,20 @@ public interface ApiInterface {
                                        @Field("device_type") String device_type,
                                        @Field("notification_id") String notification_id);
 
-    @GET(UrlConstants.SELECT_COUNRTY)
-    Call<Country> getCounrty();
+    /*@GET(UrlConstants.SELECT_COUNRTY)
+    Call<Country> getCounrty();*/
 
     @GET(UrlConstants.CANCEL_REASON_MECHANIC)
     Call<CancelReason> cancelReason();
 
+    @GET(UrlConstants.CANCEL_REASON_MECHANIC_BOOKING)
+    Call<CancelReason> cancelReasonBooking(@QueryMap Map<String, String> params);
+
     @GET(UrlConstants.CANCEL_REASON_AMBULANCE)
     Call<CancelReason> cancelReasonAmbulance();
+
+    @GET(UrlConstants.CANCEL_REASON_AMBULANCE_BOOKING)
+    Call<CancelReason> cancelReasonAmbulanceBooking(@QueryMap Map<String, String> params);
 
     @GET(UrlConstants.SELECT_STATE)
     Call<State> getState(@QueryMap Map<String, String> params);
@@ -262,8 +284,8 @@ public interface ApiInterface {
     @GET(UrlConstants.SELECT_CITY)
     Call<City> getCity(@QueryMap Map<String, String> params);
 
-    @GET(UrlConstants.MECHANIC_BOOKING_ACTIVE)
-    Call<BookingDetails> getAllDetail(@QueryMap Map<String, String> params);
+   /* @GET(UrlConstants.MECHANIC_BOOKING_ACTIVE)
+    Call<BookingDetails> getAllDetail(@QueryMap Map<String, String> params);*/
 
     @GET(UrlConstants.MECHANIC_BOOKING)
     Call<BookingDetails> getMechBooking(@QueryMap Map<String, String> params);
@@ -281,8 +303,8 @@ public interface ApiInterface {
 
     @POST(UrlConstants.REQUEST_AMBULANCE)
     @FormUrlEncoded
-    Call<RequestAccept>  req_acceptAmbulance(@Field("id") String id,
-                                        @Field("booking_id") String booking_id);
+    Call<RequestAccept> req_acceptAmbulance(@Field("id") String id,
+                                            @Field("booking_id") String booking_id);
 
     @POST(UrlConstants.MECHANIC_REQUEST_CANCEL)
     @FormUrlEncoded
@@ -293,8 +315,18 @@ public interface ApiInterface {
     @POST(UrlConstants.AMBULANCE_REQUEST_CANCEL)
     @FormUrlEncoded
     Call<CancelRequest> ambulance_req_cancel(@Field("id") String id,
-                                        @Field("booking_id") String booking_id,
-                                        @Field("reason") String reason);
+                                             @Field("booking_id") String booking_id,
+                                             @Field("reason") String reason);
+
+    @POST(UrlConstants.AMBULANCE_CANCEL_AUTO)
+    @FormUrlEncoded
+    Call<CancelRequest> ambulance_req_cancel_auto(@Field("id") String id,
+                                                  @Field("booking_id") String booking_id);
+
+    @POST(UrlConstants.MECHANIC_CANCEL_AUTO)
+    @FormUrlEncoded
+    Call<CancelRequest> mechanic_req_cancel_auto(@Field("id") String id,
+                                                  @Field("booking_id") String booking_id);
 
     @POST(UrlConstants.MECHANIC_BOOKING_STATUS)
     @FormUrlEncoded
@@ -305,8 +337,10 @@ public interface ApiInterface {
     @POST(UrlConstants.AMBULANCE_BOOKING_STATUS)
     @FormUrlEncoded
     Call<B_Status> ambulance_booking_status(@Field("id") String id,
-                                       @Field("booking_id") String booking_id,
-                                       @Field("enroute_status") String reason);
+                                            @Field("booking_id") String booking_id,
+                                            @Field("enroute_status") String reason,
+                                            @Field("latitude") String latitude,
+                                            @Field("longitude") String longitude);
 
 
     @POST(UrlConstants.MECHANIC_UPDATE_LOCTION)
@@ -318,7 +352,15 @@ public interface ApiInterface {
     @POST(UrlConstants.AMB_UPDATE_LOCTION)
     @FormUrlEncoded
     Call<LocUpdate> update_loc_amb(@Field("id") String id,
-                               @Field("latitude") String latitude,
-                               @Field("longitude") String longitude);
+                                   @Field("latitude") String latitude,
+                                   @Field("longitude") String longitude);
+
+    @POST(UrlConstants.LOGOUT_AMBULANCE)
+    @FormUrlEncoded
+    Call<Logout> logoutAmbulance(@Field("id") String id);
+
+    @POST(UrlConstants.LOGOUT_MECHANIC)
+    @FormUrlEncoded
+    Call<Logout> logoutMechanic(@Field("id") String id);
 
 }

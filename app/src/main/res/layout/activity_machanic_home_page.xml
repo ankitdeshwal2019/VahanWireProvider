@@ -22,11 +22,26 @@
         android:orientation="vertical">
 
         <com.electrom.vahanwireprovider.utility.CustomTextView
-            android:textSize="@dimen/size_30sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Current status"
+            android:textSize="@dimen/size_18sp"/>
+
+        <com.electrom.vahanwireprovider.utility.CustomTextView
+            android:id="@+id/tvStatusMechanic"
+            android:layout_margin="@dimen/size_20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/size_20dp"
+            android:textSize="@dimen/size_35dp"
+            android:text=""/>
+
+        <com.electrom.vahanwireprovider.utility.CustomTextView
+            android:textSize="@dimen/size_20sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/size_15sp"
-            android:text="Total Visitors"/>
+            android:text="Total visitors"/>
 
         <com.electrom.vahanwireprovider.utility.CustomTextView
             android:id="@+id/tvTotalVisitorsCountMechanic"
@@ -35,40 +50,39 @@
             android:textSize="@dimen/size_30dp"
             android:text="0"/>
 
-        <com.electrom.vahanwireprovider.utility.CustomTextView
-            android:id="@+id/tvStatusMechanic"
-            android:layout_marginTop="@dimen/size_50dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/size_30dp"
-            android:text="status"/>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:gravity="bottom|center"
+            android:orientation="vertical">
+
+            <com.electrom.vahanwireprovider.utility.CustomButton
+                android:id="@+id/banStatusOnMechanic"
+                android:visibility="gone"
+                android:layout_width="200dp"
+                android:layout_height="@dimen/size_50dp"
+                android:background="@drawable/round_gray"
+                android:textColor="@color/colorGreenApp"
+                android:layout_marginBottom="@dimen/size_10dp"
+                android:text="Make on duty"/>
+
+            <com.electrom.vahanwireprovider.utility.CustomButton
+                android:id="@+id/banStatusOffMechanic"
+                android:layout_width="200dp"
+                android:layout_height="@dimen/size_50dp"
+                android:background="@drawable/round_gray"
+                android:textColor="#f00"
+                android:layout_marginBottom="@dimen/size_10dp"
+                android:text="Make off duty"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:gravity="bottom|center"
-        android:orientation="vertical">
 
-        <com.electrom.vahanwireprovider.utility.CustomButton
-            android:id="@+id/banStatusOnMechanic"
-            android:visibility="gone"
-            android:layout_width="200dp"
-            android:layout_height="@dimen/size_50dp"
-            android:background="@drawable/round_gray"
-            android:layout_marginBottom="@dimen/size_10dp"
-            android:text="Duty ON"/>
-
-        <com.electrom.vahanwireprovider.utility.CustomButton
-            android:id="@+id/banStatusOffMechanic"
-            android:layout_width="200dp"
-            android:layout_height="@dimen/size_50dp"
-            android:background="@drawable/round_gray"
-            android:layout_marginBottom="@dimen/size_30dp"
-            android:text="Duty OFF"/>
-
-    </LinearLayout>
 
 
 

@@ -87,9 +87,9 @@ public class ActionForAll {
     public static void alertUser(String title, String massage, String action, final Activity context) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(title);
+        builder.setTitle("VahanProvider");
         builder.setMessage(massage);
-        builder.setIcon(R.drawable.ic_launcher_foreground);
+        //builder.setIcon(R.drawable.ic_launcher_foreground);
         builder.setPositiveButton(action,new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -106,7 +106,7 @@ public class ActionForAll {
     public static void alertUserWithCloseActivity(String title, String massage, String action, final Activity context) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(title);
+        builder.setTitle("VahanProvider");
         builder.setMessage(massage);
         builder.setPositiveButton(action,new DialogInterface.OnClickListener() {
             @Override
@@ -126,7 +126,7 @@ public class ActionForAll {
     public static void alertChoiseCloseActivity(final Context context) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("VahanWire");
+        builder.setTitle("VahanProvider");
         builder.setMessage("Do you want to exit from this page?");
         builder.setPositiveButton("YES",new DialogInterface.OnClickListener() {
             @Override
@@ -192,7 +192,7 @@ public class ActionForAll {
 
     public static boolean validEditText(EditText edit , String text, Activity act) {
         if (edit.getText().toString().trim().length()< 3) {
-            edit.setError("Please type " + text + " here!");
+            edit.setError("Please enter " + text + " here!");
             requestFocus(edit, act);
             return false;
         }
@@ -201,7 +201,7 @@ public class ActionForAll {
 
     public static boolean validPassword(EditText edit , String text, Activity act) {
         if (edit.getText().toString().trim().length() != 4) {
-            edit.setError("Please enter minimum 4 digit " + text + " here!");
+            edit.setError("Please enter 4 digit " + text + " here!");
             requestFocus(edit, act);
             return false;
         }
@@ -210,7 +210,7 @@ public class ActionForAll {
 
     public static boolean validMobileEditText(EditText edit , String text, Activity act) {
         if (edit.getText().toString().trim().length() != 10) {
-            edit.setError("Please type " + text + " here!");
+            edit.setError("Please enter " + text + " here!");
             requestFocus(edit, act);
             return false;
         }

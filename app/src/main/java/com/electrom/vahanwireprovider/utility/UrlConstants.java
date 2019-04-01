@@ -3,6 +3,7 @@ package com.electrom.vahanwireprovider.utility;
 public class UrlConstants {
     //public static final String BASE_URL = "https://polar-plateau-32696.herokuapp.com/api/";
     public static final String BASE_URL = "http://52.66.52.59/api/";
+    //public static final String BASE_URL = "https://guarded-bayou-98906.herokuapp.com/api/";
     public static final String REGISTER_PROVIDER = "petrolpump/provider/register/mobile";
     public static final String VERIFY_MOB_PROVIDER = "petrolpump/provider/register/verifymobile";
     public static final String RESISTRATION_UPDATE = "petrolpump/provider/details/update";
@@ -21,8 +22,8 @@ public class UrlConstants {
     public static final String MECHANIC_MOBILE_VERIFY = "mechanic/provider/register/verifymobile";
     public static final String MECHANIC_REGISTRATION_UPDATE = "mechanic/provider/details/update";
     public static final String MECHANIC_LOGIN = "mechanic/provider/login";
-    public static final String PETROL_PUMP_UPLOAD = "profilepic/petrolpump";
-    public static final String MECHANIC_UPLOAD = "profilepic/mechanic";
+    public static final String PETROL_PUMP_UPLOAD = "petrolpump/provider/upload/profilepic";
+    public static final String MECHANIC_UPLOAD = "mechanic/provider/upload/profilepic";
     public static final String MECHANIC_STATUS = "mechanic/provider/activestatus";
     public static final String SELECT_COUNRTY = "commonapi/country";
     public static final String SELECT_STATE = "commonapi/country/state" ;
@@ -52,4 +53,13 @@ public class UrlConstants {
     public static final String BRAND_UPDATE_MECHANIC = "mechanic/mainprovider/vehiclebrands/update";
     public static final String ALL_ISSUES = "mechanic/provider/vehicleissues/all";
     public static final String ISSUE_UPDATE_MECHANIC = "mechanic/provider/vehicleissues/update";
+    public static final String AMBULANCE_CANCEL_AUTO = "ambulance/auto/request/cancel";
+    public static final String LOGOUT_AMBULANCE = "ambulance/provider/logout";
+    public static final String LOGOUT_MECHANIC = "mechanic/provider/logout";
+    public static final String MECHANIC_CANCEL_AUTO = "mechanic/auto/request/cancel" ;
+    public static final String CANCEL_REASON_MECHANIC_BOOKING = "mechanic/cancelreasons";
+    public static final String CANCEL_REASON_AMBULANCE_BOOKING = "ambulance/cancelreasons";
+    public static final String PETROL_TIME_UPDATE = "petrolpump/provider/timing/update";
+    public static final String MECH_TIME_UPDATE = "mechanic/mainprovider/timing/update";
+    public static final String PETROLPUMP_STATUS = "petrolpump/provider/closeddate/update";
 }

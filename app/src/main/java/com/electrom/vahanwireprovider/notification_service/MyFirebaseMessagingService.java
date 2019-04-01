@@ -38,41 +38,23 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     // [START receive_message]
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        // [START_EXCLUDE]
-        // There are two types of messages data messages and notification messages. Data messages
-        // are handled
-        // here in onMessageReceived whether the app is in the foreground or background. Data
-        // messages are the type
-        // traditionally used with GCM. Notification messages are only received here in
-        // onMessageReceived when the app
-        // is in the foreground. When the app is in the background an automatically generated
-        // notification is displayed.
-        // When the user taps on the notification they are returned to the app. Messages
-        // containing both notification
-        // and data payloads are treated as notification messages. The Firebase console always
-        // sends notification
-        // messages. For more see: https://firebase.google.com/docs/cloud-messaging/concept-options
-        // [END_EXCLUDE]
 
-        // TODO(developer): Handle FCM messages here.
-        // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         Log.d(TAG, "From: " + remoteMessage.getData().get("sound"));
 
-        // payload. {tag=test tag, body=test body, sound=apple_tone.mp3, title=test title}
-
-        // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
-            Log.e(TAG, "Message data payload: " + remoteMessage.getData().get("notification_details"));
-            Log.e(TAG, "Message data payload: " + remoteMessage.getData());
+            Log.e(TAG, "Message data payload: all data " + remoteMessage.getData().get("notification_details"));
+            Log.e(TAG, "Message data payload: data  " + remoteMessage.getData());
             String Obj =  remoteMessage.getData().get("notification_details");
             String userD =  remoteMessage.getData().get("user_details");
             final String tag = remoteMessage.getData().get("tag");
             try {
-
-
                 JSONObject data = new JSONObject(Obj);
                 String booking_id = data.getString("booking_id");
                 JSONObject booking_status = data.getJSONObject("booking_status");
+                // JSONObject device = data.getJSONObject("user_details");
+                // JSONObject device_type = device.getJSONObject("device");
+                // String devic_type = device_type.getString("device_type");
+                // Log.e(TAG, "onMessageReceived: " + devic_type );
                 SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_ID, booking_id);
                 Log.e(TAG, "onMessageReceived: " + booking_id );
                 if(tag.contains("mechanic"))
@@ -92,8 +74,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     String b_s = ambulance.getString("cancel_reason");
                     String status = ambulance.getString("status");
                     SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_STATUS, status);
-
-                    Log.e(TAG, "onMessageReceived: name | status" + status + " | " + booking_id);
+                    Log.e(TAG, "onMessageReceived: name | status " + status + " | " + booking_id);
                 }
 
                 JSONObject user = booking_status.getJSONObject("user");
@@ -106,12 +87,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
                 SessionManager.getInstance(getApplicationContext()).setString(SessionManager.NOTI_NAME,  use.getString("fullname"));
 
+                Log.e(TAG, "onMessageReceived: name " +  use.getString("fullname"));
 
                 sendMyNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("body"), remoteMessage.getData().get("tag"));
 
-                if(remoteMessage.getData()!=null)
+                if(remoteMessage.getData() != null)
                 {
-
                             if (tag.equalsIgnoreCase("ambulance")) {
                                 startActivity(new Intent(getApplicationContext(), AmbulanceProvider.class));
                             }
@@ -119,21 +100,18 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             if (tag.equalsIgnoreCase("mechanic")) {
                                 startActivity(new Intent(getApplicationContext(), MachanicHomePage.class));
                             }
-
                             Log.e(TAG, "onMessageReceived: " + "done" );
-
                 }
+            }
 
-            } catch (JSONException e) {
+            catch (JSONException e) {
                 e.printStackTrace();
             }
 
             catch (NullPointerException e){
                 e.printStackTrace();
             }
-
             //sendMyNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("body"), remoteMessage.getData().get("tag"));
-
         }
 
         // Check if message contains a notification

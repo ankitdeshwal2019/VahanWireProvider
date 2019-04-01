@@ -32,7 +32,9 @@ import android.widget.TextView;
 import com.electrom.vahanwireprovider.features.BookingStatusActivity;
 import com.electrom.vahanwireprovider.location_service.GPSTracker;
 import com.electrom.vahanwireprovider.models.detail.Detail;
+import com.electrom.vahanwireprovider.models.detail.Friday;
 import com.electrom.vahanwireprovider.models.detail.Offer;
+import com.electrom.vahanwireprovider.models.detail.WorkingHours;
 import com.electrom.vahanwireprovider.models.update_profile.Datum;
 import com.electrom.vahanwireprovider.models.update_profile.Update;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiClient;
@@ -86,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sessionManager = SessionManager.getInstance(this);
         setUpLayoutWithToolbar();
         initView();
-        startLocationUpdate();
+        //startLocationUpdate();
         //requestPopup();
 
     }
@@ -160,12 +162,47 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onResponse(Call<Detail> call, Response<Detail> response) {
                 Detail detail = response.body();
-                Log.d(TAG, detail.getStatus());
+                Log.e(TAG, detail.getStatus());
                 if (detail.getStatus().equals("200")) {
                     Util.hideProgressDialog(progressDialog);
                     Log.d(TAG, detail.getData().getMobile() + "-pin-" + detail.getData().getMobilePin());
                     count_navitaion_user = detail.getData().getNavigatedUsers().size();
                     tvTotalVisitorsCount.setText(String.valueOf(count_navitaion_user));
+
+                    Log.d(TAG, "onResponse: " + "  message " + detail.getMessage());
+                    Log.d(TAG, "onResponse: " + "  mobile " + detail.getData().getMobile());
+                    Log.d(TAG, "onResponse: " + "  pin " + "--" + detail.getData().getMobilePin());
+                    Log.d(TAG, "onResponse: " + " first address " + "--" + detail.getData().getAddress().getFirstAddress());
+                    Log.d(TAG, "onResponse: " + "contact person " + "--" + detail.getData().getContactPerson());
+                    Log.d(TAG, "onResponse: " + "phone number" + "--" + detail.getData().getPhone());
+                    List<Double> list = detail.getData().getAddress().getLocation().getCoordinates();
+                    Double longitude = list.get(0).doubleValue();
+                    Double latitude = list.get(1).doubleValue();
+                    Log.d(TAG, "onResponse: " + "longitude" + "--" + longitude);
+                    Log.d(TAG, "onResponse: " + "longitude" + "--" + latitude);
+                    Log.d(TAG, "onResponse: " + " image " + "--" + detail.getData().getProfilePic());
+
+                    sessionManager.setString(SessionManager.PROVIDER_MOBILE, detail.getData().getMobile());
+                    sessionManager.setString(SessionManager.PROVIDER_PIN, detail.getData().getMobilePin());
+                    sessionManager.setString(SessionManager.REGISTER_NAME, detail.getData().getContactPerson());
+                    sessionManager.setString(SessionManager.EMAIL, detail.getData().getEmail());
+                    sessionManager.setString(SessionManager.ADDRESS, detail.getData().getAddress().getFirstAddress());
+                    sessionManager.setString(SessionManager.CONTACT_PERSON,detail.getData().getRegisteredName());
+
+                    //sessionManager.setString(SessionManager.CONTACT_PERSON, list.get(0).getRegisteredName());
+                    sessionManager.setString(SessionManager.LANDLINE, detail.getData().getPhone());
+                    sessionManager.setString(SessionManager.LATITUDE, latitude+"");
+                    sessionManager.setString(SessionManager.LONGITUDE, longitude+"");
+                    sessionManager.setString(SessionManager.PROVIDER_IMAGE, detail.getData().getProfilePic());
+                    sessionManager.setString(SessionManager.CITY, detail.getData().getAddress().getCity());
+                    sessionManager.setString(SessionManager.STATE, detail.getData().getAddress().getState());
+                    sessionManager.setString(SessionManager.COUNRTY, detail.getData().getAddress().getCountry());
+                    sessionManager.setString(SessionManager.PINCODE, detail.getData().getAddress().getPincode());
+
+                    WorkingHours workingHours = detail.getData().getWorkingHours();
+                    sessionManager.setString(SessionManager.WORK_FROM,workingHours.getFrom());
+                    sessionManager.setString(SessionManager.WORK_TO,workingHours.getTo());
+
                     List<Offer> offers = detail.getData().getOffers();
                      Offer offer = null;
                     SharedPreferences appSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -193,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onFailure(Call<Detail> call, Throwable t) {
                 Util.hideProgressDialog(progressDialog);
-                Log.d(TAG, "error" + t.getMessage());
+                Log.e(TAG, "error" + t.getMessage());
             }
         });
     }
@@ -294,7 +331,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             else
             {
-                ActionForAll.alertUserWithCloseActivity("Location", "Please enable location Permission", "OK", MainActivity.this);
+               gps.showSettingsAlert(this);
             }
         }
     }

@@ -51,6 +51,7 @@ import com.electrom.vahanwireprovider.utility.PicassoClient;
 import com.electrom.vahanwireprovider.utility.SessionManager;
 import com.electrom.vahanwireprovider.utility.UrlConstants;
 import com.electrom.vahanwireprovider.utility.Util;
+import com.fasterxml.jackson.databind.util.Provider;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -311,7 +312,15 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void isNotEmptyFields(){
-        if(ActionForAll.validMobileEditText(etProfileMobileNumber,"mobile Number", ProfileActivity.this))
+        if(ActionForAll.validEditText(etProfileCompanyName,"name", ProfileActivity.this)
+                && ActionForAll.validEditText(etProfilePersonName,"name", ProfileActivity.this)
+                && ActionForAll.validMobileEditText(etProfileMobileNumber,"mobile Number", ProfileActivity.this)
+                && ActionForAll.validEditText(etProfileAddress,"address", ProfileActivity.this)
+                && ActionForAll.validEditText(spinCountry, "country", ProfileActivity.this)
+                && ActionForAll.validEditText(spinState, "state", ProfileActivity.this)
+                && ActionForAll.validEditText(spinCity, "city", ProfileActivity.this)
+                && ActionForAll.validEditText(etPinCode, "pincode", ProfileActivity.this))
+
         {
             if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_PETROL_PUMP))
             {
@@ -327,11 +336,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 compaleteRegistrationMechanic();
                 Log.e(TAG, "isNotEmptyFields: " + sessionManager.getString(SessionManager.SERVICE));
             }
-
-        }
-        else
-        {
-            ActionForAll.alertUserWithCloseActivity("VahanWire", "There is some issue, Try after sometime", "OK", ProfileActivity.this);
         }
     }
 
@@ -508,13 +512,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                             JSONObject data = object.getJSONObject("data");
                             Log.e(TAG, "onResponse: " +  data.getString("profile_pic"));
                             sessionManager.setString(SessionManager.PROVIDER_IMAGE, data.getString("profile_pic"));
-                            ActionForAll.alertUser("VahanWire", object.getString("message"), "OK", ProfileActivity.this);
+                            ActionForAll.alertUser("VahanWire", "Profile image updated successfully", "OK", ProfileActivity.this);
                         }
                         else
                         {
                             ActionForAll.alertUser("VahanWire", object.getString("message"), "OK", ProfileActivity.this);
                         }
-                        Log.e("resMulti", response.toString());
+                        Log.e("resMulti", response);
                         }
 
                      catch (JSONException e) {
@@ -531,16 +535,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         } catch (UnsupportedEncodingException e) {
             pDialog.dismiss();
-
-
             //e.printStackTrace();
         } catch (NullPointerException e) {
             pDialog.dismiss();
             e.printStackTrace();
             ActionForAll.alertUserWithCloseActivity("VahanVire", "The selected image can not be uploaded.", "OK", ProfileActivity.this);
         }
-
-
     }
 
     public Uri getImageUri(Context inContext, Bitmap inImage) {
@@ -570,7 +570,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         // check if all permissions are granted
                         if (report.areAllPermissionsGranted()) {
                             openCamera();
-
                         }
 
                         // check for permanent denial of any permission

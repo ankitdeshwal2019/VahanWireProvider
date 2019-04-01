@@ -1,10 +1,17 @@
 package com.electrom.vahanwireprovider.ragistration;
 
+import android.Manifest;
+import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.LocationManager;
+import android.net.Uri;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -14,7 +21,9 @@ import com.electrom.vahanwireprovider.MainActivity;
 import com.electrom.vahanwireprovider.R;
 import com.electrom.vahanwireprovider.features.AmbulanceProvider;
 import com.electrom.vahanwireprovider.features.MachanicHomePage;
-import com.electrom.vahanwireprovider.models.login.Login;
+import com.electrom.vahanwireprovider.location_service.GPSTracker;
+import com.electrom.vahanwireprovider.models.login.Location;
+import com.electrom.vahanwireprovider.models.login.LoginPP;
 import com.electrom.vahanwireprovider.models.login_ambulance.Data;
 import com.electrom.vahanwireprovider.models.login_ambulance.LoginAmbulance;
 import com.electrom.vahanwireprovider.models.mechanic.MechanicLogin;
@@ -27,6 +36,11 @@ import com.electrom.vahanwireprovider.utility.CustomEditText;
 import com.electrom.vahanwireprovider.utility.CustomTextView;
 import com.electrom.vahanwireprovider.utility.SessionManager;
 import com.electrom.vahanwireprovider.utility.Util;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import java.util.List;
 
@@ -43,6 +57,16 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
     CustomTextView tvForgotPin,extra;
     String service = "";
     ImageView ivBackLogin;
+    LocationManager manager;
+
+    boolean isGPSEnabled = false;
+
+    // Flag for network status
+    boolean isNetworkEnabled = false;
+
+    // Flag for GPS status
+    boolean canGetLocation = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +75,7 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
     }
 
     private void initView() {
+
         sessionManager = SessionManager.getInstance(this);
         btnLogin = findViewById(R.id.btnLogin);
         btnRegister = findViewById(R.id.btnRegister);
@@ -76,7 +101,12 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
+
+        manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        isGPSEnabled = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
         switch (v.getId()) {
+
             case R.id.btnLogin:
                 if (ActionForAll.validMobileEditText(etLoginMobile, "mobile number", ProviderLogin.this) &&
                         ActionForAll.validEditText(etLoginPassword, "valid pin", ProviderLogin.this)) {
@@ -89,11 +119,42 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
                     }
                     else if(service.contains("Ambulance"))
                     {
-                        loginAmbulance();
+                        Dexter.withActivity(this).withPermissions(
+                                Manifest.permission.ACCESS_COARSE_LOCATION,
+                                Manifest.permission.ACCESS_FINE_LOCATION)
+                                .withListener(new MultiplePermissionsListener() {
+                                    @Override
+                                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                                        // check if all permissions are granted
+                                        if (report.areAllPermissionsGranted()) {
+                                            // do you work now
+                                            if (!isMyServiceRunning(GPSTracker.class))
+                                                startService(new Intent(getApplicationContext(), GPSTracker.class));
+                                            sessionManager.setString(SessionManager.SERVICE, service);
+
+                                            loginAmbulance();
+                                        }
+
+                                        //check for permanent denial of any permission
+                                        if (report.isAnyPermissionPermanentlyDenied()) {
+                                            showSettingsDialog();
+                                            // permission is denied permenantly, navigate user to app settings
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                                        token.continuePermissionRequest();
+                                    }
+                                })
+                                .onSameThread()
+                                .check();
+
                     }
 
                     else if(service.contains("MechanicPro"))
                     {
+
                         loginMecanic();
                     }
                     else
@@ -134,7 +195,6 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
         Log.d(TAG, "loginMecanic: device_type " + "1");
         Log.d(TAG, "loginMecanic: notification_id " + sessionManager.getString(SessionManager.NOTIFICATION_TOKEN));
         Log.d(TAG, "loginMecanic: mobile " + etLoginMobile.getText().toString());
-
 
         final ProgressDialog progressDialog = Util.showProgressDialog(this);
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
@@ -190,6 +250,11 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
                         finish();
                     }
 
+                    else if(login.getStatus().equals("404"))
+                    {
+                        ActionForAll.alertUserWithCloseActivity("VahanWire", login.getMessage(), "OK", ProviderLogin.this);
+                    }
+
                     else {
                         Util.hideProgressDialog(progressDialog);
                         ActionForAll.alertUserWithCloseActivity("VahanWire", login.getMessage(), "OK", ProviderLogin.this);
@@ -204,8 +269,10 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
             @Override
             public void onFailure(Call<MechanicLogin> call, Throwable t) {
                 etLoginPassword.setText("");
+                t.printStackTrace();
+                Log.e(TAG, "onFailure: " + t.getMessage());
                 Util.hideProgressDialog(progressDialog);
-                ActionForAll.alertUser("VahanWire", "Invalid credentials", "OK", ProviderLogin.this);
+                ActionForAll.alertUser("VahanWire", "Enter valid ", "OK", ProviderLogin.this);
             }
         });
 
@@ -217,18 +284,18 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
         final ProgressDialog progressDialog = Util.showProgressDialog(this);
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
 
-        Call<Login> call = apiService.login(etLoginMobile.getText().toString(),
+        Call<LoginPP> call = apiService.login(etLoginMobile.getText().toString(),
                 etLoginPassword.getText().toString(),
                 "1",
                 sessionManager.getString(sessionManager.NOTIFICATION_TOKEN));
 
-        call.enqueue(new Callback<Login>() {
+        call.enqueue(new Callback<LoginPP>() {
             @Override
-            public void onResponse(Call<Login> call, Response<Login> response) {
+            public void onResponse(Call<LoginPP> call, Response<LoginPP> response) {
                 if (response != null && response.isSuccessful()) {
                     Log.d(TAG, "onResponse: "+ response.body().getStatus());
                     Util.hideProgressDialog(progressDialog);
-                    Login login = response.body();
+                    LoginPP login = response.body();
                     if (login.getStatus().equals("200")) {
 
                         Log.d(TAG, "onResponse: " + "  message " + login.getMessage());
@@ -260,6 +327,7 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
                         sessionManager.setString(SessionManager.STATE, login.getData().getAddress().getState());
                         sessionManager.setString(SessionManager.COUNRTY, login.getData().getAddress().getCountry());
                         sessionManager.setString(SessionManager.PINCODE, login.getData().getAddress().getPincode());
+                        sessionManager.setString(SessionManager.PROVIDER_ID, login.getData().getId());
 
                         Intent logout= new Intent(getApplicationContext(), MainActivity.class);
                         logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -267,7 +335,21 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
                         finish();
                     }
 
-                    else {
+                    else if(login.getStatus().equalsIgnoreCase("401"))
+                    {
+                        ActionForAll.alertUser("VahanWire", login.getMessage(), "OK", ProviderLogin.this);
+                    }
+                    else if(login.getStatus().equalsIgnoreCase("400"))
+                    {
+                        ActionForAll.alertUser("VahanWire", login.getMessage(), "OK", ProviderLogin.this);
+                    }
+
+                    else if(login.getStatus().equalsIgnoreCase("500"))
+                    {
+                        ActionForAll.alertUser("VahanWire", login.getMessage(), "OK", ProviderLogin.this);
+                    }
+                    else
+                    {
                         ActionForAll.alertUser("VahanWire", login.getMessage(), "OK", ProviderLogin.this);
                     }
 
@@ -278,12 +360,12 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
             }
 
             @Override
-            public void onFailure(Call<Login> call, Throwable t) {
+            public void onFailure(Call<LoginPP> call, Throwable t) {
                 Util.hideProgressDialog(progressDialog);
                 Log.e(TAG, "error::: " + t.getMessage());
                 etLoginMobile.setText("");
                 etLoginPassword.setText("");
-                ActionForAll.alertUser("VahanWire", "Invalid credentials, Please check", "OK", ProviderLogin.this);
+                ActionForAll.alertUser("VahanWire", "Please enter valid details", "OK", ProviderLogin.this);
             }
         });
     }
@@ -292,6 +374,10 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
 
         final ProgressDialog progressDialog = Util.showProgressDialog(this);
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        Log.e(TAG, "loginAmbulance: "+ etLoginMobile.getText().toString() );
+        Log.e(TAG, "loginAmbulance: "+ sessionManager.getString(SessionManager.DEVICE_ID) );
+        Log.e(TAG, "loginAmbulance: "+ sessionManager.getString(SessionManager.NOTIFICATION_TOKEN) );
 
         Call<LoginAmbulance> call = apiService.login_ambulance(etLoginMobile.getText().toString(),
                 etLoginPassword.getText().toString(),
@@ -317,6 +403,7 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
                         sessionManager.setString(SessionManager.REGISTER_NAME, data.getOrganisation().getOrganisationName());
                         sessionManager.setString(SessionManager.EMAIL, data.getOrganisation().getEmail());
                         sessionManager.setString(SessionManager.PROVIDER_ID, data.getId());
+                        sessionManager.setString(SessionManager.PROVIDER_VEHICLE, data.getVehicleNumber());
                         Log.e(TAG, "onResponse: image " + sessionManager.getString(SessionManager.PROVIDER_IMAGE));
 
 
@@ -327,34 +414,7 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
                         startActivity(intent);
                         finish();
 
-                        /* Log.d(TAG, "onResponse: " + "  message " + login.getMessage());
-                        Log.d(TAG , "onResponse: " + "  mobile " + login.getData().getMobile());
-                        Log.d(TAG, "onResponse: " + "  pin " + "--" + login.getData().getMobilePin());
-                        Log.d(TAG, "onResponse: " + " first address " + "--" + login.getData().getAddress().getFirstAddress());
-                        Log.d(TAG, "onResponse: " + "contact person " + "--" + login.getData().getContactPerson());
-                        Log.d(TAG, "onResponse: " + "phone number" + "--" + login.getData().getPhone());
-                        List<Double> list = login.getData().getAddress().getLocation().getCoordinates();
-                        Double longitude = list.get(0).doubleValue();
-                        Double latitude = list.get(1).doubleValue();
-                        Log.d(TAG, "onResponse: " + "longitude" + "--" + longitude);
-                        Log.d(TAG, "onResponse: " + "longitude" + "--" + latitude);
-                        Log.d(TAG, "onResponse: " + " image " + "--" + login.getData().getProfilePic());
 
-                        sessionManager.setString(SessionManager.PROVIDER_MOBILE, login.getData().getMobile());
-                        sessionManager.setString(SessionManager.PROVIDER_PIN, login.getData().getMobilePin());
-                        sessionManager.setString(SessionManager.REGISTER_NAME, login.getData().getRegisteredName());
-                        sessionManager.setString(SessionManager.EMAIL, login.getData().getEmail());
-                        sessionManager.setString(SessionManager.ADDRESS, login.getData().getAddress().getFirstAddress());
-                        sessionManager.setString(SessionManager.CONTACT_PERSON,login.getData().getContactPerson());
-                        sessionManager.setString(SessionManager.LANDLINE, login.getData().getPhone());
-                        sessionManager.setString(SessionManager.LATITUDE, latitude+"");
-                        sessionManager.setString(SessionManager.LONGITUDE, longitude+"");
-                        sessionManager.setString(SessionManager.PROVIDER_IMAGE, login.getData().getProfilePic());
-
-                        Intent logout= new Intent(getApplicationContext(), MainActivity.class);
-                        logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(logout);
-                        finish();*/
                     }
 
                     else {
@@ -388,6 +448,73 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
             ActionForAll.alertChoiseCloseActivity(this);
         }
         return true;
+    }
+
+    private void showSettingsDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ProviderLogin.this);
+        builder.setTitle("Need Permissions");
+        builder.setMessage("This app needs permission to use this feature. You can grant them in app settings.");
+        builder.setPositiveButton("GOTO SETTINGS", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                openSettings();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+
+    }
+
+    // navigating user to app settings
+    private void openSettings() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", getPackageName(), null);
+        intent.setData(uri);
+        startActivityForResult(intent, 101);
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void showSettingsAlert() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+
+        // Setting Dialog Title
+        alertDialog.setTitle("GPS settings");
+
+        // Setting Dialog Message
+        alertDialog.setMessage("GPS is not enabled. This feature need enable GPS setting. Do you want to go to settings menu?");
+
+        // On pressing the Settings button.
+        alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+               startActivity(intent);
+            }
+        });
+
+        // On pressing the cancel button
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        // Showing Alert Message
+        alertDialog.show();
     }
 
 }

@@ -51,7 +51,7 @@
                 android:background="#fff"
                 android:paddingLeft="@dimen/size_15dp"
                 android:hint="4 digit code"
-                android:inputType="number"
+                android:inputType="numberPassword"
                 android:gravity="center"
                 android:maxLength="4"
                 android:layout_width="match_parent"

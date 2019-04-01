@@ -44,206 +44,228 @@
         android:layout_margin="@dimen/size_5dp"
         android:orientation="vertical">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="@dimen/size_20dp"
-            android:orientation="vertical">
-
-            <com.electrom.vahanwireprovider.utility.CustomEditText
-                android:id="@+id/etProfileCompanyName"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/size_40dp"
-                android:background="@drawable/text_box_background"
-                android:layout_marginTop="@dimen/size_15dp"
-                android:layout_marginLeft="@dimen/size_25dp"
-                android:layout_marginRight="@dimen/size_25dp"
-                android:paddingLeft="@dimen/size_15dp"
-                android:textSize="14sp"
-                android:hint="Company name"/>
-
-            <com.electrom.vahanwireprovider.utility.CustomEditText
-                android:id="@+id/etProfilePersonName"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:background="@drawable/text_box_background"
-                android:layout_marginTop="@dimen/size_15dp"
-                android:layout_marginLeft="@dimen/size_25dp"
-                android:layout_marginRight="@dimen/size_25dp"
-                android:paddingLeft="@dimen/size_15dp"
-                android:textSize="14sp"
-                android:hint="Person name"/>
+            android:fillViewport="true">
 
             <LinearLayout
-                android:layout_marginTop="@dimen/size_15dp"
-                android:layout_marginLeft="@dimen/size_25dp"
-                android:layout_marginRight="@dimen/size_25dp"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/size_40dp"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="@dimen/size_20dp"
+                android:orientation="vertical">
 
                 <com.electrom.vahanwireprovider.utility.CustomEditText
-                    android:id="@+id/etProfileMobileNumber"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:textSize="14sp"
-                    android:editable="false"
-                    android:clickable="false"
-                    android:hint="Mobile number"
+                    android:id="@+id/etProfileCompanyName"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_40dp"
+                    android:background="@drawable/text_box_background"
+                    android:layout_marginTop="@dimen/size_15dp"
+                    android:layout_marginLeft="@dimen/size_25dp"
+                    android:layout_marginRight="@dimen/size_25dp"
+                    android:nextFocusDown="@+id/etProfilePersonName"
+                    android:imeOptions="actionNext"
                     android:paddingLeft="@dimen/size_15dp"
-                    android:layout_marginRight="@dimen/size_5dp"
-                    android:background="@drawable/text_box_background"/>
+                    android:textSize="14sp"
+                    android:hint="Company name"/>
+
                 <com.electrom.vahanwireprovider.utility.CustomEditText
-                    android:id="@+id/etProfileLandLine"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:inputType="number"
-                    android:hint="Landline number"
+                    android:id="@+id/etProfilePersonName"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:nextFocusDown="@+id/etProfileMobileNumber"
+                    android:imeOptions="actionNext"
+                    android:background="@drawable/text_box_background"
+                    android:layout_marginTop="@dimen/size_15dp"
+                    android:layout_marginLeft="@dimen/size_25dp"
+                    android:layout_marginRight="@dimen/size_25dp"
                     android:paddingLeft="@dimen/size_15dp"
                     android:textSize="14sp"
-                    android:layout_marginLeft="@dimen/size_5dp"
-                    android:background="@drawable/text_box_background"/>
+                    android:hint="Person name"/>
 
-            </LinearLayout>
-
-            <com.electrom.vahanwireprovider.utility.CustomEditText
-                android:id="@+id/etProfileAddress"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:background="@drawable/text_box_background"
-                android:layout_marginTop="@dimen/size_15dp"
-                android:layout_marginLeft="@dimen/size_25dp"
-                android:paddingRight="@dimen/size_15dp"
-                android:layout_marginRight="@dimen/size_25dp"
-                android:paddingLeft="@dimen/size_15dp"
-                android:textSize="14sp"
-                android:hint="Address"/>
-
-            <LinearLayout
-                android:layout_marginTop="@dimen/size_15dp"
-                android:layout_marginLeft="@dimen/size_25dp"
-                android:layout_marginRight="@dimen/size_25dp"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/size_50dp"
-                android:orientation="horizontal">
-
-                <RelativeLayout
-                    android:layout_marginTop="10dp"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_marginLeft="@dimen/size_5dp"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentRight="true">
+                <LinearLayout
+                    android:layout_marginTop="@dimen/size_15dp"
+                    android:layout_marginLeft="@dimen/size_25dp"
+                    android:layout_marginRight="@dimen/size_25dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_40dp"
+                    android:orientation="horizontal">
 
                     <com.electrom.vahanwireprovider.utility.CustomEditText
-                        android:id="@+id/etCountry"
-                        android:paddingLeft="@dimen/size_15dp"
-                        android:layout_width="match_parent"
-                        android:background="@drawable/round_transparent"
-                        android:hint="Country"
-                        android:inputType="text"
+                        android:id="@+id/etProfileMobileNumber"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
                         android:textSize="14sp"
-                        android:layout_height="40dp" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_marginTop="10dp"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_marginLeft="@dimen/size_5dp"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentRight="true">
-
-                    <com.electrom.vahanwireprovider.utility.CustomEditText
-                        android:id="@+id/etState"
+                        android:editable="false"
+                        android:nextFocusRight="@+id/etProfileLandLine"
+                        android:imeOptions="actionNext"
+                        android:clickable="false"
+                        android:hint="Mobile number"
                         android:paddingLeft="@dimen/size_15dp"
-                        android:layout_width="match_parent"
-                        android:background="@drawable/round_transparent"
-                        android:hint="State"
-                        android:maxLines="1"
-                        android:ellipsize="end"
-                        android:inputType="text"
-                        android:textSize="14sp"
-                        android:layout_height="40dp" />
-                </RelativeLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_marginTop="@dimen/size_15dp"
-                android:layout_marginLeft="@dimen/size_25dp"
-                android:layout_marginRight="@dimen/size_25dp"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/size_50dp"
-                android:orientation="horizontal">
-
-                <RelativeLayout
-                    android:layout_marginTop="10dp"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_marginLeft="@dimen/size_5dp"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentRight="true">
-
+                        android:layout_marginRight="@dimen/size_5dp"
+                        android:background="@drawable/text_box_background"/>
                     <com.electrom.vahanwireprovider.utility.CustomEditText
-                        android:id="@+id/etCity"
-                        android:paddingLeft="@dimen/size_15dp"
-                        android:layout_width="match_parent"
-                        android:background="@drawable/round_transparent"
-                        android:hint="City"
-                        android:inputType="text"
-                        android:textSize="14sp"
-                        android:layout_height="40dp" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_marginTop="10dp"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_marginLeft="@dimen/size_5dp"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentRight="true">
-
-                    <com.electrom.vahanwireprovider.utility.CustomEditText
-                        android:id="@+id/etPinCode"
-                        android:paddingLeft="@dimen/size_15dp"
-                        android:layout_width="match_parent"
-                        android:background="@drawable/round_transparent"
-                        android:hint="pin code"
+                        android:id="@+id/etProfileLandLine"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
                         android:inputType="number"
+                        android:nextFocusDown="@+id/etProfileAddress"
+                        android:imeOptions="actionNext"
+                        android:hint="Landline number"
+                        android:paddingLeft="@dimen/size_15dp"
                         android:textSize="14sp"
-                        android:layout_height="40dp" />
-                </RelativeLayout>
+                        android:layout_marginLeft="@dimen/size_5dp"
+                        android:background="@drawable/text_box_background"/>
+
+                </LinearLayout>
+
+                <com.electrom.vahanwireprovider.utility.CustomEditText
+                    android:id="@+id/etProfileAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:nextFocusDown="@+id/etCountry"
+                    android:imeOptions="actionNext"
+                    android:background="@drawable/text_box_background"
+                    android:layout_marginTop="@dimen/size_15dp"
+                    android:layout_marginLeft="@dimen/size_25dp"
+                    android:paddingRight="@dimen/size_15dp"
+                    android:layout_marginRight="@dimen/size_25dp"
+                    android:paddingLeft="@dimen/size_15dp"
+                    android:textSize="14sp"
+                    android:hint="Address"/>
+
+                <LinearLayout
+                    android:layout_marginTop="@dimen/size_15dp"
+                    android:layout_marginLeft="@dimen/size_25dp"
+                    android:layout_marginRight="@dimen/size_25dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_50dp"
+                    android:orientation="horizontal">
+
+                    <RelativeLayout
+                        android:layout_marginTop="10dp"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_marginLeft="@dimen/size_5dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentRight="true">
+
+                        <com.electrom.vahanwireprovider.utility.CustomEditText
+                            android:id="@+id/etCountry"
+                            android:paddingLeft="@dimen/size_15dp"
+                            android:layout_width="match_parent"
+                            android:background="@drawable/round_transparent"
+                            android:hint="Country"
+                            android:nextFocusRight="@+id/etState"
+                            android:imeOptions="actionNext"
+                            android:inputType="text"
+                            android:textSize="14sp"
+                            android:layout_height="40dp" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_marginTop="10dp"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_marginLeft="@dimen/size_5dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentRight="true">
+
+                        <com.electrom.vahanwireprovider.utility.CustomEditText
+                            android:id="@+id/etState"
+                            android:paddingLeft="@dimen/size_15dp"
+                            android:layout_width="match_parent"
+                            android:background="@drawable/round_transparent"
+                            android:hint="State"
+                            android:nextFocusDown="@+id/etCity"
+                            android:imeOptions="actionNext"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:inputType="text"
+                            android:textSize="14sp"
+                            android:layout_height="40dp" />
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_marginTop="@dimen/size_15dp"
+                    android:layout_marginLeft="@dimen/size_25dp"
+                    android:layout_marginRight="@dimen/size_25dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_50dp"
+                    android:orientation="horizontal">
+
+                    <RelativeLayout
+                        android:layout_marginTop="10dp"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_marginLeft="@dimen/size_5dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentRight="true">
+
+                        <com.electrom.vahanwireprovider.utility.CustomEditText
+                            android:id="@+id/etCity"
+                            android:paddingLeft="@dimen/size_15dp"
+                            android:layout_width="match_parent"
+                            android:background="@drawable/round_transparent"
+                            android:hint="City"
+                            android:nextFocusRight="@+id/etPinCode"
+                            android:imeOptions="actionNext"
+                            android:inputType="text"
+                            android:textSize="14sp"
+                            android:layout_height="40dp" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_marginTop="10dp"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_marginLeft="@dimen/size_5dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentRight="true">
+
+                        <com.electrom.vahanwireprovider.utility.CustomEditText
+                            android:id="@+id/etPinCode"
+                            android:paddingLeft="@dimen/size_15dp"
+                            android:layout_width="match_parent"
+                            android:background="@drawable/round_transparent"
+                            android:hint="pin code"
+                            android:inputType="number"
+                            android:textSize="14sp"
+                            android:layout_height="40dp" />
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_marginTop="@dimen/size_40dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:gravity="center">
+
+                    <com.electrom.vahanwireprovider.utility.CustomButton
+                        android:id="@+id/btnProfileSubmit"
+                        android:layout_width="200dp"
+                        android:layout_height="50dp"
+                        android:textColor="@color/colorGreyApp"
+                        android:background="@drawable/round_gray"
+                        android:textSize="@dimen/size_20dp"
+                        android:text="Submit"/>
+
+                </LinearLayout>
 
             </LinearLayout>
 
-
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:gravity="center">
-
-            <com.electrom.vahanwireprovider.utility.CustomButton
-                android:id="@+id/btnProfileSubmit"
-                android:layout_width="200dp"
-                android:layout_height="50dp"
-                android:textColor="@color/colorGreyApp"
-                android:background="@drawable/round_gray"
-                android:textSize="@dimen/size_20dp"
-                android:text="Submit"/>
-
-        </LinearLayout>
+        </ScrollView>
 
     </LinearLayout>
 

@@ -48,25 +48,25 @@ public class Data {
     private Integer isClosed;
     @SerializedName("payment_methods")
     @Expose
-    private List<PaymentMethod> paymentMethods = null;
+    private List<Object> paymentMethods = null;
     @SerializedName("services")
     @Expose
-    private List<Service> services = null;
+    private List<Object> services = null;
     @SerializedName("offers")
     @Expose
-    private List<Offer> offers = null;
+    private List<Object> offers = null;
     @SerializedName("isPaid")
     @Expose
     private Integer isPaid;
     @SerializedName("paid_subscription")
     @Expose
-    private List<PaidSubscription> paidSubscription = null;
+    private List<Object> paidSubscription = null;
     @SerializedName("isActive")
     @Expose
     private Integer isActive;
     @SerializedName("navigated_users")
     @Expose
-    private List<NavigatedUser> navigatedUsers = null;
+    private List<Object> navigatedUsers = null;
     @SerializedName("_id")
     @Expose
     private String id;
@@ -184,27 +184,27 @@ public class Data {
         this.isClosed = isClosed;
     }
 
-    public List<PaymentMethod> getPaymentMethods() {
+    public List<Object> getPaymentMethods() {
         return paymentMethods;
     }
 
-    public void setPaymentMethods(List<PaymentMethod> paymentMethods) {
+    public void setPaymentMethods(List<Object> paymentMethods) {
         this.paymentMethods = paymentMethods;
     }
 
-    public List<Service> getServices() {
+    public List<Object> getServices() {
         return services;
     }
 
-    public void setServices(List<Service> services) {
+    public void setServices(List<Object> services) {
         this.services = services;
     }
 
-    public List<Offer> getOffers() {
+    public List<Object> getOffers() {
         return offers;
     }
 
-    public void setOffers(List<Offer> offers) {
+    public void setOffers(List<Object> offers) {
         this.offers = offers;
     }
 
@@ -216,11 +216,11 @@ public class Data {
         this.isPaid = isPaid;
     }
 
-    public List<PaidSubscription> getPaidSubscription() {
+    public List<Object> getPaidSubscription() {
         return paidSubscription;
     }
 
-    public void setPaidSubscription(List<PaidSubscription> paidSubscription) {
+    public void setPaidSubscription(List<Object> paidSubscription) {
         this.paidSubscription = paidSubscription;
     }
 
@@ -232,11 +232,11 @@ public class Data {
         this.isActive = isActive;
     }
 
-    public List<NavigatedUser> getNavigatedUsers() {
+    public List<Object> getNavigatedUsers() {
         return navigatedUsers;
     }
 
-    public void setNavigatedUsers(List<NavigatedUser> navigatedUsers) {
+    public void setNavigatedUsers(List<Object> navigatedUsers) {
         this.navigatedUsers = navigatedUsers;
     }
 

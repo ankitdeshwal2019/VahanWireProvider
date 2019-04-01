@@ -44,6 +44,10 @@ public class SessionManager {
     public static final String MAIN_PROVIDER = "main_provider";
     public static final String NOTI_NAME = "notification_name" ;
     public static final String NOTI_ISSUE = "notification issue" ;
+    public static final String PROVIDER_VEHICLE = "vehicle";
+    public static final String WORK_FROM = "work_from";
+    public static final String WORK_TO = "work_to";
+
     private static String SHARED_PREFERENCE_PROVIDER = "shared_provider_electrom";
     ///public static final String COUNT_COMPARE = "count_compare";
     private static SharedPreferences sharedPref;

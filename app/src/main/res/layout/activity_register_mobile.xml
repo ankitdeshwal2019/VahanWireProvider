@@ -68,6 +68,7 @@
                 android:id="@+id/etRegisterMobile"
                 android:background="#fff"
                 android:inputType="number"
+                android:paddingLeft="@dimen/size_5dp"
                 android:hint="Mobile no"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />

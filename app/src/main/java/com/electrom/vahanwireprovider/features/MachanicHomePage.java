@@ -13,9 +13,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.location.LocationManager;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -54,8 +56,9 @@ import com.electrom.vahanwireprovider.models.city.CityData;
 import com.electrom.vahanwireprovider.models.country.Country;
 import com.electrom.vahanwireprovider.models.detail.Detail;
 import com.electrom.vahanwireprovider.models.mech_status.MechanicStatus;
-import com.electrom.vahanwireprovider.models.mechanic_detail.MechanicDetail;
-import com.electrom.vahanwireprovider.models.mechanic_detail.Offer;
+import com.electrom.vahanwireprovider.models.mechainc_detail.MechanicDetail;
+import com.electrom.vahanwireprovider.models.mechainc_detail.Offer;
+import com.electrom.vahanwireprovider.models.mechainc_detail.WorkingHours;
 import com.electrom.vahanwireprovider.models.request_accept.RequestAccept;
 import com.electrom.vahanwireprovider.models.status_user.StatusUser;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiClient;
@@ -95,8 +98,8 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
     CustomButton banStatusOnMechanic, banStatusOffMechanic;
     CustomTextView tvStatusMechanic, tvTotalVisitorsCountMechanic;
     String loginStatus = "0";
-    String ACTIVE_STATUS_ON = "You are LogIN";
-    String ACTIVE_STATUS_OFF = "You are LogOut";
+    String ACTIVE_STATUS_ON = "ON";
+    String ACTIVE_STATUS_OFF = "OFF";
     MyHandler handler;
     String faltuCheck = "auto", cancelReason;
     Dialog requestPopup,cancelDiolog;
@@ -104,6 +107,12 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
     List<Datum> data;
     ArrayList<String> reason = new ArrayList();
     public static String id1 = "provider_location_update";
+
+    LocationManager manager;
+
+    boolean isGPSEnabled = false;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +127,7 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
     }
 
     private void initView() {
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         handler = new MyHandler();
         sessionManager = SessionManager.getInstance(this);
         banStatusOnMechanic = findViewById(R.id.banStatusOnMechanic);
@@ -132,12 +142,15 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
         Log.e(TAG, "initView: pro_id " + sessionManager.getString(SessionManager.PROVIDER_ID));
         getreason();
 
+        manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+
         if(loginStatus.equals("1"))
         {
             banStatusOnMechanic.setVisibility(View.GONE);
             banStatusOffMechanic.setVisibility(View.VISIBLE);
             tvStatusMechanic.setText(ACTIVE_STATUS_ON);
-            tvStatusMechanic.setTextColor(Color.GREEN);
+            tvStatusMechanic.setTextColor(Color.parseColor("#00A600"));
             if (!isMyServiceRunning(MyForeGroundService.class))
             {
                 Intent locationIntent = new Intent(getBaseContext(), MyForeGroundService.class);
@@ -149,7 +162,6 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                     startService(locationIntent);
                 }
             }
-
         }
         else
         {
@@ -228,6 +240,7 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
             nav_Menu.findItem(R.id.nav_offer).setVisible(false);
             nav_Menu.findItem(R.id.nav_time_n_schedule).setVisible(false);
             nav_Menu.findItem(R.id.nav_payment_method).setVisible(false);
+            nav_Menu.findItem(R.id.nav_time_n_schedule).setVisible(false);
         }
     }
 
@@ -247,8 +260,16 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                                 // check if all permissions are granted
                                 if (report.areAllPermissionsGranted()) {
 
-                                    updateserviceInfo("1");
+                                    isGPSEnabled = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
+                                    if(isGPSEnabled)
+                                    {
+                                        updateserviceInfo("1");
+                                    }
+                                    else
+                                    {
+                                        showSettingsAlert();
+                                    }
                                 }
                                 // check for permanent denial of any permission
                                 if (report.isAnyPermissionPermanentlyDenied()) {
@@ -311,7 +332,7 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                             tvStatusMechanic.setText(ACTIVE_STATUS_ON);
                             banStatusOnMechanic.setVisibility(View.GONE);
                             banStatusOffMechanic.setVisibility(View.VISIBLE);
-                            tvStatusMechanic.setTextColor(Color.GREEN);
+                            tvStatusMechanic.setTextColor(Color.parseColor("#00A600"));
 
                             sessionManager.setString(SessionManager.ACTIVE_STATUS, "1");
 
@@ -391,7 +412,7 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
 
         if(sessionManager.getString(SessionManager.BOOKING_ID).length()>0)
         {
-            timer = new CountDownTimer(120000, 1000) {
+            timer = new CountDownTimer(60000, 1000) {
                 public void onTick(long millisUntilFinished) {
                     long seconds = millisUntilFinished / 1000;
                     //pBar2.setProgress((int) (millisUntilFinished));
@@ -406,8 +427,8 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                             requestPopup.dismiss();
                             cancelReason = "auto";
                             handler.removeCallbacks(null);
-                            getAllBookingDetail();
-                            //requestCancelAuto(cancelReason);
+                            //getAllBookingDetail();
+                            requestCancelAuto();
                         }
                         else {
 
@@ -753,7 +774,6 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                             reason.add(name);
                             Log.e(TAG, "onResponse: "+ name);
                         }
-
                     }
                     else
                     {
@@ -791,18 +811,17 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
             @Override
             public void onResponse(Call<MechanicDetail> call, Response<MechanicDetail> response) {
                 MechanicDetail detail = response.body();
-                Log.d(TAG, detail.getStatus());
+    //            Log.d(TAG, detail.getStatus());
                 if (detail.getStatus().equals("200")) {
                     Util.hideProgressDialog(progressDialog);
                     Log.d(TAG, detail.getData().getMobile() + "-pin-" + detail.getData().getMobilePin());
 
                     int count_navitaion_user = detail.getData().getRequestedUsers().size();
                     tvTotalVisitorsCountMechanic.setText(String.valueOf(count_navitaion_user));
-                    List<com.electrom.vahanwireprovider.models.mechanic_detail.Offer> offers = detail.getData().getOrganisation().getOffers();
+                    List<Offer> offers = detail.getData().getOrganisation().getOffers();
                     SharedPreferences appSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     if (offers.size() > 0) {
                         Offer offer = offers.get(0);
-
                         SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
                         Gson gson = new Gson();
                         String json = gson.toJson(offer);
@@ -828,8 +847,12 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                         sessionManager.setString(SessionManager.STATE, detail.getData().getOrganisation().getRegAddress().getState());
                         sessionManager.setString(SessionManager.CITY, detail.getData().getOrganisation().getRegAddress().getCity());
                         sessionManager.setString(SessionManager.PINCODE, detail.getData().getOrganisation().getRegAddress().getPincode());
+                        WorkingHours workingHours = detail.getData().getOrganisation().getWorkingHours();
+                        sessionManager.setString(SessionManager.WORK_TO, workingHours.getTo());
+                        sessionManager.setString(SessionManager.WORK_FROM,workingHours.getFrom());
 
-                        Log.e(TAG, "onResponse: done ");
+
+                    Log.e(TAG, "onResponse: done ");
 
                 } else {
                     Util.hideProgressDialog(progressDialog);
@@ -882,7 +905,7 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                         else
                         {
                             new AlertDialog.Builder(context)
-                                    .setTitle("VahanWire")
+                                    .setTitle("VahanProvider")
                                     .setMessage("")
                                     .setCancelable(false)
                                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -934,6 +957,114 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
             }
         }
         return false;
+    }
+
+    private void requestCancelAuto() {
+        Log.e(TAG, "provider id " + sessionManager.getString(SessionManager.PROVIDER_ID));
+
+        final ProgressDialog progressDialog = Util.showProgressDialog(context);
+
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        Call<CancelRequest> call = apiService.mechanic_req_cancel_auto(
+                sessionManager.getString(SessionManager.PROVIDER_ID),
+                sessionManager.getString(SessionManager.BOOKING_ID));
+
+        call.enqueue(new Callback<CancelRequest>() {
+            @Override
+            public void onResponse(Call<CancelRequest> call, Response<CancelRequest> response) {
+
+                Util.hideProgressDialog(progressDialog);
+
+                Log.e(TAG, "onResponse: "+ response.body().getStatus());
+
+                if(response.isSuccessful())
+                {
+                    CancelRequest body = response.body();
+                    if(body.getStatus().equals("200"))
+                    {
+                        sessionManager.setString(SessionManager.BOOKING_STATUS, "");
+                        if(requestPopup.isShowing())
+                        {
+                            requestPopup.dismiss();
+                        }
+
+                        ActionForAll.myFlash(getApplicationContext(), "Request cancelled!");
+                        finish();
+                    }
+                    else
+                    {
+                        ActionForAll.myFlash(getApplicationContext(), body.getMessage());
+                    }
+                }
+                else
+                {
+                    ActionForAll.myFlash(getApplicationContext(), "error found api not responding...");
+                }
+
+                //handler.removeCallbacks(null);
+                //finish();
+
+               /* if(response.isSuccessful())
+                {
+                    CancelRequest cancelRequest = response.body();
+                    if(cancelRequest.getStatus().equals("200"))
+                    {
+                        sessionManager.setString(SessionManager.BOOKING_STATUS, "");
+                        Log.d(TAG, "success " + cancelRequest.getMessage());
+                        //ActionForAll.alertUserWithCloseActivity("VahanWire","Request cancelled !","OK", AmbulanceProvider.this);
+                        timer.cancel();
+                        faltuCheck = "cancelled_by_provider";
+                        if(requestPopup.isShowing())
+                        {
+                            requestPopup.dismiss();
+                        }
+                    }
+                    else
+                    {
+                        ActionForAll.alertUserWithCloseActivity("VahanWire", cancelRequest.getMessage(), "OK", AmbulanceProvider.this);
+                    }
+                }
+                else
+                {
+                    ActionForAll.alertUserWithCloseActivity("VahanWire", "Network busy please try after sometime", "OK", AmbulanceProvider.this);
+                }*/
+            }
+
+            @Override
+            public void onFailure(Call<CancelRequest> call, Throwable t) {
+                Util.hideProgressDialog(progressDialog);
+                ActionForAll.alertUser("VahanWire", t.getMessage(), "OK", MachanicHomePage.this);
+            }
+        });
+    }
+
+    public void showSettingsAlert() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+
+        // Setting Dialog Title
+        alertDialog.setTitle("GPS settings");
+
+        // Setting Dialog Message
+        alertDialog.setMessage("GPS is not enabled. This feature need enable GPS setting. Do you want to go to settings menu?");
+
+        // On pressing the Settings button.
+        alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
+            }
+        });
+
+        // On pressing the cancel button
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        // Showing Alert Message
+        alertDialog.show();
     }
 
 }

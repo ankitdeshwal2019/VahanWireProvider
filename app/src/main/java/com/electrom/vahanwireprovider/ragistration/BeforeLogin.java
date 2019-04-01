@@ -99,7 +99,10 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
             case R.id.tvPetrolPump:
                 service = "Petrol_Pump";
 
-                Dexter.withActivity(this).withPermissions(
+                sessionManager.setString(SessionManager.SERVICE, service);
+
+                startActivity(new Intent(getApplicationContext(), ProviderLogin.class));
+               /* Dexter.withActivity(this).withPermissions(
                         Manifest.permission.ACCESS_COARSE_LOCATION,
                         Manifest.permission.ACCESS_FINE_LOCATION)
                         .withListener(new MultiplePermissionsListener() {
@@ -110,7 +113,7 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
                                     // do you work now
                                     if (!isMyServiceRunning(GPSTracker.class))
                                         startService(new Intent(getApplicationContext(), GPSTracker.class));
-                                        startActivity(new Intent(getApplicationContext(), ProviderLogin.class));
+
                                         sessionManager.setString(SessionManager.SERVICE, service);
                                 }
 
@@ -127,13 +130,16 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
                             }
                         })
                         .onSameThread()
-                        .check();
+                        .check();*/
                 break;
             case R.id.tvAmbulance:
 
                 service = "Ambulance";
 
-                Dexter.withActivity(this).withPermissions(
+                startActivity(new Intent(getApplicationContext(), ProviderLogin.class));
+                sessionManager.setString(SessionManager.SERVICE, service);
+
+               /* Dexter.withActivity(this).withPermissions(
                         Manifest.permission.ACCESS_COARSE_LOCATION,
                         Manifest.permission.ACCESS_FINE_LOCATION)
                         .withListener(new MultiplePermissionsListener() {
@@ -144,8 +150,7 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
                                     // do you work now
                                     if (!isMyServiceRunning(GPSTracker.class))
                                         startService(new Intent(getApplicationContext(), GPSTracker.class));
-                                        startActivity(new Intent(getApplicationContext(), ProviderLogin.class));
-                                        sessionManager.setString(SessionManager.SERVICE, service);
+
                                 }
 
                                 //check for permanent denial of any permission
@@ -161,12 +166,17 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
                             }
                         })
                         .onSameThread()
-                        .check();
+                        .check();*/
                 break;
             case R.id.tvMechanic:
 
                 service = "MechanicPro";
-                Dexter.withActivity(this).withPermissions(
+
+                startActivity(new Intent(getApplicationContext(), ProviderLogin.class));
+                sessionManager.setString(SessionManager.SERVICE, service);
+
+
+               /* Dexter.withActivity(this).withPermissions(
                         Manifest.permission.ACCESS_COARSE_LOCATION,
                         Manifest.permission.ACCESS_FINE_LOCATION)
                         .withListener(new MultiplePermissionsListener() {
@@ -179,8 +189,7 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
                                         // do you work now
                                         if (!isMyServiceRunning(GPSTracker.class))
                                             startService(new Intent(getApplicationContext(), GPSTracker.class));
-                                            startActivity(new Intent(getApplicationContext(), ProviderLogin.class));
-                                            sessionManager.setString(SessionManager.SERVICE, service);
+
                                     }
                                 }
 
@@ -196,7 +205,7 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
                             }
                         })
                         .onSameThread()
-                        .check();
+                        .check();*/
                 break;
         }
 
@@ -211,7 +220,7 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
                     @Override
                     public void onComplete(@NonNull Task<InstanceIdResult> task) {
                         if (!task.isSuccessful()) {
-                            Log.w(TAG, "getInstanceId failed", task.getException());
+                            Log.e(TAG, "getInstanceId failed", task.getException());
                             return;
                         }
                         // Get new Instance ID token

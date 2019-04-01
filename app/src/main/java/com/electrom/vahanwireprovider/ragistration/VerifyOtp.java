@@ -384,7 +384,10 @@ public class VerifyOtp extends AppCompatActivity implements View.OnClickListener
     //mechanic registration
     private void getRegisterMobileMechanic(){
 
-        Log.e(TAG, "service: regst for MechanicPro ");
+        Log.e(TAG, "service: regst for MechanicPro " + sessionManager.getString(SessionManager.DEVICE_ID));
+        //Log.e(TAG, "device id " + sessionManager.getString(SessionManager.NOTIFICATION_TOKEN));
+        Log.e(TAG, "token "+ sessionManager.getString(SessionManager.NOTIFICATION_TOKEN));
+        Log.e(TAG, "mobile "+ sessionManager.getString(SessionManager.PROVIDER_MOBILE));
         final ProgressDialog progressDialog = Util.showProgressDialog(this);
 
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
@@ -406,12 +409,7 @@ public class VerifyOtp extends AppCompatActivity implements View.OnClickListener
                     Mechanic mechanic = response.body();
                     if(mechanic.getStatus().equals("200"))
                     {
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                startActivity(new Intent(getApplicationContext(), VerifyOtp.class).putExtra("mobile", sessionManager.getString(SessionManager.PROVIDER_MOBILE)));
-                            }
-                        }, 300);
+                       ActionForAll.myFlash(getApplicationContext(), "Resend otp successfully");
                     }
                     else
                     {

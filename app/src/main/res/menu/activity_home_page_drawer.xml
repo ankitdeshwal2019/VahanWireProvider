@@ -5,8 +5,6 @@
 
     <group android:checkableBehavior="single">
 
-
-
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/nav_home"
@@ -17,6 +15,7 @@
             android:title="Profile" />
 
         <item
+            android:icon="@drawable/nav_booking_history"
             android:id="@+id/nav_booking"
             android:title="Booking History" />
 
@@ -24,6 +23,7 @@
             android:id="@+id/nav_offer"
             android:icon="@drawable/offer"
             android:title="Offers" />
+
         <item
             android:id="@+id/nav_time_n_schedule"
             android:icon="@drawable/time_schedule"
@@ -36,14 +36,16 @@
 
         <item
             android:id="@+id/nav_facility_n_payment"
-            android:icon="@drawable/facility_payments_method"
+            android:icon="@drawable/nav_facilities"
             android:title="Facilities" />
 
         <item
+            android:icon="@drawable/nav_brand"
             android:id="@+id/nav_Serviceable_brand"
             android:title="Select Serviceable brand" />
 
         <item
+            android:icon="@drawable/nav_services"
             android:id="@+id/nav_Service"
             android:title="Select Services" />
 

@@ -107,25 +107,8 @@ public class OfferActivity extends AppCompatActivity implements View.OnClickList
                 break;
 
             case R.id.btnSubmitOffer:
-                if(isNotEmptyFields()){
 
-                    if(sessionManager.getString(SessionManager.SERVICE).contains(Constant.SERVICE_PETROL_PUMP))
-                    {
-                        Log.e(TAG, "onClick: " + sessionManager.getString(SessionManager.SERVICE));
-                        addOffer();
-                    }
-                    else if(sessionManager.getString(SessionManager.SERVICE).contains(Constant.SERVICE_AMBULANCE))
-                    {
-                        Log.e(TAG, "onClick: " + sessionManager.getString(SessionManager.SERVICE));
-                    }
-                    else if(sessionManager.getString(SessionManager.SERVICE).contains(Constant.SERVICE_MECHNIC_PRO))
-                    {
-                        Log.e(TAG, "onClick: " + sessionManager.getString(SessionManager.SERVICE));
-                        addOffermech();
-                    }
-
-                        //
-                }
+                isNotEmptyFields();
                 break;
 
             case R.id.iv_back:
@@ -160,10 +143,10 @@ public class OfferActivity extends AppCompatActivity implements View.OnClickList
                                 @Override
                                 public void run() {
                                     new AlertDialog.Builder(OfferActivity.this)
-                                            .setTitle("VahanWire")
+                                            .setTitle("VahanProvider")
                                             .setMessage(message)
                                             .setCancelable(false)
-                                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
                                                     dialog.dismiss();
@@ -224,10 +207,10 @@ public class OfferActivity extends AppCompatActivity implements View.OnClickList
                                 @Override
                                 public void run() {
                                     new AlertDialog.Builder(OfferActivity.this)
-                                            .setTitle("VahanWire")
+                                            .setTitle("VahanProvider")
                                             .setMessage(message)
                                             .setCancelable(false)
-                                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
                                                     dialog.dismiss();
@@ -260,16 +243,42 @@ public class OfferActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
-    private boolean isNotEmptyFields()
+    private void isNotEmptyFields()
     {
-        if(ActionForAll.validEditText(etOfferTitle, "title", OfferActivity.this) &&
-        ActionForAll.validEditText(etOfferDescription, "description", OfferActivity.this) &&
-        !btnStartDate.getText().toString().contains("Start Date") && !btnEndDate.getText().toString().contains("End Date"))
-            return true;
+        if(etOfferTitle.getText().toString().trim().length() == 0)
+        {
+            ActionForAll.alertUser("Tips", "Please enter title", "OK", OfferActivity.this);
+        }
+        else if(etOfferDescription.getText().toString().trim().length() == 0)
+        {
+            ActionForAll.alertUser("Tips", "Please enter description.", "OK", OfferActivity.this);
+        }
+        else if(btnStartDate.getText().toString().contains("Start Date"))
+        {
+            ActionForAll.alertUser("Tips", "Please enter start offer date.", "OK", OfferActivity.this);
+        }
+
+        else if(btnEndDate.getText().toString().contains("End Date"))
+        {
+            ActionForAll.alertUser("Tips", "Please enter end offer date.", "OK", OfferActivity.this);
+        }
         else
         {
-            ActionForAll.alertUser("Tips", "Please fill all the fields and Choose date.", "OK", OfferActivity.this);
-            return false;
+            if(sessionManager.getString(SessionManager.SERVICE).contains(Constant.SERVICE_PETROL_PUMP))
+            {
+                Log.e(TAG, "onClick: " + sessionManager.getString(SessionManager.SERVICE));
+                addOffer();
+            }
+            else if(sessionManager.getString(SessionManager.SERVICE).contains(Constant.SERVICE_AMBULANCE))
+            {
+                Log.e(TAG, "onClick: " + sessionManager.getString(SessionManager.SERVICE));
+            }
+            else if(sessionManager.getString(SessionManager.SERVICE).contains(Constant.SERVICE_MECHNIC_PRO))
+            {
+                Log.e(TAG, "onClick: " + sessionManager.getString(SessionManager.SERVICE));
+                addOffermech();
+            }
+
         }
 
     }

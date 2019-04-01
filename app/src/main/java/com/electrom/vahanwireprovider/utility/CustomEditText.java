@@ -2,6 +2,7 @@ package com.electrom.vahanwireprovider.utility;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.support.v7.widget.AppCompatEditText;
 import android.util.AttributeSet;
 
 
@@ -9,7 +10,7 @@ import android.util.AttributeSet;
  * Created by admin on 7/26/2017.
  */
 
-public class CustomEditText extends android.support.v7.widget.AppCompatEditText {
+public class CustomEditText extends AppCompatEditText {
 
 
     private Context context;

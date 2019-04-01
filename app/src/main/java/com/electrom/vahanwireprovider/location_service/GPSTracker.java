@@ -65,7 +65,8 @@ public class GPSTracker extends Service {
             // Getting network status
             isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
-            if (!isGPSEnabled && !isNetworkEnabled) {
+            if (!isGPSEnabled) {
+                //this.canGetLocation = false;
                 // No network provider is enabled
             } else {
                 this.canGetLocation = true;
@@ -201,14 +202,14 @@ public class GPSTracker extends Service {
      * Function to show settings alert dialog.
      * On pressing the Settings button it will launch Settings Options.
      * */
-    public void showSettingsAlert() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
+    public void showSettingsAlert(Context context) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
 
         // Setting Dialog Title
-        alertDialog.setTitle("GPS is settings");
+        alertDialog.setTitle("GPS settings");
 
         // Setting Dialog Message
-        alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?");
+        alertDialog.setMessage("GPS is not enabled. This feature need enable GPS setting. Do you want to go to settings menu?");
 
         // On pressing the Settings button.
         alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
