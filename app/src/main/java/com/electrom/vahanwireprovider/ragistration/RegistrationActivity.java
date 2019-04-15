@@ -21,7 +21,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.electrom.vahanwireprovider.MainActivity;
+import com.electrom.vahanwireprovider.PetrolPumpHomePage;
 import com.electrom.vahanwireprovider.R;
 import com.electrom.vahanwireprovider.features.MachanicHomePage;
 import com.electrom.vahanwireprovider.location_service.GPSTracker;
@@ -40,13 +40,9 @@ import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.util.List;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -232,7 +228,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
                                 @Override
                                 public void run() {
 
-                                    Intent logout= new Intent(RegistrationActivity.this, MainActivity.class);
+                                    Intent logout= new Intent(RegistrationActivity.this, PetrolPumpHomePage.class);
                                     logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                     startActivity(logout);
                                 }

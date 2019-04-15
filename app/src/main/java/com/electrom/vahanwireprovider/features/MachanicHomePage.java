@@ -32,35 +32,24 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.electrom.vahanwireprovider.MainActivity;
 import com.electrom.vahanwireprovider.R;
-import com.electrom.vahanwireprovider.adapters.CityAdapter;
-import com.electrom.vahanwireprovider.adapters.SpinnerAdapter;
 import com.electrom.vahanwireprovider.location_service_update_track.MyForeGroundService;
 import com.electrom.vahanwireprovider.models.booking_details.BookingDetails;
 import com.electrom.vahanwireprovider.models.booking_details.Data;
-import com.electrom.vahanwireprovider.models.booking_details.Details;
-import com.electrom.vahanwireprovider.models.booking_details.UserDetails;
 import com.electrom.vahanwireprovider.models.cancel_reason_mech.CancelReason;
 import com.electrom.vahanwireprovider.models.cancel_reason_mech.Datum;
 import com.electrom.vahanwireprovider.models.cancel_request.CancelRequest;
-import com.electrom.vahanwireprovider.models.city.City;
-import com.electrom.vahanwireprovider.models.city.CityData;
-import com.electrom.vahanwireprovider.models.country.Country;
-import com.electrom.vahanwireprovider.models.detail.Detail;
 import com.electrom.vahanwireprovider.models.mech_status.MechanicStatus;
-import com.electrom.vahanwireprovider.models.mechainc_detail.MechanicDetail;
-import com.electrom.vahanwireprovider.models.mechainc_detail.Offer;
-import com.electrom.vahanwireprovider.models.mechainc_detail.WorkingHours;
+import com.electrom.vahanwireprovider.models.mechanic_new.MechNewDetail;
+import com.electrom.vahanwireprovider.models.mechanic_new.Myimages;
+import com.electrom.vahanwireprovider.models.mechanic_new.Offer;
+import com.electrom.vahanwireprovider.models.mechanic_new.PersonalDetails;
+import com.electrom.vahanwireprovider.models.mechanic_new.WorkingHours;
 import com.electrom.vahanwireprovider.models.request_accept.RequestAccept;
-import com.electrom.vahanwireprovider.models.status_user.StatusUser;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiClient;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiInterface;
 import com.electrom.vahanwireprovider.utility.ActionForAll;
@@ -102,17 +91,13 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
     String ACTIVE_STATUS_OFF = "OFF";
     MyHandler handler;
     String faltuCheck = "auto", cancelReason;
-    Dialog requestPopup,cancelDiolog;
+    Dialog requestPopup, cancelDiolog;
     CountDownTimer timer;
     List<Datum> data;
     ArrayList<String> reason = new ArrayList();
     public static String id1 = "provider_location_update";
-
     LocationManager manager;
-
     boolean isGPSEnabled = false;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,10 +105,10 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
         setContentView(R.layout.activity_machanic_home_page_nav);
         initView();
         getDetail();
-        try{
+        try {
             setUpLayoutWithToolbar();
+        } catch (IllegalArgumentException e) {
         }
-        catch (IllegalArgumentException e){}
     }
 
     private void initView() {
@@ -145,52 +130,25 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
         manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
 
-        if(loginStatus.equals("1"))
-        {
-            banStatusOnMechanic.setVisibility(View.GONE);
-            banStatusOffMechanic.setVisibility(View.VISIBLE);
-            tvStatusMechanic.setText(ACTIVE_STATUS_ON);
-            tvStatusMechanic.setTextColor(Color.parseColor("#00A600"));
-            if (!isMyServiceRunning(MyForeGroundService.class))
-            {
-                Intent locationIntent = new Intent(getBaseContext(), MyForeGroundService.class);
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-
-                    startForegroundService(locationIntent);
-                } else {
-                    //lower then Oreo, just start the service.
-                    startService(locationIntent);
-                }
-            }
-        }
-        else
-        {
-            banStatusOnMechanic.setVisibility(View.VISIBLE);
-            banStatusOffMechanic.setVisibility(View.GONE);
-            tvStatusMechanic.setText(ACTIVE_STATUS_OFF);
-            tvStatusMechanic.setTextColor(Color.RED);
-        }
-
-        if(sessionManager.getString(SessionManager.BOOKING_STATUS).equals("0") && !sessionManager.getString(SessionManager.BOOKING_STATUS_USER).equals("2"))
-        {
-            Log.e(TAG, "initView: "+sessionManager.getString(SessionManager.BOOKING_ID));
-            Log.e(TAG, "initView: "+sessionManager.getString(SessionManager.BOOKING_STATUS));
+        if (sessionManager.getString(SessionManager.BOOKING_STATUS).equals("0") &&
+                !sessionManager.getString(SessionManager.BOOKING_STATUS_USER).equals("2") &&
+                !sessionManager.getString(SessionManager.NOTI_ISSUE).equalsIgnoreCase("Pre Request")) {
+            Log.e(TAG, "initView: " + sessionManager.getString(SessionManager.BOOKING_ID));
+            Log.e(TAG, "initView: " + sessionManager.getString(SessionManager.BOOKING_STATUS));
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     requestPopup();
                 }
             }, 500);
-        }
-        else if(sessionManager.getString(SessionManager.BOOKING_STATUS_USER).equals("2"))
-        {
+        } else if (sessionManager.getString(SessionManager.BOOKING_STATUS_USER).equals("2")) {
 
             new Handler().postDelayed(new Runnable() {
-                                          @Override
-                                          public void run() {
-                                              ActionForAll.alertUserWithCloseActivity("VahanWire", "Request cancelled by user.", "OK", MachanicHomePage.this);
-                                          }
-                                      },500);
+                @Override
+                public void run() {
+                    ActionForAll.alertUserWithCloseActivity("VahanWire", "Request cancelled by user.", "OK", MachanicHomePage.this);
+                }
+            }, 500);
         }
     }
 
@@ -207,13 +165,13 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
         title.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ActionForAll.alertUser("VahanWire", "Work in Progress", "OK", MainActivity.this);
+                ActionForAll.alertUser("VahanWire", "Work in Progress", "OK", PetrolPumpHomePage.this);
             }
         });*/
 
         NavigationView mNavigationView = findViewById(R.id.nav_view);
         View navHeader = mNavigationView.getHeaderView(0);
-        CircleImageView img =  navHeader.findViewById(R.id.ivNavProfile);
+        CircleImageView img = navHeader.findViewById(R.id.ivNavProfile);
         CustomTextView nav_name = navHeader.findViewById(R.id.tvNavName);
         CustomTextView nav_email = navHeader.findViewById(R.id.tvNavEmail);
         //Picasso.with(this).load(sessionManager.getString(SessionManager.PROVIDER_IMAGE)).into(img);
@@ -229,13 +187,12 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
 
         Menu nav_Menu = mNavigationView.getMenu();
 
-        if(sessionManager.getString(SessionManager.MAIN_PROVIDER).equals("1"))
-        {
+        if (sessionManager.getString(SessionManager.MAIN_PROVIDER).equals("1")) {
+
+            nav_Menu.findItem(R.id.nav_service_charge_mech).setVisible(true);
             /*nav_Menu.findItem(R.id.nav_Service).setVisible(false);
             nav_Menu.findItem(R.id.nav_Serviceable_brand).setVisible(false);*/
-        }
-        else
-        {
+        } else {
             nav_Menu.findItem(R.id.nav_profile).setVisible(false);
             nav_Menu.findItem(R.id.nav_offer).setVisible(false);
             nav_Menu.findItem(R.id.nav_time_n_schedule).setVisible(false);
@@ -246,8 +203,7 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onClick(View v) {
-        switch (v.getId())
-        {
+        switch (v.getId()) {
             case R.id.banStatusOnMechanic:
 
                 Dexter.withActivity(MachanicHomePage.this)
@@ -262,12 +218,9 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
 
                                     isGPSEnabled = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
-                                    if(isGPSEnabled)
-                                    {
+                                    if (isGPSEnabled) {
                                         updateserviceInfo("1");
-                                    }
-                                    else
-                                    {
+                                    } else {
                                         showSettingsAlert();
                                     }
                                 }
@@ -304,10 +257,9 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
 
     }
 
-    private void updateserviceInfo(final String status_id)
-    {
+    private void updateserviceInfo(final String status_id) {
         Log.e(TAG, "provider id " + sessionManager.getString(SessionManager.PROVIDER_ID));
-        Log.e(TAG, "status id " +status_id);
+        Log.e(TAG, "status id " + status_id);
 
         final ProgressDialog progressDialog = Util.showProgressDialog(context);
 
@@ -321,14 +273,11 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
 
                 Util.hideProgressDialog(progressDialog);
 
-                if(response.isSuccessful())
-                {
+                if (response.isSuccessful()) {
                     MechanicStatus statusUser = response.body();
-                    if(statusUser.getStatus().equals("200"))
-                    {
+                    if (statusUser.getStatus().equals("200")) {
                         Log.d(TAG, "success " + statusUser.getMessage());
-                        if(status_id.equals("1"))
-                        {
+                        if (status_id.equals("1")) {
                             tvStatusMechanic.setText(ACTIVE_STATUS_ON);
                             banStatusOnMechanic.setVisibility(View.GONE);
                             banStatusOffMechanic.setVisibility(View.VISIBLE);
@@ -345,23 +294,17 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                                 startService(locationIntent);
                             }
 
-                        }
-                        else
-                        {
+                        } else {
                             tvStatusMechanic.setText(ACTIVE_STATUS_OFF);
                             banStatusOnMechanic.setVisibility(View.VISIBLE);
                             banStatusOffMechanic.setVisibility(View.GONE);
                             tvStatusMechanic.setTextColor(Color.RED);
                             sessionManager.setString(SessionManager.ACTIVE_STATUS, "0");
                         }
-                    }
-                    else
-                    {
+                    } else {
                         ActionForAll.alertUser("VahanWire", statusUser.getMessage(), "OK", MachanicHomePage.this);
                     }
-                }
-                else
-                {
+                } else {
                     ActionForAll.alertUser("VahanWire", "Network busy please try after sometime", "OK", MachanicHomePage.this);
                 }
             }
@@ -391,13 +334,17 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
         final CustomButton btnPopupRequestReject = requestPopup.findViewById(R.id.btnPopupRequestReject);
         final CustomButton btnPopupRequestAccept = requestPopup.findViewById(R.id.btnPopupRequestAccept);
         final CustomTextView tvMessegePopup = requestPopup.findViewById(R.id.tvMessegePopup);
-        tvMessegePopup.setText("You have new request for " + sessionManager.getString(SessionManager.NOTI_ISSUE) + " by "+
+        tvMessegePopup.setText("You have new request for " + sessionManager.getString(SessionManager.NOTI_ISSUE) + " by " +
                 sessionManager.getString(SessionManager.NOTI_NAME));
 
         btnPopupRequestAccept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                requestAdd();
+
+                if(sessionManager.getString(SessionManager.NOTI_ISSUE).contains("Pre Request"))
+                    startActivity(new Intent(getApplicationContext(), BookingHistoryMechanic.class));
+                else
+                    requestAdd();
             }
         });
 
@@ -409,28 +356,37 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
         });
 
 
-
-        if(sessionManager.getString(SessionManager.BOOKING_ID).length()>0)
-        {
+        if (sessionManager.getString(SessionManager.BOOKING_ID).length() > 0) {
             timer = new CountDownTimer(60000, 1000) {
                 public void onTick(long millisUntilFinished) {
                     long seconds = millisUntilFinished / 1000;
                     //pBar2.setProgress((int) (millisUntilFinished));
                     tv_popup_request_timer.setText(millisUntilFinished / 1000 + " \tseconds left");
                 }
+
                 public void onFinish() {
+                    if(requestPopup.isShowing())
                     requestPopup.dismiss();
+
                     if (!ActionForAll.isNetworkAvailable(getApplicationContext())) {
-                        //diologInternet.show();
+
                     } else {
+
                         if (faltuCheck.equalsIgnoreCase("auto")) {
                             requestPopup.dismiss();
                             cancelReason = "auto";
                             handler.removeCallbacks(null);
                             //getAllBookingDetail();
-                            requestCancelAuto();
-                        }
-                        else {
+                            //requestCancelAuto();
+
+                            sessionManager.setString(SessionManager.BOOKING_STATUS, "");
+                            if (requestPopup.isShowing()) {
+                                requestPopup.dismiss();
+                            }
+
+                            //ActionForAll.myFlash(getApplicationContext(), "Request cancelled!");
+
+                        } else {
 
                         }
                     }
@@ -440,8 +396,7 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    private void requestAdd()
-    {
+    private void requestAdd() {
         Log.e(TAG, "provider id " + sessionManager.getString(SessionManager.PROVIDER_ID));
 
         final ProgressDialog progressDialog = Util.showProgressDialog(context);
@@ -459,11 +414,9 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
 
                 Log.d(TAG, "success " + response.body().getMessage());
 
-                if(response.isSuccessful())
-                {
+                if (response.isSuccessful()) {
                     RequestAccept requestAccept = response.body();
-                    if(requestAccept.getStatus().equals("200"))
-                    {
+                    if (requestAccept.getStatus().equals("200")) {
                         sessionManager.setString(SessionManager.BOOKING_STATUS, "");
 
                         new AlertDialog.Builder(context)
@@ -480,18 +433,25 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
 
                         timer.cancel();
                         faltuCheck = "accepted";
-                        if(requestPopup.isShowing())
-                        {
+                        if (requestPopup.isShowing()) {
                             requestPopup.dismiss();
                         }
                     }
-                    else
+                    else if(requestAccept.getStatus().equals("409"))
                     {
+                        sessionManager.setString(SessionManager.BOOKING_STATUS, "");
+                        timer.cancel();
+                        faltuCheck = "accepted";
+                        if (requestPopup.isShowing()) {
+                            requestPopup.dismiss();
+                        }
                         ActionForAll.alertUserWithCloseActivity("VahanWire", requestAccept.getMessage(), "OK", MachanicHomePage.this);
                     }
-                }
-                else
-                {
+
+                    else {
+                        ActionForAll.alertUserWithCloseActivity("VahanWire", requestAccept.getMessage(), "OK", MachanicHomePage.this);
+                    }
+                } else {
                     ActionForAll.alertUserWithCloseActivity("VahanWire", "Network busy please try after sometime", "OK", MachanicHomePage.this);
                 }
             }
@@ -505,8 +465,77 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
 
     }
 
-    private void requestCancel(String reason)
-    {
+    private void requestAddPre() {
+        Log.e(TAG, "requestAddPre: " + "pre request" );
+        Log.e(TAG, "provider id " + sessionManager.getString(SessionManager.PROVIDER_ID));
+
+        final ProgressDialog progressDialog = Util.showProgressDialog(context);
+
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        Call<RequestAccept> call = apiService.preReQuest_req_accept(sessionManager.getString(SessionManager.PROVIDER_ID),
+                sessionManager.getString(SessionManager.BOOKING_ID));
+
+        call.enqueue(new Callback<RequestAccept>() {
+            @Override
+            public void onResponse(Call<RequestAccept> call, Response<RequestAccept> response) {
+
+                Util.hideProgressDialog(progressDialog);
+
+                Log.d(TAG, "success " + response.body().getMessage());
+
+                if (response.isSuccessful()) {
+                    RequestAccept requestAccept = response.body();
+                    if (requestAccept.getStatus().equals("200")) {
+                        sessionManager.setString(SessionManager.BOOKING_STATUS, "");
+
+                        new AlertDialog.Builder(context)
+                                .setTitle("VahanWire")
+                                .setMessage("Request Accepted")
+                                .setCancelable(false)
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        startActivity(new Intent(context, BookingHistory.class));
+                                    }
+                                })
+                                .create().show();
+
+                        timer.cancel();
+                        faltuCheck = "accepted";
+                        if (requestPopup.isShowing()) {
+                            requestPopup.dismiss();
+                        }
+                    }
+                    else if(requestAccept.getStatus().equals("409"))
+                    {
+                        sessionManager.setString(SessionManager.BOOKING_STATUS, "");
+                        timer.cancel();
+                        faltuCheck = "accepted";
+                        if (requestPopup.isShowing()) {
+                            requestPopup.dismiss();
+                        }
+                        ActionForAll.alertUserWithCloseActivity("VahanWire", requestAccept.getMessage(), "OK", MachanicHomePage.this);
+                    }
+
+                    else {
+                        ActionForAll.alertUserWithCloseActivity("VahanWire", requestAccept.getMessage(), "OK", MachanicHomePage.this);
+                    }
+                } else {
+                    ActionForAll.alertUserWithCloseActivity("VahanWire", "Network busy please try after sometime", "OK", MachanicHomePage.this);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RequestAccept> call, Throwable t) {
+                Util.hideProgressDialog(progressDialog);
+                ActionForAll.alertUser("VahanWire", t.getMessage(), "OK", MachanicHomePage.this);
+            }
+        });
+
+    }
+
+    private void requestCancel(String reason) {
         Log.e(TAG, "provider id " + sessionManager.getString(SessionManager.PROVIDER_ID));
 
         final ProgressDialog progressDialog = Util.showProgressDialog(context);
@@ -514,7 +543,7 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
 
         Call<CancelRequest> call = apiService.mech_req_cancel(sessionManager.getString(SessionManager.PROVIDER_ID),
-                sessionManager.getString(SessionManager.BOOKING_ID),reason);
+                sessionManager.getString(SessionManager.BOOKING_ID), reason);
 
         call.enqueue(new Callback<CancelRequest>() {
             @Override
@@ -522,35 +551,27 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
 
                 Util.hideProgressDialog(progressDialog);
 
-                if(response.isSuccessful())
-                {
+                if (response.isSuccessful()) {
                     CancelRequest cancelRequest = response.body();
-                    if(cancelRequest.getStatus().equals("200"))
-                    {
+                    if (cancelRequest.getStatus().equals("200")) {
                         sessionManager.setString(SessionManager.BOOKING_STATUS, "");
                         Log.d(TAG, "success " + cancelRequest.getMessage());
-                        ActionForAll.alertUserWithCloseActivity("VahanWire","Request cancelled !","OK", MachanicHomePage.this);
+                        ActionForAll.alertUserWithCloseActivity("VahanWire", "Request cancelled !", "OK", MachanicHomePage.this);
                         timer.cancel();
                         faltuCheck = "cancelled_by_provider";
-                        if(requestPopup.isShowing())
-                        {
+                        if (requestPopup.isShowing()) {
                             requestPopup.dismiss();
 
                         }
 
-                        if(cancelDiolog.isShowing())
-                        {
+                        if (cancelDiolog.isShowing()) {
                             cancelDiolog.dismiss();
                         }
 
-                    }
-                    else
-                    {
+                    } else {
                         ActionForAll.alertUserWithCloseActivity("VahanWire", cancelRequest.getMessage(), "OK", MachanicHomePage.this);
                     }
-                }
-                else
-                {
+                } else {
                     ActionForAll.alertUserWithCloseActivity("VahanWire", "Network busy please try after sometime", "OK", MachanicHomePage.this);
                 }
             }
@@ -564,15 +585,14 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
 
     }
 
-    private void requestCancelAuto(String reason)
-    {
+    private void requestCancelAuto(String reason) {
         Log.e(TAG, "provider id " + sessionManager.getString(SessionManager.PROVIDER_ID));
 
         final ProgressDialog progressDialog = Util.showProgressDialog(context);
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
 
         Call<CancelRequest> call = apiService.mech_req_cancel(sessionManager.getString(SessionManager.PROVIDER_ID),
-                sessionManager.getString(SessionManager.BOOKING_ID),reason);
+                sessionManager.getString(SessionManager.BOOKING_ID), reason);
 
         call.enqueue(new Callback<CancelRequest>() {
             @Override
@@ -580,36 +600,28 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
 
                 Util.hideProgressDialog(progressDialog);
 
-                if(response.isSuccessful())
-                {
+                if (response.isSuccessful()) {
                     CancelRequest cancelRequest = response.body();
-                    if(cancelRequest.getStatus().equals("200"))
-                    {
+                    if (cancelRequest.getStatus().equals("200")) {
                         Log.d(TAG, "success " + cancelRequest.getMessage());
                         ActionForAll.myFlash(getApplicationContext(), "Request cancelled automatically");
                         timer.cancel();
                         faltuCheck = "auto";
-                        if(requestPopup.isShowing())
-                        {
+                        if (requestPopup.isShowing()) {
                             requestPopup.dismiss();
 
                         }
 
-                        if(cancelDiolog!=null && cancelDiolog.isShowing())
-                        {
+                        if (cancelDiolog != null && cancelDiolog.isShowing()) {
                             cancelDiolog.dismiss();
                         }
 
                         finish();
 
-                    }
-                    else
-                    {
+                    } else {
                         ActionForAll.alertUserWithCloseActivity("VahanWire", cancelRequest.getMessage(), "OK", MachanicHomePage.this);
                     }
-                }
-                else
-                {
+                } else {
                     ActionForAll.alertUserWithCloseActivity("VahanWire", "Network busy please try after sometime", "OK", MachanicHomePage.this);
                 }
             }
@@ -649,7 +661,7 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
         cancelReason = "";
 
         ListView list = cancelDiolog.findViewById(R.id.listReason);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(MachanicHomePage.this,android.R.layout.simple_list_item_single_choice, reason);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(MachanicHomePage.this, android.R.layout.simple_list_item_single_choice, reason);
         list.setAdapter(adapter);
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -704,7 +716,7 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
         });*/
 
 
-       laySubmit.setOnClickListener(new View.OnClickListener() {
+        laySubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (cancelReason.equalsIgnoreCase("")) {
@@ -747,7 +759,7 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    private void getreason(){
+    private void getreason() {
 
         final ProgressDialog progressDialog = Util.showProgressDialog(this);
 
@@ -762,26 +774,19 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
 
                 CancelReason cancelReason = response.body();
 
-                if(response.isSuccessful())
-                {
+                if (response.isSuccessful()) {
 
-                    if(cancelReason.getStatus().equals("200"))
-                    {
+                    if (cancelReason.getStatus().equals("200")) {
                         data = cancelReason.getData();
-                        for(Datum datum : data)
-                        {
+                        for (Datum datum : data) {
                             String name = datum.getName();
                             reason.add(name);
-                            Log.e(TAG, "onResponse: "+ name);
+                            Log.e(TAG, "onResponse: " + name);
                         }
-                    }
-                    else
-                    {
+                    } else {
 
                     }
-                }
-                else
-                {
+                } else {
 
                 }
 
@@ -806,51 +811,107 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
         Map<String, String> params = new HashMap<String, String>();
         params.put("mobile", sessionManager.getString(SessionManager.PROVIDER_MOBILE));
 
-        Call<MechanicDetail> call = apiService.getUpdatedDetailMechanic(params);
-        call.enqueue(new Callback<MechanicDetail>() {
+        Call<MechNewDetail> call = apiService.getUpdatedDetailMechanic(params);
+        call.enqueue(new Callback<MechNewDetail>() {
             @Override
-            public void onResponse(Call<MechanicDetail> call, Response<MechanicDetail> response) {
-                MechanicDetail detail = response.body();
-    //            Log.d(TAG, detail.getStatus());
+            public void onResponse(Call<MechNewDetail> call, Response<MechNewDetail> response) {
+                MechNewDetail detail = response.body();
+                //            Log.d(TAG, detail.getStatus());
                 if (detail.getStatus().equals("200")) {
                     Util.hideProgressDialog(progressDialog);
-                    Log.d(TAG, detail.getData().getMobile() + "-pin-" + detail.getData().getMobilePin());
+                    Log.e(TAG, detail.getData().getMobile() + "-pin-" + detail.getData().getMobilePin());
 
                     int count_navitaion_user = detail.getData().getRequestedUsers().size();
                     tvTotalVisitorsCountMechanic.setText(String.valueOf(count_navitaion_user));
                     List<Offer> offers = detail.getData().getOrganisation().getOffers();
                     SharedPreferences appSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     if (offers.size() > 0) {
-                        Offer offer = offers.get(0);
+                        com.electrom.vahanwireprovider.models.mechanic_new.Offer offer = offers.get(0);
                         SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
                         Gson gson = new Gson();
                         String json = gson.toJson(offer);
                         prefsEditor.putString("Offer", json);
                         prefsEditor.apply();
-                    }
-                    else
-                    {
+                    } else {
                         appSharedPrefs.edit().remove("Offer").commit();
                     }
-                        //sessionManager.setObject("Myobj", offer);
+                    //sessionManager.setObject("Myobj", offer);
+                    try {
 
-                        sessionManager.setString(SessionManager.PROVIDER_MOBILE, detail.getData().getMobile());
-                        sessionManager.setString(SessionManager.PROVIDER_PIN, detail.getData().getMobilePin());
-                        sessionManager.setString(SessionManager.REGISTER_NAME, detail.getData().getName());
-                        sessionManager.setString(SessionManager.EMAIL, detail.getData().getOrganisation().getEmail());
-                        sessionManager.setString(SessionManager.ADDRESS, detail.getData().getOrganisation().getRegAddress().getFirstAddress());
-                        sessionManager.setString(SessionManager.CONTACT_PERSON,detail.getData().getOrganisation().getOrganisationName());
-                        sessionManager.setString(SessionManager.LANDLINE, detail.getData().getOrganisation().getPhone());
-                        sessionManager.setString(SessionManager.PROVIDER_IMAGE, detail.getData().getProfilePic());
-                        sessionManager.setString(SessionManager.PROVIDER_ID, detail.getData().getId());
-                        sessionManager.setString(SessionManager.COUNRTY, detail.getData().getOrganisation().getRegAddress().getCountry());
-                        sessionManager.setString(SessionManager.STATE, detail.getData().getOrganisation().getRegAddress().getState());
-                        sessionManager.setString(SessionManager.CITY, detail.getData().getOrganisation().getRegAddress().getCity());
-                        sessionManager.setString(SessionManager.PINCODE, detail.getData().getOrganisation().getRegAddress().getPincode());
-                        WorkingHours workingHours = detail.getData().getOrganisation().getWorkingHours();
-                        sessionManager.setString(SessionManager.WORK_TO, workingHours.getTo());
-                        sessionManager.setString(SessionManager.WORK_FROM,workingHours.getFrom());
+                        Log.e(TAG, "onResponse: " + detail.getData().getPersonalDetails().getDob());
+                        Log.e(TAG, "onResponse: " + detail.getData().getPersonalDetails().getEmail());
+                        Log.e(TAG, "onResponse: " + detail.getData().getPersonalDetails().getHighestQualification());
+                        Log.e(TAG, "onResponse: " + detail.getData().getPersonalDetails().getMaritalStatus());
+                        Log.e(TAG, "onResponse: " + detail.getData().getPersonalDetails().getTotalExp());
+                        Log.e(TAG, "onResponse: " + detail.getData().getPersonalDetails().getWebsite());
+                        Log.e(TAG, "onResponse: " + detail.getData().getOrganisation().getOrgDetails().getGstNumber());
+                        Log.e(TAG, "onResponse: " + detail.getData().getPersonalDetails().getSocialMedia().getFacebook());
+                        Log.e(TAG, "onResponse: " + detail.getData().getPersonalDetails().getSocialMedia().getTwitter());
+                        Log.e(TAG, "onResponse: " + detail.getData().getPersonalDetails().getSocialMedia().getInstagram());
 
+                        sessionManager.setString(SessionManager.PRO_DOB, detail.getData().getPersonalDetails().getDob());
+                        sessionManager.setString(SessionManager.EMAIL, detail.getData().getPersonalDetails().getEmail());
+                        sessionManager.setString(SessionManager.PRO_HIGH_QULALIFICATION, detail.getData().getPersonalDetails().getHighestQualification());
+                        sessionManager.setString(SessionManager.PRO_MARRITAL_STATUS, detail.getData().getPersonalDetails().getMaritalStatus());
+                        sessionManager.setString(SessionManager.PRO_TOTAL_EXP, detail.getData().getPersonalDetails().getTotalExp());
+                        sessionManager.setString(SessionManager.PRO_WEB, detail.getData().getPersonalDetails().getWebsite());
+                        sessionManager.setString(SessionManager.PRO_GST, detail.getData().getOrganisation().getOrgDetails().getGstNumber());
+                        sessionManager.setString(SessionManager.PRO_FACEBOOK, detail.getData().getPersonalDetails().getSocialMedia().getFacebook());
+                        sessionManager.setString(SessionManager.PRO_TWEET, detail.getData().getPersonalDetails().getSocialMedia().getTwitter());
+                        sessionManager.setString(SessionManager.PRO_INSTA, detail.getData().getPersonalDetails().getSocialMedia().getInstagram());
+                        sessionManager.setString(SessionManager.SERVICE_CHARGE,detail.getData().getService_charge());
+                        sessionManager.setString(SessionManager.ACTIVE_STATUS, detail.getData().getMechanicActiveStatus().toString());
+
+                        if (sessionManager.getString(SessionManager.ACTIVE_STATUS).equals("1")) {
+                            banStatusOnMechanic.setVisibility(View.GONE);
+                            banStatusOffMechanic.setVisibility(View.VISIBLE);
+                            tvStatusMechanic.setText(ACTIVE_STATUS_ON);
+                            tvStatusMechanic.setTextColor(Color.parseColor("#00A600"));
+                            if (!isMyServiceRunning(MyForeGroundService.class)) {
+                                Intent locationIntent = new Intent(getBaseContext(), MyForeGroundService.class);
+                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+
+                                    startForegroundService(locationIntent);
+                                } else {
+                                    //lower then Oreo, just start the service.
+                                    startService(locationIntent);
+                                }
+                            }
+                        } else {
+                            banStatusOnMechanic.setVisibility(View.VISIBLE);
+                            banStatusOffMechanic.setVisibility(View.GONE);
+                            tvStatusMechanic.setText(ACTIVE_STATUS_OFF);
+                            tvStatusMechanic.setTextColor(Color.RED);
+                        }
+
+                        PersonalDetails personalDetails = detail.getData().getPersonalDetails();
+                        SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+                        Gson gson = new Gson();
+                        String json = gson.toJson(personalDetails);
+                        prefsEditor.putString("personalDetails", json);
+                        prefsEditor.apply();
+
+
+                    } catch (Exception e) {
+
+                    }
+
+                    sessionManager.setString(SessionManager.PROVIDER_MOBILE, detail.getData().getMobile());
+                    sessionManager.setString(SessionManager.PROVIDER_PIN, detail.getData().getMobilePin());
+                    sessionManager.setString(SessionManager.REGISTER_NAME, detail.getData().getName());
+                    sessionManager.setString(SessionManager.EMAIL, detail.getData().getOrganisation().getEmail());
+                    sessionManager.setString(SessionManager.ADDRESS, detail.getData().getOrganisation().getRegAddress().getFirstAddress());
+                    sessionManager.setString(SessionManager.CONTACT_PERSON, detail.getData().getOrganisation().getOrganisationName());
+                    sessionManager.setString(SessionManager.LANDLINE, detail.getData().getOrganisation().getPhone());
+                    sessionManager.setString(SessionManager.PROVIDER_IMAGE, detail.getData().getProfilePic());
+                    sessionManager.setString(SessionManager.PROVIDER_ID, detail.getData().getId());
+                    sessionManager.setString(SessionManager.COUNRTY, detail.getData().getOrganisation().getRegAddress().getCountry());
+                    sessionManager.setString(SessionManager.STATE, detail.getData().getOrganisation().getRegAddress().getState());
+                    sessionManager.setString(SessionManager.CITY, detail.getData().getOrganisation().getRegAddress().getCity());
+                    sessionManager.setString(SessionManager.PINCODE, detail.getData().getOrganisation().getRegAddress().getPincode());
+                    WorkingHours workingHours = detail.getData().getOrganisation().getWorkingHours();
+                    sessionManager.setString(SessionManager.WORK_TO, workingHours.getTo());
+                    sessionManager.setString(SessionManager.WORK_FROM, workingHours.getFrom());
 
                     Log.e(TAG, "onResponse: done ");
 
@@ -861,14 +922,14 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
             }
 
             @Override
-            public void onFailure(Call<MechanicDetail> call, Throwable t) {
+            public void onFailure(Call<MechNewDetail> call, Throwable t) {
                 Util.hideProgressDialog(progressDialog);
-                Log.d(TAG, "error" + t.getMessage());
+                Log.e(TAG, "error detail " + t.getMessage());
             }
         });
     }
 
-    private void getAllBookingDetail(){
+    private void getAllBookingDetail() {
 
         final ProgressDialog progressDialog = Util.showProgressDialog(this);
 
@@ -890,20 +951,15 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
 
                 Log.e(TAG, "onResponse: " + bookingDetails.getStatus());
 
-                if(response.isSuccessful())
-                {
+                if (response.isSuccessful()) {
 
-                    if(bookingDetails.getStatus().equals("200"))
-                    {
+                    if (bookingDetails.getStatus().equals("200")) {
                         Data data = bookingDetails.getData();
 
-                        String status  = data.getDetails().getBookingStatus().getMechanic().getStatus();
-                        if(status.contains("0") || status.contains("2"))
-                        {
+                        String status = data.getDetails().getBookingStatus().getMechanic().getStatus();
+                        if (status.contains("0") || status.contains("2")) {
 
-                        }
-                        else
-                        {
+                        } else {
                             new AlertDialog.Builder(context)
                                     .setTitle("VahanProvider")
                                     .setMessage("")
@@ -911,24 +967,17 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            Log.e(TAG , "done");
+                                            Log.e(TAG, "done");
                                         }
                                     }).create().show();
                         }
-                    }
-
-                    else if(bookingDetails.getStatus().equals("404"))
-                    {
-                        ActionForAll.alertUserWithCloseActivity("VahanWire","No booking found", "OK", MachanicHomePage.this);
-                    }
-                    else
-                    {
+                    } else if (bookingDetails.getStatus().equals("404")) {
+                        ActionForAll.alertUserWithCloseActivity("VahanWire", "No booking found", "OK", MachanicHomePage.this);
+                    } else {
                         ActionForAll.alertUserWithCloseActivity("VahanWire", bookingDetails.getMessage(), "OK", MachanicHomePage.this);
                     }
 
-                }
-                else
-                {
+                } else {
                     ActionForAll.alertUserWithCloseActivity("VahanWire", bookingDetails.getMessage(), "OK", MachanicHomePage.this);
                 }
 
@@ -976,29 +1025,22 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
 
                 Util.hideProgressDialog(progressDialog);
 
-                Log.e(TAG, "onResponse: "+ response.body().getStatus());
+                Log.e(TAG, "onResponse: " + response.body().getStatus());
 
-                if(response.isSuccessful())
-                {
+                if (response.isSuccessful()) {
                     CancelRequest body = response.body();
-                    if(body.getStatus().equals("200"))
-                    {
+                    if (body.getStatus().equals("200")) {
                         sessionManager.setString(SessionManager.BOOKING_STATUS, "");
-                        if(requestPopup.isShowing())
-                        {
+                        if (requestPopup.isShowing()) {
                             requestPopup.dismiss();
                         }
 
                         ActionForAll.myFlash(getApplicationContext(), "Request cancelled!");
-                        finish();
-                    }
-                    else
-                    {
+
+                    } else {
                         ActionForAll.myFlash(getApplicationContext(), body.getMessage());
                     }
-                }
-                else
-                {
+                } else {
                     ActionForAll.myFlash(getApplicationContext(), "error found api not responding...");
                 }
 
@@ -1012,7 +1054,7 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                     {
                         sessionManager.setString(SessionManager.BOOKING_STATUS, "");
                         Log.d(TAG, "success " + cancelRequest.getMessage());
-                        //ActionForAll.alertUserWithCloseActivity("VahanWire","Request cancelled !","OK", AmbulanceProvider.this);
+                        //ActionForAll.alertUserWithCloseActivity("VahanWire","Request cancelled !","OK", AmbulanceHomePage.this);
                         timer.cancel();
                         faltuCheck = "cancelled_by_provider";
                         if(requestPopup.isShowing())
@@ -1022,12 +1064,12 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                     }
                     else
                     {
-                        ActionForAll.alertUserWithCloseActivity("VahanWire", cancelRequest.getMessage(), "OK", AmbulanceProvider.this);
+                        ActionForAll.alertUserWithCloseActivity("VahanWire", cancelRequest.getMessage(), "OK", AmbulanceHomePage.this);
                     }
                 }
                 else
                 {
-                    ActionForAll.alertUserWithCloseActivity("VahanWire", "Network busy please try after sometime", "OK", AmbulanceProvider.this);
+                    ActionForAll.alertUserWithCloseActivity("VahanWire", "Network busy please try after sometime", "OK", AmbulanceHomePage.this);
                 }*/
             }
 

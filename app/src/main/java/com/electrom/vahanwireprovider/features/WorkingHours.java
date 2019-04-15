@@ -1,8 +1,10 @@
 package com.electrom.vahanwireprovider.features;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
@@ -16,10 +18,14 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 
+import com.electrom.vahanwireprovider.PetrolPumpHomePage;
 import com.electrom.vahanwireprovider.R;
 import com.electrom.vahanwireprovider.location_service_update_track.MyForeGroundService;
 import com.electrom.vahanwireprovider.models.mech_status.MechanicStatus;
 import com.electrom.vahanwireprovider.models.petrol_status.PetrolStatus;
+import com.electrom.vahanwireprovider.models.request_accept.RequestAccept;
+import com.electrom.vahanwireprovider.new_app_driver.DriverHomePage;
+import com.electrom.vahanwireprovider.new_app_tow.TowHomePage;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiClient;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiInterface;
 import com.electrom.vahanwireprovider.utility.ActionForAll;
@@ -46,7 +52,7 @@ public class WorkingHours extends AppCompatActivity implements View.OnClickListe
     Context context = WorkingHours.this;
     private int mYear, mMonth, mDay, mHour, mMinute;
     RelativeLayout rlStartTime, rlEndTime;
-    CustomTextView tvStartTime, tvEndTime,tvPetrolServiceOnOff;
+    CustomTextView tvStartTime, tvEndTime,tvPetrolServiceOnOff, tvTagCurrentStatus;
     SessionManager sessionManager;
     CustomButton btnSumbitWorkingHours,btnPetrolServiceOn, btnPetrolServiceOff;
     String START_TIME = "Open Time";
@@ -71,6 +77,8 @@ public class WorkingHours extends AppCompatActivity implements View.OnClickListe
         tvPetrolServiceOnOff = findViewById(R.id.tvPetrolServiceOnOff);
         btnPetrolServiceOn = findViewById(R.id.btnPetrolServiceOn);
         btnPetrolServiceOff = findViewById(R.id.btnPetrolServiceOff);
+        tvTagCurrentStatus = findViewById(R.id.tvTagCurrentStatus);
+        tvTagCurrentStatus.setVisibility(View.INVISIBLE);
 
         if(sessionManager.getString(SessionManager.WORK_FROM).length() > 0)
         {
@@ -112,7 +120,6 @@ public class WorkingHours extends AppCompatActivity implements View.OnClickListe
             btnPetrolServiceOff.setVisibility(View.GONE);
             btnPetrolServiceOn.setVisibility(View.GONE);
         }
-
     }
 
     @Override
@@ -170,6 +177,11 @@ public class WorkingHours extends AppCompatActivity implements View.OnClickListe
                     else if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_MECHNIC_PRO))
                     {
                         updateTimingMech();
+                    }
+
+                    else if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_TOW))
+                    {
+                        updateTimingTow();
                     }
                 }
                 else
@@ -308,6 +320,106 @@ public class WorkingHours extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Util.hideProgressDialog(progressDialog);
+                t.printStackTrace();
+                finish();
+            }
+        });
+
+    }
+
+
+    private void updateTimingTow()
+    {
+        final ProgressDialog progressDialog = Util.showProgressDialog(context);
+
+        Log.e(TAG, "updateTimingTow: " + "tow timing update" );
+        Log.e(TAG, "updateTiming: mobile " + sessionManager.getString(SessionManager.PROVIDER_MOBILE));
+        Log.e(TAG, "updateTiming: from " + START_TIME);
+        Log.e(TAG, "updateTiming: to " + END_TIME);
+
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        Call<RequestAccept> call = apiService.tow_time_update(sessionManager.getString(SessionManager.PROVIDER_MOBILE),
+                START_TIME,
+                END_TIME);
+
+        call.enqueue(new Callback<RequestAccept>() {
+            @Override
+            public void onResponse(Call<RequestAccept> call, Response<RequestAccept> response) {
+
+                Util.hideProgressDialog(progressDialog);
+
+                if(response.isSuccessful())
+                {
+
+                    RequestAccept body = response.body();
+
+                    if(body.getStatus().equals("200"))
+                    {
+
+                        new AlertDialog.Builder(WorkingHours.this)
+                                .setTitle("VahanProvider")
+                                .setMessage(body.getMessage())
+                                .setCancelable(false)
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                        if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_PETROL_PUMP))
+                                        {
+
+                                            Intent logout = new Intent(context, PetrolPumpHomePage.class);
+                                            logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            context.startActivity(logout);
+
+                                        }
+                                        else if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_MECHNIC_PRO))
+                                        {
+                                            Intent logout = new Intent(context, MachanicHomePage.class);
+                                            logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            context.startActivity(logout);
+                                        }
+                                        else if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_TOW))
+                                        {
+                                            Intent logout = new Intent(context, TowHomePage.class);
+                                            logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            context.startActivity(logout);
+                                        }
+                                        else if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_DRIVER))
+                                        {
+                                            Intent logout = new Intent(context, DriverHomePage.class);
+                                            logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            context.startActivity(logout);
+
+                                        }
+                                        else if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_AMBULANCE))
+                                        {
+                                            Intent logout = new Intent(context, AmbulanceHomePage.class);
+                                            logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            context.startActivity(logout);
+                                        }
+
+                                    }
+                                }).create().show();
+
+                        //ActionForAll.alertUserWithCloseActivity("VahanProvider", body.getMessage(), "OK", WorkingHours.this);
+                    }
+                    else
+                    {
+                        ActionForAll.alertUserWithCloseActivity("VahanProvider", body.getMessage(), "OK", WorkingHours.this);
+                    }
+
+                }
+
+                else
+                {
+                    ActionForAll.alertUser("VahanWire", "Network busy please try after sometime", "OK", WorkingHours.this);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RequestAccept> call, Throwable t) {
                 Util.hideProgressDialog(progressDialog);
                 t.printStackTrace();
                 finish();

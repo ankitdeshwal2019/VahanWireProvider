@@ -40,6 +40,7 @@ import com.electrom.vahanwireprovider.retrofit_lib.ApiClient;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiInterface;
 import com.electrom.vahanwireprovider.utility.ActionForAll;
 import com.electrom.vahanwireprovider.utility.CustomButton;
+import com.electrom.vahanwireprovider.utility.CustomEditText;
 import com.electrom.vahanwireprovider.utility.CustomTextView;
 import com.electrom.vahanwireprovider.utility.PicassoClient;
 import com.electrom.vahanwireprovider.utility.SessionManager;
@@ -84,6 +85,8 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
     Dialog cancelDiolog;
     CustomButton btnCancelMechanic;
     ImageView ivDir;
+    String OTP;
+    int routeCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +95,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
 
         initView();
 
-        getAllBookingDetail();
+       getAllBookingDetail();
 
         getreason();
     }
@@ -134,23 +137,29 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
         switch (v.getId())
         {
             case R.id.llCointainerOnTheWay:
+                if(routeCount <  1)
                 boobkingStatusOnTheWay();
                 break;
 
-                case R.id.btnCancelMechanic:
-                cancelPopup();
-                break;
-
             case R.id.llCointainerReachStart:
-                boobkingStatusReachNstart();
+                if(routeCount == 1)
+
+                verifyOtpPopup();
                 break;
 
             case R.id.llCointainerServiceDone:
+                if(routeCount == 2)
                 boobkingStatusServiceDone();
                 break;
 
             case R.id.llCointainerCompalete:
+                if(routeCount == 3)
                 boobkingStatusComplete();
+                break;
+
+
+            case R.id.btnCancelMechanic:
+                cancelPopup();
                 break;
 
                 case R.id.back:
@@ -217,6 +226,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
 
                     if(bookingStatus.getStatus().equals("200"))
                     {
+                        routeCount = 1;
                         Log.d(TAG, "success " + bookingStatus.getMessage());
                         Log.d(TAG, "success " + bookingStatus.getMessage());
                         ivOnTheWay.setImageResource(R.drawable.on_the_way_green);
@@ -271,6 +281,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                     B_Status bookingStatus = response.body();
                     if(bookingStatus.getStatus().equals("200"))
                     {
+                        routeCount = 2;
                         Log.d(TAG, "success " + bookingStatus.getMessage());
                         ivOnTheWay.setImageResource(R.drawable.on_the_way_green);
                         ivReachStart.setImageResource(R.drawable.reach_start);
@@ -328,6 +339,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                     B_Status bookingStatus = response.body();
                     if(bookingStatus.getStatus().equals("200"))
                     {
+                        routeCount = 3;
                         ivOnTheWay.setImageResource(R.drawable.on_the_way_green);
                         ivReachStart.setImageResource(R.drawable.reach_start);
                         ivServiceDone.setImageResource(R.drawable.service_done_green);
@@ -385,6 +397,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                     B_Status bookingStatus = response.body();
                     if(bookingStatus.getStatus().equals("200"))
                     {
+                        routeCount = 4;
                         Log.e(TAG, "success " + bookingStatus.getMessage());
                         ivOnTheWay.setImageResource(R.drawable.on_the_way_green);
                         ivReachStart.setImageResource(R.drawable.reach_start);
@@ -460,6 +473,9 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                         Latitude = coordinates.get(1);
                         Log.e(TAG, "onResponse: "+ Longitude+" - " + Latitude);
                         String status = details.getEnrouteStatus();
+                        OTP =  details.getOtpVerify();
+                        Log.e(TAG, "onResponse: otp mechanic" +  OTP);
+
                         if(status.equals("0")){
                             btnCancelMechanic.setVisibility(View.VISIBLE);
                             llDiration.setVisibility(View.INVISIBLE);
@@ -477,6 +493,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                             llCointainerReachStart.setClickable(true);
                             llCointainerServiceDone.setClickable(true);
                             llCointainerCompalete.setClickable(true);
+                            routeCount = 1;
 
                         }
                         else if(status.equals("2")){
@@ -492,6 +509,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                             llCointainerReachStart.setClickable(false);
                             llCointainerServiceDone.setClickable(true);
                             llCointainerCompalete.setClickable(true);
+                            routeCount = 2;
                         }
                         else if(status.equals("3")){
 
@@ -506,6 +524,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                             llCointainerReachStart.setClickable(false);
                             llCointainerServiceDone.setClickable(false);
                             llCointainerCompalete.setClickable(true);
+                            routeCount = 3;
 
                         }
                         else if(status.equals("4")){
@@ -514,14 +533,18 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                             ivReachStart.setImageResource(R.drawable.reach_start);
                             ivServiceDone.setImageResource(R.drawable.service_done_green);
                             ivComplete.setImageResource(R.drawable.complete_green);
-                            tvBookingMechanicDirection.setText("Compalete");
-                            llDiration.setVisibility(View.INVISIBLE);
+                            tvBookingMechanicDirection.setText("Complete");
+                            tvBookingMechanicDirection.setClickable(false);
+                            llDiration.setVisibility(View.VISIBLE);
+                            ivDir.setVisibility(View.GONE);
+                            llDiration.setClickable(false);
                             btnCancelMechanic.setVisibility(View.INVISIBLE);
                             llCointainerOnTheWay.setClickable(false);
                             llCointainerReachStart.setClickable(false);
                             llCointainerServiceDone.setClickable(false);
                             llCointainerCompalete.setClickable(false);
                             tvTitle.setText("Completed / Cancelled service");
+                            routeCount = 4;
 
                         }
                         tvBookingMechanicName.setText(userDetails.getFullname());
@@ -578,7 +601,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                 Util.hideProgressDialog(progressDialog);
                 Log.e("service failier", t.getMessage());
                 t.printStackTrace();
-                ActionForAll.alertUserWithCloseActivity("VahanWire", "No active bookin found", "OK", BookingStatusMechanic.this);
+                //ActionForAll.alertUserWithCloseActivity("VahanWire", "No active bookin found", "OK", BookingStatusMechanic.this);
 
             }
         });
@@ -816,6 +839,47 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
             }
         });
 
+    }
+
+    public void verifyOtpPopup() {
+
+        final Dialog verifyDiolog = new Dialog(BookingStatusMechanic.this);
+        verifyDiolog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        verifyDiolog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        verifyDiolog.setContentView(R.layout.verify_otp_popup);
+        verifyDiolog.getWindow().getAttributes().windowAnimations = R.style.diologIntertnet;
+        verifyDiolog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+
+        final CustomEditText etVerifyOtpBooking = verifyDiolog.findViewById(R.id.etVerifyOtpBooking);
+        CustomButton btnVerifyOtpBookingCancel = verifyDiolog.findViewById(R.id.btnVerifyOtpBookingCancel);
+        CustomButton btnVerifyOtpBookingVerify = verifyDiolog.findViewById(R.id.btnVerifyOtpBookingVerify);
+
+        btnVerifyOtpBookingCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                verifyDiolog.dismiss();
+            }
+        });
+
+        btnVerifyOtpBookingVerify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(etVerifyOtpBooking.getText().toString().trim().equals(OTP))
+                {
+                    verifyDiolog.dismiss();
+                    boobkingStatusReachNstart();
+                }
+                else
+                {
+                    etVerifyOtpBooking.setText("");
+                    ActionForAll.alertUser("VahanWire", "OTP not matched", "OK", BookingStatusMechanic.this);
+                }
+
+            }
+        });
+
+        verifyDiolog.show();
     }
 
 }

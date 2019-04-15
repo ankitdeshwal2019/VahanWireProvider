@@ -685,13 +685,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
                     if(service.getStatus().equals("200"))
                     {
-                        final List<com.electrom.vahanwireprovider.models.country.Datum> list  = service.getData();
+                        final List<com.electrom.vahanwireprovider.models.country.DriverData> list  = service.getData();
                         Log.d("size", "list size " + list.size()+"");
 
                         // CountryAdapter adapter = new CountryAdapter(ProfileActivity.this, list);
                         SpinnerAdapter adapter = new SpinnerAdapter(ProfileActivity.this, list);
                         spinCountry.setAdapter(adapter);
-                        for(com.electrom.vahanwireprovider.models.country.Datum datum : list)
+                        for(com.electrom.vahanwireprovider.models.country.DriverData datum : list)
                         {
                             if(datum.getName().equals(sessionManager.getString(SessionManager.COUNRTY)))
                             {
@@ -839,7 +839,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
                 if(response.isSuccessful())
                 {
-                    com.electrom.vahanwireprovider.models.country.Datum datum = new com.electrom.vahanwireprovider.models.country.Datum();
+                    com.electrom.vahanwireprovider.models.country.DriverData datum = new com.electrom.vahanwireprovider.models.country.DriverData();
 
 
                     if(city.getStatus().equals("200"))

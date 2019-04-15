@@ -15,9 +15,27 @@
             android:title="Profile" />
 
         <item
+            android:id="@+id/nav_my_introduction"
+            android:icon="@drawable/profile"
+            android:title="My Introduction" />
+
+        <item
             android:icon="@drawable/nav_booking_history"
             android:id="@+id/nav_booking"
             android:title="Booking History" />
+
+
+        <item
+            android:icon="@drawable/nav_booking_history"
+            android:visible="false"
+            android:id="@+id/nav_booking_driver"
+            android:title="Booking History" />
+
+
+        <item
+            android:visible="false"
+            android:id="@+id/nav_service_charge_mech"
+            android:title="Service Charge" />
 
         <item
             android:id="@+id/nav_offer"

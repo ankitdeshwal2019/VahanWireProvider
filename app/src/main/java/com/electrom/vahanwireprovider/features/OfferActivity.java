@@ -18,9 +18,11 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 
-import com.electrom.vahanwireprovider.MainActivity;
+import com.electrom.vahanwireprovider.PetrolPumpHomePage;
 import com.electrom.vahanwireprovider.R;
 import com.electrom.vahanwireprovider.models.detail.Offer;
+import com.electrom.vahanwireprovider.models.request_accept.RequestAccept;
+import com.electrom.vahanwireprovider.new_app_tow.TowHomePage;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiClient;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiInterface;
 import com.electrom.vahanwireprovider.utility.ActionForAll;
@@ -31,6 +33,7 @@ import com.electrom.vahanwireprovider.utility.SessionManager;
 import com.electrom.vahanwireprovider.utility.Util;
 import com.google.gson.Gson;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -63,8 +66,7 @@ public class OfferActivity extends AppCompatActivity implements View.OnClickList
 
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         Gson gson = new Gson();
-        String json = sharedPrefs.getString("Offer", null);
-        Offer offer = gson.fromJson(json, Offer.class);
+
         sessionManager = SessionManager.getInstance(this);
         btnStartDate = findViewById(R.id.btnStartDate);
         btnEndDate = findViewById(R.id.btnEndDate);
@@ -76,14 +78,40 @@ public class OfferActivity extends AppCompatActivity implements View.OnClickList
         btnEndDate.setOnClickListener(this);
         btnSubmitOffer.setOnClickListener(this);
         iv_back.setOnClickListener(this);
-        try {
-            setData(offer);
-        } catch (Exception e) {
-            e.printStackTrace();
+
+        if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_TOW))
+        {
+            String json = sharedPrefs.getString("Offer_tow", null);
+            Log.e(TAG, "initView: " + json);
+            try {
+                JSONArray array = new JSONArray(json);
+                for(int i = 0 ; i < array.length(); i++)
+                {
+                    JSONObject value = array.getJSONObject(i);
+                    etOfferTitle.setText(value.getString("title"));
+                    etOfferDescription.setText(value.getString("description"));
+                    btnStartDate.setText(value.getString("from"));
+                    btnEndDate.setText(value.getString("to"));
+
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        else
+        {
+            String json = sharedPrefs.getString("Offer", null);
+            Offer offer = gson.fromJson(json, Offer.class);
+            try {
+                setData(offer);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    private void setData(Offer offer) throws Exception {
+    private void setData(Offer offer) {
         etOfferTitle.setText(offer.getTitle());
         etOfferDescription.setText(offer.getDescription());
         btnStartDate.setText(offer.getFrom());
@@ -150,7 +178,7 @@ public class OfferActivity extends AppCompatActivity implements View.OnClickList
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
                                                     dialog.dismiss();
-                                                    Intent logout= new Intent(getApplicationContext(), MainActivity.class);
+                                                    Intent logout= new Intent(getApplicationContext(), PetrolPumpHomePage.class);
                                                     logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                                     startActivity(logout);
                                                 }
@@ -242,6 +270,66 @@ public class OfferActivity extends AppCompatActivity implements View.OnClickList
         });
     }
 
+    private void addOfferTow() {
+
+        Log.e(TAG, "addOfferTow: " + "tow offer" );
+
+        final ProgressDialog progressDialog = Util.showProgressDialog(this);
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        Call<RequestAccept> call = apiService.offerAddTow(
+                sessionManager.getString(SessionManager.PROVIDER_MOBILE),
+                etOfferTitle.getText().toString(), etOfferDescription.getText().toString(),
+                btnStartDate.getText().toString(),
+                btnEndDate.getText().toString());
+
+        call.enqueue(new Callback<RequestAccept>() {
+            @Override
+            public void onResponse(Call<RequestAccept> call, Response<RequestAccept> response) {
+                if (response != null && response.isSuccessful()) {
+                    Util.hideProgressDialog(progressDialog);
+
+                    final RequestAccept body = response.body();
+
+                    if(body.getStatus().equals("200"))
+                    {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                new AlertDialog.Builder(OfferActivity.this)
+                                        .setTitle("VahanProvider")
+                                        .setMessage(body.getMessage())
+                                        .setCancelable(false)
+                                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                                Intent logout= new Intent(getApplicationContext(), TowHomePage.class);
+                                                logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                startActivity(logout);
+                                            }
+                                        }).create().show();
+                                //ActionForAll.alertUserWithCloseActivity("VahanWire", message,"OK", OfferActivity.this);
+                            }
+                        }, 300);
+                    } else {
+                        ActionForAll.alertUser("VahanWire", body.getMessage(), "OK", OfferActivity.this);
+                    }
+                    }
+                    else
+                    {
+                        ActionForAll.alertUser("VahanWire", "No connection please try after sometime", "OK", OfferActivity.this);
+                    }
+            }
+
+            @Override
+            public void onFailure(Call<RequestAccept> call, Throwable t) {
+                Util.hideProgressDialog(progressDialog);
+                Log.d(TAG, "onFailure: " + t.getMessage());
+            }
+        });
+    }
+
 
     private void isNotEmptyFields()
     {
@@ -277,6 +365,12 @@ public class OfferActivity extends AppCompatActivity implements View.OnClickList
             {
                 Log.e(TAG, "onClick: " + sessionManager.getString(SessionManager.SERVICE));
                 addOffermech();
+            }
+
+            else if(sessionManager.getString(SessionManager.SERVICE).contains(Constant.SERVICE_TOW))
+            {
+                Log.e(TAG, "onClick: " + sessionManager.getString(SessionManager.SERVICE));
+                addOfferTow();
             }
 
         }

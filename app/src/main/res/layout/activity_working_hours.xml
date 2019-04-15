@@ -167,6 +167,7 @@
 
 
         <com.electrom.vahanwireprovider.utility.CustomTextView
+            android:id="@+id/tvTagCurrentStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Current status"
@@ -188,7 +189,7 @@
             android:layout_margin="@dimen/size_40dp"
             android:id="@+id/btnPetrolServiceOn"
             android:layout_width="210dp"
-            android:text="Make on duty"
+            android:text="Open Petrol Pump "
             android:textSize="@dimen/size_15sp"
             android:textColor="@color/colorGreenApp"
             android:layout_height="@dimen/size_50dp"
@@ -197,7 +198,7 @@
             android:layout_margin="@dimen/size_40dp"
             android:id="@+id/btnPetrolServiceOff"
             android:layout_width="210dp"
-            android:text="Make off duty"
+            android:text="Close Petrol Pump"
             android:textColor="#cc0000"
             android:visibility="gone"
             android:textSize="@dimen/size_15sp"

@@ -14,21 +14,26 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.electrom.vahanwireprovider.MainActivity;
-import com.electrom.vahanwireprovider.features.AmbulanceProvider;
+import com.electrom.vahanwireprovider.PetrolPumpHomePage;
+import com.electrom.vahanwireprovider.features.ActivityServiceCharge;
+import com.electrom.vahanwireprovider.features.AddnExpert;
+import com.electrom.vahanwireprovider.features.AmbulanceHomePage;
 import com.electrom.vahanwireprovider.features.BookingHistory;
-import com.electrom.vahanwireprovider.features.BookingStatusMechanic;
+import com.electrom.vahanwireprovider.features.BookingHistoryMechanic;
+import com.electrom.vahanwireprovider.new_app_driver.BookingHistoryDriver;
 import com.electrom.vahanwireprovider.features.FacilitynPaymentMethod;
 import com.electrom.vahanwireprovider.features.MachanicHomePage;
+import com.electrom.vahanwireprovider.features.MechanicProfile;
 import com.electrom.vahanwireprovider.features.OfferActivity;
 import com.electrom.vahanwireprovider.features.PaymentMethod;
 import com.electrom.vahanwireprovider.features.ProfileActivity;
 import com.electrom.vahanwireprovider.features.SelectBrand;
 import com.electrom.vahanwireprovider.features.SelectIssue;
+import com.electrom.vahanwireprovider.features.UploadSocial;
 import com.electrom.vahanwireprovider.features.WorkingHours;
 import com.electrom.vahanwireprovider.models.logout.Logout;
+import com.electrom.vahanwireprovider.new_app_tow.ProfileUpdateTow;
 import com.electrom.vahanwireprovider.ragistration.BeforeLogin;
-import com.electrom.vahanwireprovider.ragistration.ProviderLogin;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiClient;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiInterface;
 
@@ -59,17 +64,37 @@ public class CodeMinimisations {
         switch (menuItem) {
 
             case "Booking History":
-                in = new Intent(context, BookingHistory.class);
-                context.startActivity(in);
+
+                if (sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_DRIVER))
+                {
+                    Log.e(TAG, "largeSwitchCase: " + "driver" );
+                    in = new Intent(context, BookingHistoryDriver.class);
+                    context.startActivity(in);
+                    context.startActivity(in);
+                }
+                else if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_MECHNIC_PRO))
+                {
+                    Log.e(TAG, "largeSwitchCase: " + "mechanic" );
+                    in = new Intent(context, BookingHistoryMechanic.class);
+                    context.startActivity(in);
+                }
+
+                else
+                {
+                    Log.e(TAG, "largeSwitchCase: " + "simple" );
+                    in = new Intent(context, BookingHistory.class);
+                    context.startActivity(in);
+                }
+
                 break;
 
             case "Home":
                 if (sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_PETROL_PUMP)) {
-                    in = new Intent(context, MainActivity.class);
+                    in = new Intent(context, PetrolPumpHomePage.class);
                     context.startActivity(in);
 
                 } else if (sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_AMBULANCE)) {
-                    in = new Intent(context, AmbulanceProvider.class);
+                    in = new Intent(context, AmbulanceHomePage.class);
                     context.startActivity(in);
                 } else if (sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_MECHNIC_PRO)) {
                     in = new Intent(context, MachanicHomePage.class);
@@ -79,14 +104,48 @@ public class CodeMinimisations {
                 break;
 
             case "Profile":
-                // ActionForAll.myFlash(context, "Profile page");
-                in = new Intent(context, ProfileActivity.class);
-                context.startActivity(in);
+
+               /* in = new Intent(context, ProfileActivity.class);
+                context.startActivity(in);*/
+
+                if (sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_PETROL_PUMP)) {
+                    in = new Intent(context, ProfileActivity.class);
+                    context.startActivity(in);
+
+                } else if (sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_AMBULANCE)) {
+                    in = new Intent(context, ProfileActivity.class);
+                    context.startActivity(in);
+                }
+
+                else if (sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_MECHNIC_PRO)) {
+                    in = new Intent(context, MechanicProfile.class);
+                    context.startActivity(in);
+                }
+
+                else if (sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_TOW)) {
+                        in = new Intent(context, ProfileUpdateTow.class);
+                        context.startActivity(in);
+                }
+                break;
+
+            case "My Introduction":
+                if (sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_MECHNIC_PRO)) {
+                    in = new Intent(context, UploadSocial.class);
+                    context.startActivity(in);
+
+                }
                 break;
 
             case "Offers":
                 // ActionForAll.myFlash(context, "Offer page");
                 in = new Intent(context, OfferActivity.class);
+                context.startActivity(in);
+                break;
+
+
+            case "Service Charge":
+                // ActionForAll.myFlash(context, "Offer page");
+                in = new Intent(context, ActivityServiceCharge.class);
                 context.startActivity(in);
                 break;
 
@@ -121,6 +180,8 @@ public class CodeMinimisations {
                 break;
 
             case "About Us":
+                /*in = new Intent(context, AddnExpert.class);
+                context.startActivity(in);*/
                 ActionForAll.alertUser("VahanProvider", "Work in progress", "OK", (Activity) context);
                 break;
 
@@ -157,6 +218,12 @@ public class CodeMinimisations {
                         } else if (sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_MECHNIC_PRO)) {
                             logoutMethodMechanic();
                         }
+                        else if (sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_DRIVER)) {
+                            logoutMethodDriver();
+                        }
+                        else if (sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_TOW)) {
+                            logoutMethodTow();
+                        }
 
                         sessionManager.setString(SessionManager.PROVIDER_MOBILE, "");
                         sessionManager.setString(SessionManager.PROVIDER_PIN, "");
@@ -190,6 +257,17 @@ public class CodeMinimisations {
                         sessionManager.setString(SessionManager.PROVIDER_VEHICLE, "");
                         sessionManager.setString(SessionManager.WORK_FROM, "");
                         sessionManager.setString(SessionManager.WORK_TO, "");
+                        sessionManager.setString(SessionManager.PRO_CERTIFICTION_NAME, "");
+                        sessionManager.setString(SessionManager.PRO_DOB, "");
+                        sessionManager.setString(SessionManager.PRO_HIGH_QULALIFICATION, "");
+                        sessionManager.setString(SessionManager.PRO_MARRITAL_STATUS, "");
+                        sessionManager.setString(SessionManager.PRO_TOTAL_EXP, "");
+                        sessionManager.setString(SessionManager.PRO_WEB, "");
+                        sessionManager.setString(SessionManager.PRO_GST, "");
+                        sessionManager.setString(SessionManager.PRO_FACEBOOK, "");
+                        sessionManager.setString(SessionManager.PRO_TWEET, "");
+                        sessionManager.setString(SessionManager.PRO_INSTA, "");
+                        sessionManager.setString(SessionManager.VEHCILE_NUMBER, "");
 
                         dialog.dismiss();
                         Intent logout = new Intent(context, BeforeLogin.class);
@@ -235,6 +313,7 @@ public class CodeMinimisations {
 
 
     private static void logoutMethodAmbulance() {
+        Log.e(TAG, "logoutMethodAmbulance: " + "ambulance" );
         Log.e(TAG, "provider id " + sessionManager.getString(SessionManager.PROVIDER_ID));
 
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
@@ -273,13 +352,99 @@ public class CodeMinimisations {
 
     }
 
-
     private static void logoutMethodMechanic() {
+
+        Log.e(TAG, "logoutMethodAmbulance: " + "mechanic" );
+
         Log.e(TAG, "provider id " + sessionManager.getString(SessionManager.PROVIDER_ID));
 
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
 
         Call<Logout> call = apiService.logoutMechanic(sessionManager.getString(SessionManager.PROVIDER_ID));
+
+        call.enqueue(new Callback<Logout>() {
+            @Override
+            public void onResponse(Call<Logout> call, Response<Logout> response) {
+
+
+                if (response.isSuccessful()) {
+                    Logout bookingStatus = response.body();
+
+                    if (bookingStatus.getStatus().equals("200")) {
+                        Log.d(TAG, "success " + bookingStatus.getMessage());
+
+
+                        //ActionForAll.alertUserWithCloseActivity("VahanWire","Request cancelled !","OK", BookingStatusMechanic.this);
+                    } else {
+                        Log.e(TAG, " else  " + bookingStatus.getMessage());
+                        //ActionForAll.alertUserWithCloseActivity("VahanWire", bookingStatus.getMessage(), "OK", BookingStatusMechanic.this);
+                    }
+                } else {
+                    Log.e(TAG, " else  " + "Network busy please try after sometime");
+                    //ActionForAll.alertUserWithCloseActivity("VahanWire", "Network busy please try after sometime", "OK", MyForeGroundService.this);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Logout> call, Throwable t) {
+
+                Log.e(TAG, "onFailure: " + t.getMessage());
+            }
+        });
+
+    }
+
+    private static void logoutMethodDriver() {
+
+        Log.e(TAG, "logoutMethodAmbulance: " + "driver" );
+
+        Log.e(TAG, "provider id " + sessionManager.getString(SessionManager.PROVIDER_ID));
+
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        Call<Logout> call = apiService.logoutDriver(sessionManager.getString(SessionManager.PROVIDER_ID));
+
+        call.enqueue(new Callback<Logout>() {
+            @Override
+            public void onResponse(Call<Logout> call, Response<Logout> response) {
+
+
+                if (response.isSuccessful()) {
+                    Logout bookingStatus = response.body();
+
+                    if (bookingStatus.getStatus().equals("200")) {
+                        Log.d(TAG, "success " + bookingStatus.getMessage());
+
+
+                        //ActionForAll.alertUserWithCloseActivity("VahanWire","Request cancelled !","OK", BookingStatusMechanic.this);
+                    } else {
+                        Log.e(TAG, " else  " + bookingStatus.getMessage());
+                        //ActionForAll.alertUserWithCloseActivity("VahanWire", bookingStatus.getMessage(), "OK", BookingStatusMechanic.this);
+                    }
+                } else {
+                    Log.e(TAG, " else  " + "Network busy please try after sometime");
+                    //ActionForAll.alertUserWithCloseActivity("VahanWire", "Network busy please try after sometime", "OK", MyForeGroundService.this);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Logout> call, Throwable t) {
+
+                Log.e(TAG, "onFailure: " + t.getMessage());
+            }
+        });
+
+    }
+
+    private static void logoutMethodTow() {
+
+        Log.e(TAG, "logoutMethoe: " + "tow logout" );
+
+        Log.e(TAG, "provider id " + sessionManager.getString(SessionManager.PROVIDER_ID));
+
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        Call<Logout> call = apiService.logoutTow(sessionManager.getString(SessionManager.PROVIDER_ID));
 
         call.enqueue(new Callback<Logout>() {
             @Override

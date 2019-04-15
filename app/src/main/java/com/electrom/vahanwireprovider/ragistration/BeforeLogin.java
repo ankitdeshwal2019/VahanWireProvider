@@ -1,6 +1,5 @@
 package com.electrom.vahanwireprovider.ragistration;
 
-import android.Manifest;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -14,25 +13,20 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import com.electrom.vahanwireprovider.MainActivity;
+import com.electrom.vahanwireprovider.PetrolPumpHomePage;
 import com.electrom.vahanwireprovider.R;
-import com.electrom.vahanwireprovider.features.AmbulanceProvider;
+import com.electrom.vahanwireprovider.features.AmbulanceHomePage;
 import com.electrom.vahanwireprovider.features.MachanicHomePage;
-import com.electrom.vahanwireprovider.location_service.GPSTracker;
-import com.electrom.vahanwireprovider.utility.ActionForAll;
+import com.electrom.vahanwireprovider.new_app_driver.DriverHomePage;
+import com.electrom.vahanwireprovider.new_app_tow.ChoiseLogin;
+import com.electrom.vahanwireprovider.new_app_tow.TowHomePage;
+import com.electrom.vahanwireprovider.utility.Constant;
 import com.electrom.vahanwireprovider.utility.CustomTextView;
 import com.electrom.vahanwireprovider.utility.SessionManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.MultiplePermissionsReport;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-
-import java.util.List;
 
 public class BeforeLogin extends AppCompatActivity implements View.OnClickListener {
 
@@ -75,15 +69,23 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
                 sessionManager.getString(SessionManager.PROVIDER_PIN).length() > 0)
         {
             if(service.contains("Petrol_Pump")){
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                startActivity(new Intent(getApplicationContext(), PetrolPumpHomePage.class));
                 finish();
             }
             else if(service.contains("Ambulance")){
-                startActivity(new Intent(getApplicationContext(), AmbulanceProvider.class));
+                startActivity(new Intent(getApplicationContext(), AmbulanceHomePage.class));
                 finish();
             }
             else if(service.contains("MechanicPro")){
                 startActivity(new Intent(getApplicationContext(), MachanicHomePage.class));
+                finish();
+            }
+            else if(service.contains(Constant.SERVICE_TOW)){
+                startActivity(new Intent(getApplicationContext(), TowHomePage.class));
+                finish();
+            }
+            else if(service.contains(Constant.SERVICE_DRIVER)){
+                startActivity(new Intent(getApplicationContext(), DriverHomePage.class));
                 finish();
             }
         }
@@ -172,7 +174,7 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
 
                 service = "MechanicPro";
 
-                startActivity(new Intent(getApplicationContext(), ProviderLogin.class));
+                startActivity(new Intent(getApplicationContext(), ChoiseLogin.class));
                 sessionManager.setString(SessionManager.SERVICE, service);
 
 

@@ -13,8 +13,11 @@ import android.widget.ImageView;
 
 import com.electrom.vahanwireprovider.R;
 import com.electrom.vahanwireprovider.adapters.PaymentAdapter;
+import com.electrom.vahanwireprovider.adapters.PaymentTowAdapter;
 import com.electrom.vahanwireprovider.models.payment.Payment;
 import com.electrom.vahanwireprovider.models.payment.Payment_array;
+import com.electrom.vahanwireprovider.models.payment_tow.PaymentList;
+import com.electrom.vahanwireprovider.models.payment_tow.PaymentTow;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiClient;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiInterface;
 import com.electrom.vahanwireprovider.utility.ActionForAll;
@@ -37,8 +40,10 @@ public class PaymentMethod extends AppCompatActivity implements View.OnClickList
     RecyclerView recyclerPayment;
     SessionManager sessionManager;
     PaymentAdapter paymentAdapter;
+    PaymentTowAdapter paymentAdapter2;
     CustomButton btnSubmitPayment;
     ImageView iv_back_payment;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,6 +75,12 @@ public class PaymentMethod extends AppCompatActivity implements View.OnClickList
             getAllPlaymentMethodMech();
             Log.e(TAG, "initView: " + sessionManager.getString(SessionManager.SERVICE));
 
+        }
+
+        else if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_TOW))
+        {
+            getAllPlaymentMethodTow();
+            Log.e(TAG, "initView: " + sessionManager.getString(SessionManager.SERVICE));
         }
     }
 
@@ -146,6 +157,47 @@ public class PaymentMethod extends AppCompatActivity implements View.OnClickList
 
             @Override
             public void onFailure(Call<Payment> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void getAllPlaymentMethodTow()
+    {
+        Log.e(TAG, "getAllPlaymentMethodTow: " + "tow payment list" );
+
+        final ProgressDialog progressDialog = Util.showProgressDialog(this);
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("mobile", sessionManager.getString(SessionManager.PROVIDER_MOBILE));
+
+        Call<PaymentTow> call = apiService.getAllPaymentMethodTow(params);
+        call.enqueue(new Callback<PaymentTow>() {
+            @Override
+            public void onResponse(Call<PaymentTow> call, Response<PaymentTow> response) {
+
+                if(response!=null && response.isSuccessful())
+                {
+                    Util.hideProgressDialog(progressDialog);
+                    PaymentTow payment = response.body();
+                    Log.d(TAG, "list size mech "+ payment.getStatus());
+
+                    List<PaymentList> data = payment.getData();
+                    Log.d(TAG, "list size tow " + data.size()+"");
+                    paymentAdapter2 = new PaymentTowAdapter(data, PaymentMethod.this, btnSubmitPayment);
+                    recyclerPayment.setAdapter(paymentAdapter2);
+                    paymentAdapter2.notifyDataSetChanged();
+                }
+                else
+                {
+                    Util.hideProgressDialog(progressDialog);
+                    ActionForAll.alertUserWithCloseActivity("VahanWire", "Low Internet Connection, Please Try after some time", "OK", PaymentMethod.this);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PaymentTow> call, Throwable t) {
 
             }
         });

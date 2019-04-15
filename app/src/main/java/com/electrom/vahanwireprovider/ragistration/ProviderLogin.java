@@ -17,12 +17,11 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.electrom.vahanwireprovider.MainActivity;
+import com.electrom.vahanwireprovider.PetrolPumpHomePage;
 import com.electrom.vahanwireprovider.R;
-import com.electrom.vahanwireprovider.features.AmbulanceProvider;
+import com.electrom.vahanwireprovider.features.AmbulanceHomePage;
 import com.electrom.vahanwireprovider.features.MachanicHomePage;
 import com.electrom.vahanwireprovider.location_service.GPSTracker;
-import com.electrom.vahanwireprovider.models.login.Location;
 import com.electrom.vahanwireprovider.models.login.LoginPP;
 import com.electrom.vahanwireprovider.models.login_ambulance.Data;
 import com.electrom.vahanwireprovider.models.login_ambulance.LoginAmbulance;
@@ -162,7 +161,7 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
                         ActionForAll.myFlash(getApplicationContext(), "service choice not found");
                     }
                 }
-                //startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                //startActivity(new Intent(getApplicationContext(), PetrolPumpHomePage.class));
                 break;
 
             case R.id.btnRegister:
@@ -272,7 +271,7 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
                 t.printStackTrace();
                 Log.e(TAG, "onFailure: " + t.getMessage());
                 Util.hideProgressDialog(progressDialog);
-                ActionForAll.alertUser("VahanWire", "Enter valid ", "OK", ProviderLogin.this);
+                ActionForAll.alertUser("VahanProvider", "Invalid credentials", "OK", ProviderLogin.this);
             }
         });
 
@@ -329,7 +328,7 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
                         sessionManager.setString(SessionManager.PINCODE, login.getData().getAddress().getPincode());
                         sessionManager.setString(SessionManager.PROVIDER_ID, login.getData().getId());
 
-                        Intent logout= new Intent(getApplicationContext(), MainActivity.class);
+                        Intent logout= new Intent(getApplicationContext(), PetrolPumpHomePage.class);
                         logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(logout);
                         finish();
@@ -363,9 +362,8 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
             public void onFailure(Call<LoginPP> call, Throwable t) {
                 Util.hideProgressDialog(progressDialog);
                 Log.e(TAG, "error::: " + t.getMessage());
-                etLoginMobile.setText("");
                 etLoginPassword.setText("");
-                ActionForAll.alertUser("VahanWire", "Please enter valid details", "OK", ProviderLogin.this);
+                ActionForAll.alertUser("VahanWire", "Invalid credentials", "OK", ProviderLogin.this);
             }
         });
     }
@@ -407,7 +405,7 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
                         Log.e(TAG, "onResponse: image " + sessionManager.getString(SessionManager.PROVIDER_IMAGE));
 
 
-                        Intent intent= new Intent(getApplicationContext(), AmbulanceProvider.class);
+                        Intent intent= new Intent(getApplicationContext(), AmbulanceHomePage.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         //intent.putExtra("count", login.getData().getRequestedUsers().size());
                         //Log.e(TAG, "onResponse: "+ login.getData().getRequestedUsers().size());
@@ -430,10 +428,9 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
 
             @Override
             public void onFailure(Call<LoginAmbulance> call, Throwable t) {
-                etLoginMobile.setText("");
                 etLoginPassword.setText("");
                 Util.hideProgressDialog(progressDialog);
-                ActionForAll.alertUser("VahanWire", "Invalid credentials, Please check", "OK", ProviderLogin.this);
+                ActionForAll.alertUser("VahanWire", "Invalid credentials", "OK", ProviderLogin.this);
             }
         });
 

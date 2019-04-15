@@ -7,18 +7,16 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioAttributes;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.electrom.vahanwireprovider.MainActivity;
 import com.electrom.vahanwireprovider.R;
-import com.electrom.vahanwireprovider.features.AmbulanceProvider;
+import com.electrom.vahanwireprovider.features.AmbulanceHomePage;
+import com.electrom.vahanwireprovider.features.BookingHistoryMechanic;
 import com.electrom.vahanwireprovider.features.MachanicHomePage;
+import com.electrom.vahanwireprovider.new_app_driver.DriverHomePage;
+import com.electrom.vahanwireprovider.new_app_tow.TowHomePage;
 import com.electrom.vahanwireprovider.utility.SessionManager;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -44,71 +42,226 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         if (remoteMessage.getData().size() > 0) {
             Log.e(TAG, "Message data payload: all data " + remoteMessage.getData().get("notification_details"));
             Log.e(TAG, "Message data payload: data  " + remoteMessage.getData());
-            String Obj =  remoteMessage.getData().get("notification_details");
-            String userD =  remoteMessage.getData().get("user_details");
+            String notification_details = remoteMessage.getData().get("notification_details");
+            String user_details = remoteMessage.getData().get("user_details");
             final String tag = remoteMessage.getData().get("tag");
+            String type ="";
+
+            JSONObject data = null;
+            String booking_id = null;
+
+            if(tag.contains("tow"))
+            {
+                try {
+                    data = new JSONObject(notification_details);
+                    type = data.isNull("request_type") ? "" : data.getString("request_type");
+                    if(type.equals("emergency"))
+                    {
+                        Log.e(TAG, "onMessageReceived: " + "pre request");
+
+                        booking_id = data.getString("booking_id");
+                        JSONObject booking_status = data.getJSONObject("booking_status");
+                        JSONObject user_status = booking_status.getJSONObject("user");
+                        JSONObject tow = booking_status.getJSONObject("tow");
+                        String status_u = user_status.getString("status");
+                        String status = tow.getString("status");
+
+                        SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_ID, booking_id);
+                        SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_STATUS, status);
+                        SessionManager.getInstance(getApplicationContext()).setString(SessionManager.NOTI_ISSUE, "Tow Request");
+                        SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_STATUS_USER, status_u);
+
+                        Log.e(TAG, "onMessageReceived:BOOKING_ID " + booking_id);
+                        Log.e(TAG, "onMessageReceived:BOOKING_STATUS " + status);
+                        Log.e(TAG, "onMessageReceived:NOTI_ISSUE " + "pre request");
+                        Log.e(TAG, "onMessageReceived:BOOKING_STATUS_USER " + status_u);
+
+                    }
+                    else {
+
+                        Log.e(TAG, "onMessageReceived: " + "emergency");
+
+                        booking_id = data.getString("booking_id");
+                        JSONObject booking_status = data.getJSONObject("booking_status");
+                        String issue = data.getString("issue");
+                        JSONObject mech = booking_status.getJSONObject("mechanic");
+                        String status = mech.getString("status");
+                        JSONObject user_status = booking_status.getJSONObject("user");
+                        String status_u = user_status.getString("status");
+                        SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_ID, booking_id);
+                        SessionManager.getInstance(getApplicationContext()).setString(SessionManager.NOTI_ISSUE, issue);
+                        SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_STATUS, status);
+                        SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_STATUS_USER, status_u);
+
+                        Log.e(TAG, "onMessageReceived:BOOKING_ID " + booking_id);
+                        Log.e(TAG, "onMessageReceived:BOOKING_STATUS " + status);
+                        Log.e(TAG, "onMessageReceived:NOTI_ISSUE " + issue);
+                        Log.e(TAG, "onMessageReceived:BOOKING_STATUS_USER " + status_u);
+                    }
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            if(tag.contains("driver"))
+            {
+                try {
+                    data = new JSONObject(notification_details);
+                    type = data.isNull("request_type") ? "" : data.getString("request_type");
+                    if(type.equals("prerequest"))
+                    {
+
+                        Log.e(TAG, "onMessageReceived: " + "pre request");
+
+                        booking_id = data.getString("booking_id");
+                        JSONObject booking_status = data.getJSONObject("booking_status");
+                        JSONObject mech = booking_status.getJSONObject("servicecenter");
+                        JSONObject user_status = booking_status.getJSONObject("user");
+                        String status = mech.getString("status");
+                        String status_u = user_status.getString("status");
+                        SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_ID, booking_id);
+                        SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_STATUS, status);
+                        SessionManager.getInstance(getApplicationContext()).setString(SessionManager.NOTI_ISSUE, "Pre Request");
+                        SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_STATUS_USER, status_u);
+
+                        Log.e(TAG, "onMessageReceived:BOOKING_ID " + booking_id);
+                        Log.e(TAG, "onMessageReceived:BOOKING_STATUS " + status);
+                        Log.e(TAG, "onMessageReceived:NOTI_ISSUE " + "pre request");
+                        Log.e(TAG, "onMessageReceived:BOOKING_STATUS_USER " + status_u);
+
+                    }
+                    else {
+
+                        Log.e(TAG, "onMessageReceived: " + "pre request");
+
+                        booking_id = data.getString("booking_id");
+                        JSONObject booking_status = data.getJSONObject("booking_status");
+                        String issue = data.getString("issue");
+                        JSONObject mech = booking_status.getJSONObject("mechanic");
+                        String status = mech.getString("status");
+                        JSONObject user_status = booking_status.getJSONObject("user");
+                        String status_u = user_status.getString("status");
+                        SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_ID, booking_id);
+                        SessionManager.getInstance(getApplicationContext()).setString(SessionManager.NOTI_ISSUE, issue);
+                        SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_STATUS, status);
+                        SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_STATUS_USER, status_u);
+
+                        Log.e(TAG, "onMessageReceived:BOOKING_ID " + booking_id);
+                        Log.e(TAG, "onMessageReceived:BOOKING_STATUS " + status);
+                        Log.e(TAG, "onMessageReceived:NOTI_ISSUE " + issue);
+                        Log.e(TAG, "onMessageReceived:BOOKING_STATUS_USER " + status_u);
+                    }
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (tag.contains("mechanic")) {
+                try {
+                    data = new JSONObject(notification_details);
+                    type = data.isNull("request_type") ? "" : data.getString("request_type");
+                    if(type.equals("prerequest"))
+                    {
+
+                        Log.e(TAG, "onMessageReceived: " + "pre request");
+
+                        booking_id = data.getString("booking_id");
+                        JSONObject booking_status = data.getJSONObject("booking_status");
+                        JSONObject mech = booking_status.getJSONObject("servicecenter");
+                        JSONObject user_status = booking_status.getJSONObject("user");
+                        String status = mech.getString("status");
+                        String status_u = user_status.getString("status");
+                        SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_ID, booking_id);
+                        SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_STATUS, status);
+                        SessionManager.getInstance(getApplicationContext()).setString(SessionManager.NOTI_ISSUE, "Pre Request");
+                        SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_STATUS_USER, status_u);
+
+                        Log.e(TAG, "onMessageReceived:BOOKING_ID " + booking_id);
+                        Log.e(TAG, "onMessageReceived:BOOKING_STATUS " + status);
+                        Log.e(TAG, "onMessageReceived:NOTI_ISSUE " + "pre request");
+                        Log.e(TAG, "onMessageReceived:BOOKING_STATUS_USER " + status_u);
+
+                    }
+                    else {
+
+                        Log.e(TAG, "onMessageReceived: " + "pre request");
+
+                        booking_id = data.getString("booking_id");
+                        JSONObject booking_status = data.getJSONObject("booking_status");
+                        String issue = data.getString("issue");
+                        JSONObject mech = booking_status.getJSONObject("mechanic");
+                        String status = mech.getString("status");
+                        JSONObject user_status = booking_status.getJSONObject("user");
+                        String status_u = user_status.getString("status");
+                        SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_ID, booking_id);
+                        SessionManager.getInstance(getApplicationContext()).setString(SessionManager.NOTI_ISSUE, issue);
+                        SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_STATUS, status);
+                        SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_STATUS_USER, status_u);
+
+                        Log.e(TAG, "onMessageReceived: BOOKING_ID " + booking_id);
+                        Log.e(TAG, "onMessageReceived: BOOKING_STATUS " + status);
+                        Log.e(TAG, "onMessageReceived: NOTI_ISSUE " + issue);
+                        Log.e(TAG, "onMessageReceived: BOOKING_STATUS_USER " + status_u);
+                    }
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
             try {
-                JSONObject data = new JSONObject(Obj);
-                String booking_id = data.getString("booking_id");
-                JSONObject booking_status = data.getJSONObject("booking_status");
-                // JSONObject device = data.getJSONObject("user_details");
-                // JSONObject device_type = device.getJSONObject("device");
-                // String devic_type = device_type.getString("device_type");
-                // Log.e(TAG, "onMessageReceived: " + devic_type );
-                SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_ID, booking_id);
-                Log.e(TAG, "onMessageReceived: " + booking_id );
-                if(tag.contains("mechanic"))
-                {
-                    String issue = data.getString("issue");
-                    JSONObject mech = booking_status.getJSONObject("mechanic");
-                    String b_s = mech.getString("cancel_reason");
-                    String status = mech.getString("status");
-                    Log.e(TAG, "onMessageReceived: name | essue " + issue);
-                    SessionManager.getInstance(getApplicationContext()).setString(SessionManager.NOTI_ISSUE,  issue);
-                    SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_STATUS, status);
-                }
 
-                if(tag.contains("ambulance"))
-                {
+                if (tag.contains("ambulance")) {
+                    data = new JSONObject(notification_details);
+                    booking_id = data.getString("booking_id");
+                    JSONObject booking_status = data.getJSONObject("booking_status");
                     JSONObject ambulance = booking_status.getJSONObject("driver");
-                    String b_s = ambulance.getString("cancel_reason");
                     String status = ambulance.getString("status");
-                    SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_STATUS, status);
                     Log.e(TAG, "onMessageReceived: name | status " + status + " | " + booking_id);
+                    JSONObject user = booking_status.getJSONObject("user");
+                    String status_user = user.getString("status");
+                    SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_ID, booking_id);
+                    SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_STATUS, status);
+                    SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_STATUS_USER, status_user);
                 }
 
-                JSONObject user = booking_status.getJSONObject("user");
-                String b_s_user = user.getString("cancel_reason");
-                String status_user = user.getString("status");
+                JSONObject use = new JSONObject(user_details);
 
-                SessionManager.getInstance(getApplicationContext()).setString(SessionManager.BOOKING_STATUS_USER, status_user);
+                SessionManager.getInstance(getApplicationContext()).setString(SessionManager.NOTI_NAME, use.getString("fullname"));
 
-                JSONObject use = new JSONObject(userD);
+                Log.e(TAG, "onMessageReceived: name " + use.getString("fullname"));
 
-                SessionManager.getInstance(getApplicationContext()).setString(SessionManager.NOTI_NAME,  use.getString("fullname"));
+                sendMyNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("body"), remoteMessage.getData().get("tag"), type);
 
-                Log.e(TAG, "onMessageReceived: name " +  use.getString("fullname"));
+                if (remoteMessage.getData() != null) {
+                    if (tag.equalsIgnoreCase("ambulance")) {
+                        startActivity(new Intent(getApplicationContext(), AmbulanceHomePage.class));
+                    }
 
-                sendMyNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("body"), remoteMessage.getData().get("tag"));
+                    else if (tag.equalsIgnoreCase("mechanic") && type.equalsIgnoreCase("prerequest")) {
+                        startActivity(new Intent(getApplicationContext(), BookingHistoryMechanic.class));
+                    }
 
-                if(remoteMessage.getData() != null)
-                {
-                            if (tag.equalsIgnoreCase("ambulance")) {
-                                startActivity(new Intent(getApplicationContext(), AmbulanceProvider.class));
-                            }
+                    else if (tag.equalsIgnoreCase("mechanic")) {
+                        startActivity(new Intent(getApplicationContext(), MachanicHomePage.class));
+                    }
 
-                            if (tag.equalsIgnoreCase("mechanic")) {
-                                startActivity(new Intent(getApplicationContext(), MachanicHomePage.class));
-                            }
-                            Log.e(TAG, "onMessageReceived: " + "done" );
+                    else if (tag.equalsIgnoreCase("driver")) {
+                        startActivity(new Intent(getApplicationContext(), DriverHomePage.class));
+                    }
+
+                    else if (tag.equalsIgnoreCase("tow")) {
+                        startActivity(new Intent(getApplicationContext(), TowHomePage.class));
+                    }
+
+                    Log.e(TAG, "onMessageReceived: " + "done");
                 }
-            }
-
-            catch (JSONException e) {
+            } catch (JSONException e) {
                 e.printStackTrace();
-            }
-
-            catch (NullPointerException e){
+            } catch (NullPointerException e) {
                 e.printStackTrace();
             }
             //sendMyNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("body"), remoteMessage.getData().get("tag"));
@@ -175,25 +328,44 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // TODO: Implement this method to send token to your app server.
     }
 
-    /**
-     * Create and show a simple notification containing the received FCM message.
-     *
-     * @param messageBody FCM message body received.
-     */
 
-    private void sendMyNotification(String title, String body, String tag) {
+    private void sendMyNotification(String title, String body, String tag, String type) {
 
         PendingIntent pendingIntent = null;
 
         if (tag.equalsIgnoreCase("ambulance")) {
-            Intent intent = new Intent(this, AmbulanceProvider.class);
+            Intent intent = new Intent(this, AmbulanceHomePage.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
         }
 
-        if (tag.equalsIgnoreCase("mechanic")) {
+        else if (tag.equalsIgnoreCase("mechanic") && type.equalsIgnoreCase("prerequest")) {
+
+            Intent intent = new Intent(this, BookingHistoryMechanic.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+
+        }
+
+        else if (tag.equalsIgnoreCase("mechanic")) {
 
             Intent intent = new Intent(this, MachanicHomePage.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+
+        }
+
+        else if (tag.equalsIgnoreCase("driver")) {
+
+            Intent intent = new Intent(this, DriverHomePage.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+
+        }
+
+        else if (tag.equalsIgnoreCase("tow")) {
+
+            Intent intent = new Intent(this, TowHomePage.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
 

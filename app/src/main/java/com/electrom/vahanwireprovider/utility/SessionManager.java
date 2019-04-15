@@ -47,6 +47,18 @@ public class SessionManager {
     public static final String PROVIDER_VEHICLE = "vehicle";
     public static final String WORK_FROM = "work_from";
     public static final String WORK_TO = "work_to";
+    public static final String PRO_CERTIFICTION_NAME = "certificate";
+    public static final String PRO_DOB = "dob";
+    public static final String PRO_HIGH_QULALIFICATION = "high_qulification";
+    public static final String PRO_MARRITAL_STATUS = "marital_status";
+    public static final String PRO_TOTAL_EXP = "total_ex";
+    public static final String PRO_WEB ="web" ;
+    public static final String PRO_GST = "gst";
+    public static final String PRO_FACEBOOK = "fb";
+    public static final String PRO_TWEET = "tw";
+    public static final String PRO_INSTA = "insta";
+    public static final String VEHCILE_NUMBER = "vehcile";
+    public static final String SERVICE_CHARGE = "service_charge";
 
     private static String SHARED_PREFERENCE_PROVIDER = "shared_provider_electrom";
     ///public static final String COUNT_COMPARE = "count_compare";
