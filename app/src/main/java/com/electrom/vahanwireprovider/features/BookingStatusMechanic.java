@@ -149,14 +149,13 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
 
             case R.id.llCointainerServiceDone:
                 if(routeCount == 2)
-                boobkingStatusServiceDone();
+                bookingStatusServiceDone();
                 break;
 
             case R.id.llCointainerCompalete:
                 if(routeCount == 3)
                 boobkingStatusComplete();
                 break;
-
 
             case R.id.btnCancelMechanic:
                 cancelPopup();
@@ -316,7 +315,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
 
     }
 
-    private void boobkingStatusServiceDone()
+    private void bookingStatusServiceDone()
     {
         Log.e(TAG, "provider id " + sessionManager.getString(SessionManager.PROVIDER_ID));
 
@@ -637,7 +636,6 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
         startActivityForResult(intent, 101);
     }
 
-
     private void getreason(){
 
         Map<String, String> params = new HashMap<String, String>();
@@ -691,7 +689,6 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
         });
 
     }
-
 
     public void cancelPopup() {
 
@@ -789,8 +786,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
         cancelDiolog.show();
     }
 
-    private void requestCancel(String reason)
-    {
+    private void requestCancel(String reason) {
         Log.e(TAG, "provider id " + sessionManager.getString(SessionManager.PROVIDER_ID));
 
         final ProgressDialog progressDialog = Util.showProgressDialog(context);

@@ -98,4 +98,12 @@ public class UrlConstants {
     public static final String CANCEL_REASON_DRIVER_BOOKING = "mechanic/driver/cancelreasons";
     public static final String PRE_APPOINMENT_BOOKING_HISTORY = "mechanic/provider/prerequest/booking/all";
     public static final String PRE_APPOINTMENT_REQUEST_ACCEPT = "mechanic/mainprovider/prerequest/request/accept";
+    public static final String PRE_REQ_CANCEL = "mechanic/mainprovider/prerequest/request/cancel";
+    public static final String PRE_REQUEST_BOOKING_STATUS = "mechanic/provider/prerequest/request/enroute/update";
+    public static final String ALL_CHECKED_LIST = "mechanic/checklist";
+    public static final String CHECKED_IMAGES_UPLOAD = "mechanic/provider/prerequest/request/checklist/images" ;
+    public static final String CHECK_LIST_ADD = "mechanic/provider/prerequest/request/checklist/add" ;
+    public static final String QUOTE_STATUS = "mechanic/provider/prerequest/request/quotation";
+    public static final String MINI_QUOTE_STATUS = "mechanic/provider/prerequest/request/miniquotation";
+    public static final String PRE_BOOKING = "mechanic/provider/prerequest/booking";
 }

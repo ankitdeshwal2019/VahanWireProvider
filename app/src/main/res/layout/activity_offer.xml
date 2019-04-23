@@ -38,6 +38,7 @@
         android:layout_marginRight="@dimen/size_10dp"
         android:hint="OFFER TITLES"
         android:paddingLeft="@dimen/size_10dp"
+        android:paddingRight="@dimen/size_10dp"
         android:layout_width="match_parent"
         android:layout_height="60dp" />
 

@@ -125,7 +125,7 @@ public class VerifyOtp extends AppCompatActivity implements View.OnClickListener
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnVerifyOtp:
-                if (ActionForAll.validEditText(etVerifyOtp, "4 digit otp", VerifyOtp.this)) {
+                if (ActionForAll.validEditText(etVerifyOtp, "otp", VerifyOtp.this)) {
                     switch (service) {
                         case "Petrol_Pump":
                             verifyOTP();

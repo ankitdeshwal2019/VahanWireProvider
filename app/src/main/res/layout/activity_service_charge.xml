@@ -39,40 +39,35 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="#ccc"
-        android:gravity="center">
+        android:background="#fff"
+        android:gravity="center_horizontal">
 
 
-        <com.electrom.vahanwireprovider.utility.CustomTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Service Charge"
-            android:padding="@dimen/size_5dp"
-            android:layout_marginBottom="@dimen/size_20dp"/>
 
+            <com.electrom.vahanwireprovider.utility.CustomEditText
+                android:layout_marginTop="60dp"
+                android:id="@+id/etServiceCharge"
+                android:layout_width="250dp"
+                android:background="@drawable/round_transparent"
+                android:paddingRight="@dimen/size_15dp"
+                android:paddingLeft="@dimen/size_15dp"
+                android:layout_height="50dp"
+                android:gravity="center"
 
-        <com.electrom.vahanwireprovider.utility.CustomEditText
-            android:id="@+id/etServiceCharge"
-            android:layout_width="250dp"
-            android:background="@drawable/strip"
-            android:paddingRight="@dimen/size_15dp"
-            android:paddingLeft="@dimen/size_15dp"
-            android:layout_height="50dp"
-            android:gravity="center"
-            android:hint="Enter service charge (Rs)"
-            android:textSize="@dimen/size_15sp"
-            android:inputType="number"
-            android:text=""/>
-
+                android:hint="Visiting charges"
+                android:textSize="@dimen/size_15sp"
+                android:inputType="number"
+                android:text=""/>
 
         <com.electrom.vahanwireprovider.utility.CustomButton
             android:id="@+id/btnServiceCharge"
-            android:layout_marginTop="@dimen/size_20dp"
-            android:layout_width="200dp"
+            android:layout_marginTop="@dimen/size_40dp"
+            android:layout_width="150dp"
             android:layout_marginBottom="100dp"
-            android:background="@drawable/rect_background"
-            android:layout_height="@dimen/size_50dp"
-            android:text="Submit"/>
+            android:textColor="@color/white"
+            android:background="@drawable/round_gray_new"
+            android:layout_height="@dimen/size_40dp"
+            android:text="Update"/>
 
 
 

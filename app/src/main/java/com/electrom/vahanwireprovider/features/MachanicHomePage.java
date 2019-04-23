@@ -55,6 +55,7 @@ import com.electrom.vahanwireprovider.retrofit_lib.ApiInterface;
 import com.electrom.vahanwireprovider.utility.ActionForAll;
 import com.electrom.vahanwireprovider.utility.CodeMinimisations;
 import com.electrom.vahanwireprovider.utility.CustomButton;
+import com.electrom.vahanwireprovider.utility.CustomTextBold;
 import com.electrom.vahanwireprovider.utility.CustomTextView;
 import com.electrom.vahanwireprovider.utility.MyHandler;
 import com.electrom.vahanwireprovider.utility.PicassoClient;
@@ -85,7 +86,8 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
     Context context = MachanicHomePage.this;
     SessionManager sessionManager;
     CustomButton banStatusOnMechanic, banStatusOffMechanic;
-    CustomTextView tvStatusMechanic, tvTotalVisitorsCountMechanic;
+    CustomTextView tvStatusMechanic;
+    CustomTextBold tvTotalVisitorsCountMechanic;
     String loginStatus = "0";
     String ACTIVE_STATUS_ON = "ON";
     String ACTIVE_STATUS_OFF = "OFF";
@@ -465,76 +467,6 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
 
     }
 
-    private void requestAddPre() {
-        Log.e(TAG, "requestAddPre: " + "pre request" );
-        Log.e(TAG, "provider id " + sessionManager.getString(SessionManager.PROVIDER_ID));
-
-        final ProgressDialog progressDialog = Util.showProgressDialog(context);
-
-        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-
-        Call<RequestAccept> call = apiService.preReQuest_req_accept(sessionManager.getString(SessionManager.PROVIDER_ID),
-                sessionManager.getString(SessionManager.BOOKING_ID));
-
-        call.enqueue(new Callback<RequestAccept>() {
-            @Override
-            public void onResponse(Call<RequestAccept> call, Response<RequestAccept> response) {
-
-                Util.hideProgressDialog(progressDialog);
-
-                Log.d(TAG, "success " + response.body().getMessage());
-
-                if (response.isSuccessful()) {
-                    RequestAccept requestAccept = response.body();
-                    if (requestAccept.getStatus().equals("200")) {
-                        sessionManager.setString(SessionManager.BOOKING_STATUS, "");
-
-                        new AlertDialog.Builder(context)
-                                .setTitle("VahanWire")
-                                .setMessage("Request Accepted")
-                                .setCancelable(false)
-                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        startActivity(new Intent(context, BookingHistory.class));
-                                    }
-                                })
-                                .create().show();
-
-                        timer.cancel();
-                        faltuCheck = "accepted";
-                        if (requestPopup.isShowing()) {
-                            requestPopup.dismiss();
-                        }
-                    }
-                    else if(requestAccept.getStatus().equals("409"))
-                    {
-                        sessionManager.setString(SessionManager.BOOKING_STATUS, "");
-                        timer.cancel();
-                        faltuCheck = "accepted";
-                        if (requestPopup.isShowing()) {
-                            requestPopup.dismiss();
-                        }
-                        ActionForAll.alertUserWithCloseActivity("VahanWire", requestAccept.getMessage(), "OK", MachanicHomePage.this);
-                    }
-
-                    else {
-                        ActionForAll.alertUserWithCloseActivity("VahanWire", requestAccept.getMessage(), "OK", MachanicHomePage.this);
-                    }
-                } else {
-                    ActionForAll.alertUserWithCloseActivity("VahanWire", "Network busy please try after sometime", "OK", MachanicHomePage.this);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<RequestAccept> call, Throwable t) {
-                Util.hideProgressDialog(progressDialog);
-                ActionForAll.alertUser("VahanWire", t.getMessage(), "OK", MachanicHomePage.this);
-            }
-        });
-
-    }
-
     private void requestCancel(String reason) {
         Log.e(TAG, "provider id " + sessionManager.getString(SessionManager.PROVIDER_ID));
 
@@ -643,21 +575,7 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
         cancelDiolog.setContentView(R.layout.cancel_popup_lay);
         cancelDiolog.getWindow().getAttributes().windowAnimations = R.style.diologIntertnet;
         cancelDiolog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
-        /*RelativeLayout layNoCustomer = cancelDiolog.findViewById(R.id.layNoCustomer);
-        RelativeLayout layvichelBroke = cancelDiolog.findViewById(R.id.layvichelBroke);
-        RelativeLayout layResNoList = cancelDiolog.findViewById(R.id.layResNoList);
-        RelativeLayout layForgotTools = cancelDiolog.findViewById(R.id.layForgotTools);*/
         RelativeLayout laySubmit = cancelDiolog.findViewById(R.id.laySubmit);
-
-        /*final RadioButton radioNoCustomer = cancelDiolog.findViewById(R.id.radioNoCustomer);
-        final RadioButton radioVichelBroker = cancelDiolog.findViewById(R.id.radioVichelBroker);
-        final RadioButton radioNoRes =  cancelDiolog.findViewById(R.id.radioNoRes);
-        final RadioButton radioForgotTools =  cancelDiolog.findViewById(R.id.radioForgotTools);
-
-        final TextView txtNoCustomer =  cancelDiolog.findViewById(R.id.txtNoCustomer);
-        final TextView txtVehicelBroke =  cancelDiolog.findViewById(R.id.txtVehicelBroke);
-        final TextView txtNoRes =  cancelDiolog.findViewById(R.id.txtNoRes);
-        final TextView txtForgotTools =  cancelDiolog.findViewById(R.id.txtForgotTools);*/
         cancelReason = "";
 
         ListView list = cancelDiolog.findViewById(R.id.listReason);
@@ -673,47 +591,6 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
 
             }
         });
-
-       /* layNoCustomer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                radioNoCustomer.setChecked(true);
-                radioVichelBroker.setChecked(false);
-                radioNoRes.setChecked(false);
-                radioForgotTools.setChecked(false);
-                cancelReason = txtNoCustomer.getText().toString();
-            }
-        });
-        layvichelBroke.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                radioNoCustomer.setChecked(false);
-                radioVichelBroker.setChecked(true);
-                radioNoRes.setChecked(false);
-                radioForgotTools.setChecked(false);
-                cancelReason = txtVehicelBroke.getText().toString();
-            }
-        });
-        layResNoList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                radioNoCustomer.setChecked(false);
-                radioVichelBroker.setChecked(false);
-                radioNoRes.setChecked(true);
-                radioForgotTools.setChecked(false);
-                cancelReason = txtNoRes.getText().toString();
-            }
-        });
-        layForgotTools.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                radioNoCustomer.setChecked(false);
-                radioVichelBroker.setChecked(false);
-                radioNoRes.setChecked(false);
-                radioForgotTools.setChecked(true);
-                cancelReason = txtForgotTools.getText().toString();
-            }
-        });*/
 
 
         laySubmit.setOnClickListener(new View.OnClickListener() {
@@ -838,16 +715,19 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                     //sessionManager.setObject("Myobj", offer);
                     try {
 
-                        Log.e(TAG, "onResponse: " + detail.getData().getPersonalDetails().getDob());
-                        Log.e(TAG, "onResponse: " + detail.getData().getPersonalDetails().getEmail());
-                        Log.e(TAG, "onResponse: " + detail.getData().getPersonalDetails().getHighestQualification());
-                        Log.e(TAG, "onResponse: " + detail.getData().getPersonalDetails().getMaritalStatus());
-                        Log.e(TAG, "onResponse: " + detail.getData().getPersonalDetails().getTotalExp());
-                        Log.e(TAG, "onResponse: " + detail.getData().getPersonalDetails().getWebsite());
-                        Log.e(TAG, "onResponse: " + detail.getData().getOrganisation().getOrgDetails().getGstNumber());
-                        Log.e(TAG, "onResponse: " + detail.getData().getPersonalDetails().getSocialMedia().getFacebook());
-                        Log.e(TAG, "onResponse: " + detail.getData().getPersonalDetails().getSocialMedia().getTwitter());
-                        Log.e(TAG, "onResponse: " + detail.getData().getPersonalDetails().getSocialMedia().getInstagram());
+                       /* Log.e(TAG, "onResponse: dob " + detail.getData().getPersonalDetails().getDob());
+                        Log.e(TAG, "onResponse: email " + detail.getData().getPersonalDetails().getEmail());
+                        Log.e(TAG, "onResponse: highQul " + detail.getData().getPersonalDetails().getHighestQualification());
+                        Log.e(TAG, "onResponse: marital " + detail.getData().getPersonalDetails().getMaritalStatus());
+                        Log.e(TAG, "onResponse: tot exp " + detail.getData().getPersonalDetails().getTotalExp());
+                        Log.e(TAG, "onResponse: website " + detail.getData().getPersonalDetails().getWebsite());
+                        Log.e(TAG, "onResponse: gst num " + detail.getData().getOrganisation().getOrgDetails().getGstNumber());
+                        Log.e(TAG, "onResponse: feedback  " + detail.getData().getPersonalDetails().getSocialMedia().getFacebook());
+                        Log.e(TAG, "onResponse: facebook " + detail.getData().getPersonalDetails().getSocialMedia().getTwitter());
+                        Log.e(TAG, "onResponse: insta " + detail.getData().getPersonalDetails().getSocialMedia().getInstagram());
+                        Log.e(TAG, "onResponse: name " + detail.getData().getName());
+                        Log.e(TAG, "onResponse: org name " + detail.getData().getOrganisation().getOrganisationName());*/
+
 
                         sessionManager.setString(SessionManager.PRO_DOB, detail.getData().getPersonalDetails().getDob());
                         sessionManager.setString(SessionManager.EMAIL, detail.getData().getPersonalDetails().getEmail());
@@ -855,12 +735,20 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                         sessionManager.setString(SessionManager.PRO_MARRITAL_STATUS, detail.getData().getPersonalDetails().getMaritalStatus());
                         sessionManager.setString(SessionManager.PRO_TOTAL_EXP, detail.getData().getPersonalDetails().getTotalExp());
                         sessionManager.setString(SessionManager.PRO_WEB, detail.getData().getPersonalDetails().getWebsite());
+                        //Log.e(TAG, "onResponse: gst " +  detail.getData().getOrganisation().getOrgDetails().getGstNumber());
                         sessionManager.setString(SessionManager.PRO_GST, detail.getData().getOrganisation().getOrgDetails().getGstNumber());
                         sessionManager.setString(SessionManager.PRO_FACEBOOK, detail.getData().getPersonalDetails().getSocialMedia().getFacebook());
                         sessionManager.setString(SessionManager.PRO_TWEET, detail.getData().getPersonalDetails().getSocialMedia().getTwitter());
                         sessionManager.setString(SessionManager.PRO_INSTA, detail.getData().getPersonalDetails().getSocialMedia().getInstagram());
                         sessionManager.setString(SessionManager.SERVICE_CHARGE,detail.getData().getService_charge());
+                        //Log.e(TAG, "onResponse: service_charge " + detail.getData().getService_charge());
+                        sessionManager.setString(SessionManager.PRO_CERTIFICTION_NAME, detail.getData().getPersonalDetails().getCertification());
+                        sessionManager.setString(SessionManager.PRO_PERSONAL_PAN, detail.getData().getPersonalDetails().getPanNumber());
+                        sessionManager.setString(SessionManager.PRO_SPECIAL_TALENT, detail.getData().getPersonalDetails().getSpecialTalent());
+                        sessionManager.setString(SessionManager.PRO_ORG_PAN, detail.getData().getOrganisation().getOrgDetails().getPanNumber());
+
                         sessionManager.setString(SessionManager.ACTIVE_STATUS, detail.getData().getMechanicActiveStatus().toString());
+                        Log.e(TAG, "onResponse: " + detail.getData().getMechanicActiveStatus().toString());
 
                         if (sessionManager.getString(SessionManager.ACTIVE_STATUS).equals("1")) {
                             banStatusOnMechanic.setVisibility(View.GONE);
@@ -912,6 +800,15 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                     WorkingHours workingHours = detail.getData().getOrganisation().getWorkingHours();
                     sessionManager.setString(SessionManager.WORK_TO, workingHours.getTo());
                     sessionManager.setString(SessionManager.WORK_FROM, workingHours.getFrom());
+
+                    if(sessionManager.getString(SessionManager.MAIN_PROVIDER).equalsIgnoreCase("1"))
+                    {
+                        sessionManager.setString(SessionManager.PROVIDER_IMAGE, detail.getData().getProfilePic());
+                    }
+                    else
+                    {
+                        sessionManager.setString(SessionManager.PROVIDER_IMAGE, detail.getData().getOrganisation().getProfilePic());
+                    }
 
                     Log.e(TAG, "onResponse: done ");
 

@@ -20,6 +20,7 @@ import com.electrom.vahanwireprovider.features.AddnExpert;
 import com.electrom.vahanwireprovider.features.AmbulanceHomePage;
 import com.electrom.vahanwireprovider.features.BookingHistory;
 import com.electrom.vahanwireprovider.features.BookingHistoryMechanic;
+import com.electrom.vahanwireprovider.features.SelectionActivity;
 import com.electrom.vahanwireprovider.new_app_driver.BookingHistoryDriver;
 import com.electrom.vahanwireprovider.features.FacilitynPaymentMethod;
 import com.electrom.vahanwireprovider.features.MachanicHomePage;
@@ -32,7 +33,9 @@ import com.electrom.vahanwireprovider.features.SelectIssue;
 import com.electrom.vahanwireprovider.features.UploadSocial;
 import com.electrom.vahanwireprovider.features.WorkingHours;
 import com.electrom.vahanwireprovider.models.logout.Logout;
+import com.electrom.vahanwireprovider.new_app_driver.DriverHomePage;
 import com.electrom.vahanwireprovider.new_app_tow.ProfileUpdateTow;
+import com.electrom.vahanwireprovider.new_app_tow.TowHomePage;
 import com.electrom.vahanwireprovider.ragistration.BeforeLogin;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiClient;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiInterface;
@@ -70,7 +73,6 @@ public class CodeMinimisations {
                     Log.e(TAG, "largeSwitchCase: " + "driver" );
                     in = new Intent(context, BookingHistoryDriver.class);
                     context.startActivity(in);
-                    context.startActivity(in);
                 }
                 else if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_MECHNIC_PRO))
                 {
@@ -92,13 +94,26 @@ public class CodeMinimisations {
                 if (sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_PETROL_PUMP)) {
                     in = new Intent(context, PetrolPumpHomePage.class);
                     context.startActivity(in);
+                    ((Activity) context).finish();
 
                 } else if (sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_AMBULANCE)) {
                     in = new Intent(context, AmbulanceHomePage.class);
                     context.startActivity(in);
+                    ((Activity) context).finish();
                 } else if (sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_MECHNIC_PRO)) {
                     in = new Intent(context, MachanicHomePage.class);
                     context.startActivity(in);
+                    ((Activity) context).finish();
+                }
+                else if (sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_TOW)) {
+                    in = new Intent(context, TowHomePage.class);
+                    context.startActivity(in);
+                    ((Activity) context).finish();
+                }
+                else if (sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_DRIVER)){
+                    in = new Intent(context, DriverHomePage.class);
+                    context.startActivity(in);
+                    ((Activity) context).finish();
                 }
 
                 break;
@@ -180,11 +195,10 @@ public class CodeMinimisations {
                 break;
 
             case "About Us":
-                /*in = new Intent(context, AddnExpert.class);
+              /*  in = new Intent(context, SelectionActivity.class);
                 context.startActivity(in);*/
                 ActionForAll.alertUser("VahanProvider", "Work in progress", "OK", (Activity) context);
                 break;
-
 
             case "Terms of use":
                 ActionForAll.alertUser("VahanProvider", "Work in progress", "OK", (Activity) context);
@@ -197,7 +211,6 @@ public class CodeMinimisations {
             case "Contact Us":
                 ActionForAll.alertUser("VahanProvider", "Work in progress", "OK", (Activity) context);
                 break;
-
 
             case "Log out":
                 logoutAlert(context);
@@ -289,7 +302,6 @@ public class CodeMinimisations {
                 }).create().show();
     }
 
-
     public static void navListener(ImageView nav, final NavigationView mNavigationView, final DrawerLayout mDrawerLayout, final Context context) {
 
         nav.setOnClickListener(new View.OnClickListener() {
@@ -310,7 +322,6 @@ public class CodeMinimisations {
             }
         });
     }
-
 
     private static void logoutMethodAmbulance() {
         Log.e(TAG, "logoutMethodAmbulance: " + "ambulance" );

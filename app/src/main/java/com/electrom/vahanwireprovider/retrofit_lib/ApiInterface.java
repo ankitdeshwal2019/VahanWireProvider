@@ -10,6 +10,7 @@ import com.electrom.vahanwireprovider.models.booking_status.B_Status;
 import com.electrom.vahanwireprovider.models.brands.Brand;
 import com.electrom.vahanwireprovider.models.cancel_reason_mech.CancelReason;
 import com.electrom.vahanwireprovider.models.cancel_request.CancelRequest;
+import com.electrom.vahanwireprovider.models.checked.Check;
 import com.electrom.vahanwireprovider.models.city.City;
 import com.electrom.vahanwireprovider.models.d_book_list.DriBookList;
 import com.electrom.vahanwireprovider.models.detail.Detail;
@@ -29,8 +30,10 @@ import com.electrom.vahanwireprovider.models.mechanic_registration.Mechanic;
 import com.electrom.vahanwireprovider.models.payment.Payment;
 import com.electrom.vahanwireprovider.models.payment_tow.PaymentTow;
 import com.electrom.vahanwireprovider.models.petrol_status.PetrolStatus;
+import com.electrom.vahanwireprovider.models.pre_req_status.PreRequestStatus;
 import com.electrom.vahanwireprovider.models.pre_request.PreRequest;
 import com.electrom.vahanwireprovider.models.pro_update_mech.ProfileUpdateMech;
+import com.electrom.vahanwireprovider.models.quote_status.QuoteStatus;
 import com.electrom.vahanwireprovider.models.request_accept.RequestAccept;
 import com.electrom.vahanwireprovider.models.services.Service;
 import com.electrom.vahanwireprovider.models.state.State;
@@ -44,7 +47,6 @@ import com.electrom.vahanwireprovider.utility.UrlConstants;
 
 import java.util.Map;
 
-import okhttp3.Response;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -140,6 +142,10 @@ public interface ApiInterface {
 
     @GET(UrlConstants.ALL_ISSUES)
     Call<Issue> getAllIssueMechnic(@QueryMap Map<String, String> params);
+
+    @GET(UrlConstants.ALL_CHECKED_LIST)
+    Call<Check> getAllCheckedList(@QueryMap Map<String, String> params);
+
 
     @GET(UrlConstants.ALL_PAYMENT_METHOD)
     Call<Payment> getAllPaymentMethod(@QueryMap Map<String, String> params);
@@ -378,7 +384,7 @@ public interface ApiInterface {
             @Field("latitude") String latitude,
             @Field("longitude") String longitude,
             @Field("email") String email_service_center,
-            @Field("gst_number") String gst_number_service_center,
+            @Field("gst_number") String gst_number,
             @Field("pan_number") String pan_number,
             @Field("phone") String phone,
             @Field("first_address") String first_address,
@@ -389,7 +395,6 @@ public interface ApiInterface {
             @Field("highest_qualification") String highest_qualification,
             @Field("certification") String certification,
             @Field("total_exp") String total_exp ,
-            @Field("gst_number_mechanic") String gst_number_mechanic,
             @Field("pan_number_mechanic") String pan_number_mechanic,
             @Field("dob") String dob,
             @Field("marital_status") String marital_status,
@@ -398,7 +403,8 @@ public interface ApiInterface {
             @Field("twitter") String twitter,
             @Field("instagram") String instagram,
             @Field("special_talent") String special_talent,
-            @Field("service_charge") String service_charge
+            @Field("service_charge") String service_charge,
+            @Field("mobile_pin") String mobile_pin
     );
 
 
@@ -444,6 +450,9 @@ public interface ApiInterface {
     @GET(UrlConstants.MECHANIC_BOOKING)
     Call<BookingDetails> getMechBooking(@QueryMap Map<String, String> params);
 
+    @GET(UrlConstants.PRE_BOOKING)
+    Call<PreRequestStatus> getPreBooking(@QueryMap Map<String, String> params);
+
     @GET(UrlConstants.DRIVER_BOOKING)
     Call<DetailBookingDriver> getDriverBooking(@QueryMap Map<String, String> params);
 
@@ -481,6 +490,12 @@ public interface ApiInterface {
                                         @Field("booking_id") String booking_id,
                                         @Field("reason") String reason);
 
+    @POST(UrlConstants.PRE_REQ_CANCEL)
+    @FormUrlEncoded
+    Call<CancelRequest> pre_req_cancel(@Field("id") String id,
+                                        @Field("booking_id") String booking_id,
+                                        @Field("reason") String reason);
+
 
     @POST(UrlConstants.TOW_REQUEST_CANCEL)
     @FormUrlEncoded
@@ -508,6 +523,13 @@ public interface ApiInterface {
     Call<B_Status> mech_booking_status(@Field("id") String id,
                                        @Field("booking_id") String booking_id,
                                        @Field("enroute_status") String reason);
+
+
+    @POST(UrlConstants.PRE_REQUEST_BOOKING_STATUS)
+    @FormUrlEncoded
+    Call<B_Status> pre_booking_status(@Field("id") String id,
+                                       @Field("booking_id") String booking_id,
+                                       @Field("enroute_status") String enroute_status);
 
 
     @POST(UrlConstants.DRIVER_BOOKING_STATUS)
@@ -594,6 +616,19 @@ public interface ApiInterface {
     @FormUrlEncoded
     Call<RequestAccept> tow_req_accept(@Field("id") String id,
                                         @Field("booking_id") String booking_id);
+
+
+    @POST(UrlConstants.CHECK_LIST_ADD)
+    @FormUrlEncoded
+    Call<ResponseBody> check_list_add(@Field("id") String id,
+                                       @Field("booking_id") String booking_id,
+                                       @Field("checklist_details" ) String checklist_details);
+
+    @GET(UrlConstants.QUOTE_STATUS)
+    Call<QuoteStatus> quote_status(@QueryMap Map<String, String> params);
+
+    @GET(UrlConstants.MINI_QUOTE_STATUS)
+    Call<QuoteStatus> mini_quote_status(@QueryMap Map<String, String> params);
 
 
 }

@@ -50,7 +50,8 @@
                 android:id="@+id/etVerifyOtp"
                 android:background="#fff"
                 android:paddingLeft="@dimen/size_15dp"
-                android:hint="4 digit code"
+                android:hint="Enter OTP"
+
                 android:inputType="numberPassword"
                 android:gravity="center"
                 android:maxLength="4"

@@ -238,9 +238,16 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
                         sessionManager.setString(SessionManager.LANDLINE, login.getData().getOrganisation().getPhone());
                         sessionManager.setString(SessionManager.LATITUDE, latitude+"");
                         sessionManager.setString(SessionManager.LONGITUDE, longitude+"");
-                        sessionManager.setString(SessionManager.PROVIDER_IMAGE, login.getData().getProfilePic());
-                        sessionManager.setString(SessionManager.PROVIDER_ID, login.getData().getId());
+                        if(sessionManager.getString(SessionManager.MAIN_PROVIDER).equalsIgnoreCase("1"))
+                        {
+                            sessionManager.setString(SessionManager.PROVIDER_IMAGE, login.getData().getProfilePic());
+                        }
+                        else
+                        {
+                            sessionManager.setString(SessionManager.PROVIDER_IMAGE, login.getData().getOrganisation().getProfilePic());
+                        }
 
+                        sessionManager.setString(SessionManager.PROVIDER_ID, login.getData().getId());
 
                         Intent intent= new Intent(getApplicationContext(), MachanicHomePage.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -403,6 +410,7 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
                         sessionManager.setString(SessionManager.PROVIDER_ID, data.getId());
                         sessionManager.setString(SessionManager.PROVIDER_VEHICLE, data.getVehicleNumber());
                         Log.e(TAG, "onResponse: image " + sessionManager.getString(SessionManager.PROVIDER_IMAGE));
+                        //sessionManager.setString(SessionManager.ACTIVE_STATUS, data.getActiveStatus().toString());
 
 
                         Intent intent= new Intent(getApplicationContext(), AmbulanceHomePage.class);

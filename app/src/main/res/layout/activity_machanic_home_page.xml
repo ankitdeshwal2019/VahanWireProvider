@@ -9,22 +9,41 @@
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:padding="50dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="@dimen/size_40dp"
         android:src="@drawable/logo"/>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:paddingTop="@dimen/size_20dp"
         android:layout_marginTop="@dimen/size_10dp"
-        android:gravity="center"
+        android:gravity="center_horizontal"
         android:orientation="vertical">
+
+
+        <com.electrom.vahanwireprovider.utility.CustomTextBold
+            android:textSize="@dimen/size_20sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_marginTop="@dimen/size_20dp"
+            android:layout_marginBottom="@dimen/size_15sp"
+            android:text="Total visitors"/>
+
+        <com.electrom.vahanwireprovider.utility.CustomTextBold
+            android:id="@+id/tvTotalVisitorsCountMechanic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="@dimen/size_30dp"
+            android:text="0"/>
 
         <com.electrom.vahanwireprovider.utility.CustomTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Current status"
+            android:layout_marginTop="@dimen/size_20dp"
             android:textSize="@dimen/size_18sp"/>
 
         <com.electrom.vahanwireprovider.utility.CustomTextView
@@ -32,31 +51,14 @@
             android:layout_margin="@dimen/size_20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/size_20dp"
             android:textSize="@dimen/size_35dp"
             android:text=""/>
-
-        <com.electrom.vahanwireprovider.utility.CustomTextView
-            android:textSize="@dimen/size_20sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/size_15sp"
-            android:text="Total visitors"/>
-
-        <com.electrom.vahanwireprovider.utility.CustomTextView
-            android:id="@+id/tvTotalVisitorsCountMechanic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/size_30dp"
-            android:text="0"/>
-
-
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:gravity="bottom|center"
+            android:gravity="center"
             android:orientation="vertical">
 
             <com.electrom.vahanwireprovider.utility.CustomButton
@@ -67,7 +69,7 @@
                 android:background="@drawable/round_gray"
                 android:textColor="@color/colorGreenApp"
                 android:layout_marginBottom="@dimen/size_10dp"
-                android:text="Make on duty"/>
+                android:text="Be Online"/>
 
             <com.electrom.vahanwireprovider.utility.CustomButton
                 android:id="@+id/banStatusOffMechanic"
@@ -76,7 +78,7 @@
                 android:background="@drawable/round_gray"
                 android:textColor="#f00"
                 android:layout_marginBottom="@dimen/size_10dp"
-                android:text="Make off duty"/>
+                android:text="Be offline"/>
 
         </LinearLayout>
 

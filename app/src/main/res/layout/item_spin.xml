@@ -4,8 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/size_10dp"
-    android:gravity="center"
+    android:gravity="center_vertical"
     android:textColor="@color/colorAccent"
     android:padding="@dimen/size_5dp"
+    android:maxLines="1"
+    android:ellipsize="end"
     android:text="hello">
 </com.electrom.vahanwireprovider.utility.CustomTextView>

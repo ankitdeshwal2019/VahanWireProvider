@@ -59,6 +59,12 @@ public class SessionManager {
     public static final String PRO_INSTA = "insta";
     public static final String VEHCILE_NUMBER = "vehcile";
     public static final String SERVICE_CHARGE = "service_charge";
+    public static final String QUOTE_URL = "Quote_url";
+    public static final String VEHCILE_TYPE = "vehcile_type";
+    public static final String MINI_QUOTE_URL = "mini_quote_url";
+    public static final String PRO_PERSONAL_PAN = "personal pan";
+    public static final String PRO_SPECIAL_TALENT = "spcial talent";
+    public static final String PRO_ORG_PAN = "org_pan";
 
     private static String SHARED_PREFERENCE_PROVIDER = "shared_provider_electrom";
     ///public static final String COUNT_COMPARE = "count_compare";

@@ -38,7 +38,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -54,6 +57,17 @@ public class OfferActivity extends AppCompatActivity implements View.OnClickList
     CustomEditText etOfferTitle, etOfferDescription;
     CustomButton btnSubmitOffer;
     ImageView iv_back;
+    static String dateStart = "";
+    static String dateEnd = "";
+    static SimpleDateFormat sformat;
+
+    static int y1 = 0;
+    static int m1 = 0;
+    static int d1 = 0;
+
+    static int y2 = 0;
+    static int m2 = 0;
+    static int d2 = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +77,8 @@ public class OfferActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void initView() {
+
+        sformat = new SimpleDateFormat("yyyy-MM-dd");
 
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         Gson gson = new Gson();
@@ -81,8 +97,10 @@ public class OfferActivity extends AppCompatActivity implements View.OnClickList
 
         if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_TOW))
         {
-            String json = sharedPrefs.getString("Offer_tow", null);
+            String json = sharedPrefs.getString("Offer_tow", "");
             Log.e(TAG, "initView: " + json);
+
+
             try {
                 JSONArray array = new JSONArray(json);
                 for(int i = 0 ; i < array.length(); i++)
@@ -92,7 +110,6 @@ public class OfferActivity extends AppCompatActivity implements View.OnClickList
                     etOfferDescription.setText(value.getString("description"));
                     btnStartDate.setText(value.getString("from"));
                     btnEndDate.setText(value.getString("to"));
-
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -128,15 +145,23 @@ public class OfferActivity extends AppCompatActivity implements View.OnClickList
                 DialogFragment startDate = new DatePickerFragment();
                 startDate.show(getSupportFragmentManager(), "datePicker");
                 break;
-            case R.id.btnEndDate:
+
+                case R.id.btnEndDate:
                 check_btn = 2;
                 DialogFragment endDate = new DatePickerFragment();
                 endDate.show(getSupportFragmentManager(), "datePicker");
                 break;
 
             case R.id.btnSubmitOffer:
+                if(y2 >= y1 && m2 >= m1 && d2 >=d1 )
+                {
+                    isNotEmptyFields();
+                }
+                else
+                {
+                    ActionForAll.myFlash(getApplicationContext(), "Please choose valid date");
+                }
 
-                isNotEmptyFields();
                 break;
 
             case R.id.iv_back:
@@ -330,9 +355,7 @@ public class OfferActivity extends AppCompatActivity implements View.OnClickList
         });
     }
 
-
-    private void isNotEmptyFields()
-    {
+    private void isNotEmptyFields() {
         if(etOfferTitle.getText().toString().trim().length() == 0)
         {
             ActionForAll.alertUser("Tips", "Please enter title", "OK", OfferActivity.this);
@@ -372,7 +395,6 @@ public class OfferActivity extends AppCompatActivity implements View.OnClickList
                 Log.e(TAG, "onClick: " + sessionManager.getString(SessionManager.SERVICE));
                 addOfferTow();
             }
-
         }
 
     }
@@ -392,12 +414,29 @@ public class OfferActivity extends AppCompatActivity implements View.OnClickList
         }
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
-            String date = year + "-" + setStringMonth(month) + "-" + setStringDay(day);
-            if(check_btn == 1)
-                btnStartDate.setText(date);
-            if(check_btn == 2)
-                btnEndDate.setText(date);
-        }
+
+                if(check_btn == 1)
+                {
+
+                    y1 = year;
+                    m1 = month;
+                    d1 = day;
+                    dateStart = y1 + "-" + setStringMonth(m1) + "-" + setStringDay(d1);
+                    btnStartDate.setText(dateStart);
+                    Log.e(TAG, "onDateSet: " + dateStart );
+                }
+
+                if(check_btn == 2)
+                {
+                    y2 = year;
+                    m2= month;
+                    d2 = day;
+
+                    dateEnd = y2 + "-" + setStringMonth(m2) + "-" + setStringDay(d2);
+                    btnEndDate.setText(dateEnd);
+                    Log.e(TAG, "onDateSet: " + dateStart );
+                }
+            }
     }
 
     @Override

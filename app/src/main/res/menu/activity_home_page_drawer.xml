@@ -16,7 +16,7 @@
 
         <item
             android:id="@+id/nav_my_introduction"
-            android:icon="@drawable/profile"
+            android:icon="@drawable/introduction_nav"
             android:title="My Introduction" />
 
         <item
@@ -34,6 +34,7 @@
 
         <item
             android:visible="false"
+            android:icon="@drawable/service_charge_nav"
             android:id="@+id/nav_service_charge_mech"
             android:title="Service Charge" />
 

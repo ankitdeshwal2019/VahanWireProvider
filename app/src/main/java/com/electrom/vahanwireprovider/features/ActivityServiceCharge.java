@@ -102,8 +102,8 @@ public class ActivityServiceCharge extends AppCompatActivity {
                 ,""
                 , "",
                 "",
-                "",
-        etServiceCharge.getText().toString());
+                etServiceCharge.getText().toString(),
+        "");
 
 
         call.enqueue(new Callback<ResponseBody>() {

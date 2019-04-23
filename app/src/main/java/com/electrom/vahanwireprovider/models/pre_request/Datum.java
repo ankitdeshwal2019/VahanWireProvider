@@ -101,6 +101,30 @@ public class Datum {
     @Expose
     private UserDetails userDetails;
 
+    public String getQuote_url() {
+        return quote_url;
+    }
+
+    public void setQuote_url(String quote_url) {
+        this.quote_url = quote_url;
+    }
+
+    @SerializedName("quote_url")
+    @Expose
+    private String quote_url;
+
+    public String getMini_quote_url() {
+        return mini_quote_url;
+    }
+
+    public void setMini_quote_url(String mini_quote_url) {
+        this.mini_quote_url = mini_quote_url;
+    }
+
+    @SerializedName("mini_quote_url")
+    @Expose
+    private String mini_quote_url;
+
     public String getBookingId() {
         return bookingId;
     }

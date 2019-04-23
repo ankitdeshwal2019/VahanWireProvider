@@ -302,6 +302,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
                         sessionManager.setString(SessionManager.LANDLINE, responseBody.getData().getOrganisation().getPhone());
                         sessionManager.setString(SessionManager.PROVIDER_IMAGE, responseBody.getData().getProfilePic());
                         sessionManager.setString(SessionManager.PROVIDER_ID, responseBody.getData().getId());
+                        sessionManager.setString(SessionManager.ACTIVE_STATUS, responseBody.getData().getMechanicActiveStatus().toString());
 
                         new Handler().postDelayed(new Runnable() {
                             @Override

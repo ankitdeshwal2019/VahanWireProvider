@@ -142,7 +142,7 @@ public class WorkingHours extends AppCompatActivity implements View.OnClickListe
                             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 
                                 Log.e(TAG, "onTimeSet: " + hourOfDay + " : " + minute );
-                                START_TIME = hourOfDay + ":" + minute;
+                                START_TIME = setStringHour(hourOfDay) + ":" + setStringMinutes(minute);
                                 tvStartTime.setText(START_TIME);
                             }
                         }, mHour, mMinute, false);
@@ -159,7 +159,7 @@ public class WorkingHours extends AppCompatActivity implements View.OnClickListe
                             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 
                                 Log.e(TAG, "onTimeSet: " + hourOfDay + ":" + minute );
-                                END_TIME = hourOfDay + ":" + minute;
+                                END_TIME = setStringHour(hourOfDay) + ":" + setStringMinutes(minute);
                                 tvEndTime.setText(END_TIME);
                             }
                         }, mHour, mMinute, false);
@@ -243,7 +243,20 @@ public class WorkingHours extends AppCompatActivity implements View.OnClickListe
                         JSONObject object = new JSONObject(response.body().string());
                         if(object.getString("status").equals("200"))
                         {
-                            ActionForAll.alertUserWithCloseActivity("VahanProvider", object.getString("message"), "OK", WorkingHours.this);
+                            new AlertDialog.Builder(WorkingHours.this)
+                                    .setTitle("VahanProvider")
+                                    .setMessage(object.getString("message"))
+                                    .setCancelable(false)
+                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                            Intent logout = new Intent(context, PetrolPumpHomePage.class);
+                                            logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            context.startActivity(logout);
+
+                                        }
+                                    }).create().show();
                         }
                         else
                         {
@@ -299,7 +312,20 @@ public class WorkingHours extends AppCompatActivity implements View.OnClickListe
                         JSONObject object = new JSONObject(response.body().string());
                         if(object.getString("status").equals("200"))
                         {
-                            ActionForAll.alertUserWithCloseActivity("VahanProvider", object.getString("message"), "OK", WorkingHours.this);
+                            new AlertDialog.Builder(WorkingHours.this)
+                                    .setTitle("VahanProvider")
+                                    .setMessage(object.getString("message"))
+                                    .setCancelable(false)
+                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                            Intent logout = new Intent(context, MachanicHomePage.class);
+                                            logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            context.startActivity(logout);
+
+                                        }
+                                    }).create().show();
                         }
                         else
                         {
@@ -366,39 +392,9 @@ public class WorkingHours extends AppCompatActivity implements View.OnClickListe
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
 
-                                        if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_PETROL_PUMP))
-                                        {
-
-                                            Intent logout = new Intent(context, PetrolPumpHomePage.class);
-                                            logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                            context.startActivity(logout);
-
-                                        }
-                                        else if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_MECHNIC_PRO))
-                                        {
-                                            Intent logout = new Intent(context, MachanicHomePage.class);
-                                            logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                            context.startActivity(logout);
-                                        }
-                                        else if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_TOW))
-                                        {
                                             Intent logout = new Intent(context, TowHomePage.class);
                                             logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                             context.startActivity(logout);
-                                        }
-                                        else if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_DRIVER))
-                                        {
-                                            Intent logout = new Intent(context, DriverHomePage.class);
-                                            logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                            context.startActivity(logout);
-
-                                        }
-                                        else if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_AMBULANCE))
-                                        {
-                                            Intent logout = new Intent(context, AmbulanceHomePage.class);
-                                            logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                            context.startActivity(logout);
-                                        }
 
                                     }
                                 }).create().show();
@@ -498,4 +494,20 @@ public class WorkingHours extends AppCompatActivity implements View.OnClickListe
         });
 
     }
+
+
+    private static String setStringHour(int hour){
+        if(hour  <= 9)
+            return "0"+ hour;
+        else
+            return hour +"";
+    }
+
+    private static String setStringMinutes(int min){
+        if(min <= 9)
+            return "0"+ min;
+        else
+            return min + "";
+    }
+
 }
