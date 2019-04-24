@@ -453,6 +453,9 @@ public interface ApiInterface {
     @GET(UrlConstants.PRE_BOOKING)
     Call<PreRequestStatus> getPreBooking(@QueryMap Map<String, String> params);
 
+    @GET(UrlConstants.PRE_BOOKING)
+    Call<com.electrom.vahanwireprovider.models.preRequestTest.PreRequestStatus> getPreBookingTest(@QueryMap Map<String, String> params);
+
     @GET(UrlConstants.DRIVER_BOOKING)
     Call<DetailBookingDriver> getDriverBooking(@QueryMap Map<String, String> params);
 
@@ -528,6 +531,12 @@ public interface ApiInterface {
     @POST(UrlConstants.PRE_REQUEST_BOOKING_STATUS)
     @FormUrlEncoded
     Call<B_Status> pre_booking_status(@Field("id") String id,
+                                       @Field("booking_id") String booking_id,
+                                       @Field("enroute_status") String enroute_status);
+
+    @POST(UrlConstants.PRE_REQUEST_BOOKING_STATUS_MAIN)
+    @FormUrlEncoded
+    Call<B_Status> pre_booking_status_main(@Field("id") String id,
                                        @Field("booking_id") String booking_id,
                                        @Field("enroute_status") String enroute_status);
 

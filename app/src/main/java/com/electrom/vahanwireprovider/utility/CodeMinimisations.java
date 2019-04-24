@@ -281,6 +281,13 @@ public class CodeMinimisations {
                         sessionManager.setString(SessionManager.PRO_TWEET, "");
                         sessionManager.setString(SessionManager.PRO_INSTA, "");
                         sessionManager.setString(SessionManager.VEHCILE_NUMBER, "");
+                        sessionManager.setString(SessionManager.SERVICE_CHARGE, "");
+                        sessionManager.setString(SessionManager.QUOTE_URL, "");
+                        sessionManager.setString(SessionManager.VEHCILE_TYPE, "");
+                        sessionManager.setString(SessionManager.MINI_QUOTE_URL, "");
+                        sessionManager.setString(SessionManager.PRO_PERSONAL_PAN, "");
+                        sessionManager.setString(SessionManager.PRO_SPECIAL_TALENT, "");
+                        sessionManager.setString(SessionManager.PRO_ORG_PAN, "");
 
                         dialog.dismiss();
                         Intent logout = new Intent(context, BeforeLogin.class);

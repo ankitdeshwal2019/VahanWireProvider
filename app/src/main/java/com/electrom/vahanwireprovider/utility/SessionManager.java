@@ -65,6 +65,7 @@ public class SessionManager {
     public static final String PRO_PERSONAL_PAN = "personal pan";
     public static final String PRO_SPECIAL_TALENT = "spcial talent";
     public static final String PRO_ORG_PAN = "org_pan";
+    public static final String PRO_ORG_ID  = "org_id";
 
     private static String SHARED_PREFERENCE_PROVIDER = "shared_provider_electrom";
     ///public static final String COUNT_COMPARE = "count_compare";

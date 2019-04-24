@@ -746,6 +746,7 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                         sessionManager.setString(SessionManager.PRO_PERSONAL_PAN, detail.getData().getPersonalDetails().getPanNumber());
                         sessionManager.setString(SessionManager.PRO_SPECIAL_TALENT, detail.getData().getPersonalDetails().getSpecialTalent());
                         sessionManager.setString(SessionManager.PRO_ORG_PAN, detail.getData().getOrganisation().getOrgDetails().getPanNumber());
+                         sessionManager.setString(SessionManager.PRO_ORG_ID, detail.getData().getOrganisationId());
 
                         sessionManager.setString(SessionManager.ACTIVE_STATUS, detail.getData().getMechanicActiveStatus().toString());
                         Log.e(TAG, "onResponse: " + detail.getData().getMechanicActiveStatus().toString());
