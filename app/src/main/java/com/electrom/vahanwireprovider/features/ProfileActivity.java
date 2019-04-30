@@ -289,9 +289,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                                sessionManager.setString(SessionManager.CITY, detail.getData().getOrganisation().getRegAddress().getCity());
                                sessionManager.setString(SessionManager.PINCODE, detail.getData().getOrganisation().getRegAddress().getPincode());
 
-                               Intent logout= new Intent(ProfileActivity.this, ProfileActivity.class);
+                              /* Intent logout= new Intent(ProfileActivity.this, ProfileActivity.class);
                                logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                               startActivity(logout);
+                               startActivity(logout);*/
                                ActionForAll.alertUser("VahanWire", "Profile updated Mechanic", "OK", ProfileActivity.this);
                            }
                        }, 300);

@@ -26,10 +26,11 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.electrom.vahanwireprovider.R;
-import com.electrom.vahanwireprovider.models.booking_details.BookingDetails;
-import com.electrom.vahanwireprovider.models.booking_details.Data;
-import com.electrom.vahanwireprovider.models.booking_details.Details;
-import com.electrom.vahanwireprovider.models.booking_details.UserDetails;
+import com.electrom.vahanwireprovider.models.booking_detail_new.Billing;
+import com.electrom.vahanwireprovider.models.booking_detail_new.BookingDetails;
+import com.electrom.vahanwireprovider.models.booking_detail_new.Data;
+import com.electrom.vahanwireprovider.models.booking_detail_new.Details;
+import com.electrom.vahanwireprovider.models.booking_detail_new.UserDetails;
 import com.electrom.vahanwireprovider.models.booking_status.B_Status;
 import com.electrom.vahanwireprovider.models.cancel_reason_mech.CancelReason;
 import com.electrom.vahanwireprovider.models.cancel_reason_mech.Datum;
@@ -58,6 +59,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.security.auth.login.LoginException;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -74,19 +77,21 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
     String cancelReason;
 
     LinearLayout llCointainerOnTheWay, llCointainerReachStart, llCointainerServiceDone,
-            llCointainerCompalete, llDiration, llCallCointainer;
+            llCointainerCompalete, llDiration, llCallCointainer,llCointainerBilling;
 
-    CircleImageView ivOnTheWay, ivReachStart, ivServiceDone, ivComplete;
+    CircleImageView ivOnTheWay, ivReachStart, ivServiceDone, ivComplete, ivBilling;
     ImageView back;
     Double Latitude, Longitude;
     String contact;
-    CustomTextView tvBookingMechanicDirection;
+    CustomTextView tvBookingMechanicDirection, tvCheckBill;
     CircleImageView ivMechanicProfile;
     Dialog cancelDiolog;
     CustomButton btnCancelMechanic;
     ImageView ivDir;
     String OTP;
     int routeCount = 0;
+    String billing_url="";
+    String billview="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,12 +112,15 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
         llCointainerServiceDone= findViewById(R.id.llCointainerServiceDone);
         llCointainerCompalete = findViewById(R.id.llCointainerCompalete);
         llCallCointainer = findViewById(R.id.llCallCointainer);
+        llCointainerBilling = findViewById(R.id.llCointainerBilling);
         tvBookingMechanicDirection = findViewById(R.id.tvBookingMechanicDirection);
+        tvCheckBill = findViewById(R.id.tvCheckBill);
         llDiration = findViewById(R.id.llDiration);
         tvBookingMechanicName = findViewById(R.id.tvBookingMechanicName);
         tvBookingMechanicMobile = findViewById(R.id.tvBookingMechanicMobile);
         ivMechanicProfile = findViewById(R.id.ivMechanicProfile);
         btnCancelMechanic = findViewById(R.id.btnCancelMechanic);
+        ivBilling = findViewById(R.id.ivBilling);
         tvTitle = findViewById(R.id.tvTitle);
         ivDir = findViewById(R.id.ivDir);
         back = findViewById(R.id.back);
@@ -122,13 +130,16 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
         llCointainerCompalete.setOnClickListener(this);
         llDiration.setOnClickListener(this);
         back.setOnClickListener(this);
+        tvCheckBill.setOnClickListener(this);
         btnCancelMechanic.setOnClickListener(this);
         llCallCointainer.setOnClickListener(this);
+        llCointainerBilling.setOnClickListener(this);
 
         ivOnTheWay = findViewById(R.id.ivOnTheWay);
         ivReachStart = findViewById(R.id.ivReachStart);
         ivServiceDone = findViewById(R.id.ivServiceDone);
         ivComplete = findViewById(R.id.ivComplete);
+        llCointainerBilling = findViewById(R.id.llCointainerBilling);
     }
 
     @Override
@@ -152,9 +163,17 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                 bookingStatusServiceDone();
                 break;
 
-            case R.id.llCointainerCompalete:
+            case R.id.llCointainerBilling:
                 if(routeCount == 3)
+                    startActivity(new Intent(getApplicationContext(), WebViewMechBilling.class)
+                    .putExtra("url", billing_url));
+                Log.e(TAG, "onClick: " + billing_url );
+                break;
+
+            case R.id.llCointainerCompalete:
+                if(routeCount == 4)
                 boobkingStatusComplete();
+                Log.e(TAG, "onClick: " + routeCount );
                 break;
 
             case R.id.btnCancelMechanic:
@@ -163,6 +182,12 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
 
                 case R.id.back:
                 finish();
+                break;
+
+                case R.id.tvCheckBill:
+                    startActivity(new Intent(getApplicationContext(), BillingView.class)
+                            .putExtra("url_view", billview));
+                    Log.e(TAG, "onClick: " +routeCount + " :: url mini Quote : " +  billview);
                 break;
 
                 case R.id.llDiration:
@@ -383,7 +408,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
         Call<B_Status> call = apiService.mech_booking_status(
                 sessionManager.getString(SessionManager.PROVIDER_ID),
                 sessionManager.getString(SessionManager.BOOKING_ID),
-                "4");
+                "5");
 
         call.enqueue(new Callback<B_Status>() {
             @Override
@@ -396,7 +421,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                     B_Status bookingStatus = response.body();
                     if(bookingStatus.getStatus().equals("200"))
                     {
-                        routeCount = 4;
+                        routeCount = 5;
                         Log.e(TAG, "success " + bookingStatus.getMessage());
                         ivOnTheWay.setImageResource(R.drawable.on_the_way_green);
                         ivReachStart.setImageResource(R.drawable.reach_start);
@@ -406,6 +431,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                         llCointainerReachStart.setClickable(false);
                         llCointainerServiceDone.setClickable(false);
                         llCointainerCompalete.setClickable(false);
+                        tvCheckBill.setVisibility(View.VISIBLE);
                         llDiration.setClickable(false);
                         llDiration.setVisibility(View.VISIBLE);
                         ivDir.setVisibility(View.GONE);
@@ -431,7 +457,6 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                 ActionForAll.alertUser("VahanWire", t.getMessage(), "OK", BookingStatusMechanic.this);
             }
         });
-
     }
 
     private void getAllBookingDetail(){
@@ -443,6 +468,9 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
         Map<String, String> params = new HashMap<String, String>();
         params.put("id", sessionManager.getString(SessionManager.PROVIDER_ID));
         params.put("booking_id", sessionManager.getString(SessionManager.BOOKING_ID));
+
+        Log.e(TAG, "getAllBookingDetail: id " +  sessionManager.getString(SessionManager.PROVIDER_ID));
+        Log.e(TAG, "getAllBookingDetail: booking id " +  sessionManager.getString(SessionManager.BOOKING_ID));
 
         Call<BookingDetails> call = apiService.getMechBooking(params);
 
@@ -463,7 +491,22 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                     {
                         Data data = bookingDetails.getData();
 
-                        UserDetails userDetails = data.getUserDetails();
+
+
+                        List<Billing> billing = data.getDetails().getBilling();
+                        billing_url = bookingDetails.getData().getDetails().getBillingUrl();
+                        if(billing.size()>0)
+                        {
+                            String billingAmount = billing.get(0).getBillingAmount();
+                            String billingLink = billing.get(0).getBillImageLink();
+
+                            Log.e(TAG, "onResponse: billing " + billingAmount);
+                            Log.e(TAG, "onResponse: link " + billingLink);
+                            Log.e(TAG, "onResponse: billing_url " + billing_url);
+                            billview = bookingDetails.getData().getDetails().getBilling().get(0).getBillImageLink();
+                        }
+
+                        UserDetails userDetails = bookingDetails.getData().getUserDetails();
                         PicassoClient.downloadImage(context,userDetails.getProfilePic(),ivMechanicProfile);
                         Details details = data.getDetails();
                         contact = userDetails.getPhone();
@@ -474,6 +517,8 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                         String status = details.getEnrouteStatus();
                         OTP =  details.getOtpVerify();
                         Log.e(TAG, "onResponse: otp mechanic" +  OTP);
+                        Log.e(TAG, "onResponse: status mechanic" +  status);
+
 
                         if(status.equals("0")){
                             btnCancelMechanic.setVisibility(View.VISIBLE);
@@ -522,7 +567,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                             llCointainerOnTheWay.setClickable(false);
                             llCointainerReachStart.setClickable(false);
                             llCointainerServiceDone.setClickable(false);
-                            llCointainerCompalete.setClickable(true);
+                            llCointainerBilling.setClickable(true);
                             routeCount = 3;
 
                         }
@@ -531,9 +576,34 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                             ivOnTheWay.setImageResource(R.drawable.on_the_way_green);
                             ivReachStart.setImageResource(R.drawable.reach_start);
                             ivServiceDone.setImageResource(R.drawable.service_done_green);
-                            ivComplete.setImageResource(R.drawable.complete_green);
+                            //ivComplete.setImageResource(R.drawable.complete_green);
+                            ivBilling.setImageResource(R.drawable.bill_green_mechanic);
                             tvBookingMechanicDirection.setText("Complete");
                             tvBookingMechanicDirection.setClickable(false);
+                            tvCheckBill.setVisibility(View.VISIBLE);
+                            llDiration.setVisibility(View.VISIBLE);
+                            ivDir.setVisibility(View.GONE);
+                            llDiration.setClickable(false);
+                            btnCancelMechanic.setVisibility(View.INVISIBLE);
+                            llCointainerOnTheWay.setClickable(false);
+                            llCointainerReachStart.setClickable(false);
+                            llCointainerServiceDone.setClickable(false);
+                            llCointainerCompalete.setClickable(true);
+                            tvTitle.setText("Completed / Cancelled service");
+
+                            routeCount = 4;
+                        }
+
+                        else if(status.equals("5")){
+
+                            ivOnTheWay.setImageResource(R.drawable.on_the_way_green);
+                            ivReachStart.setImageResource(R.drawable.reach_start);
+                            ivServiceDone.setImageResource(R.drawable.service_done_green);
+                            ivComplete.setImageResource(R.drawable.complete_green);
+                            ivBilling.setImageResource(R.drawable.bill_green_mechanic);
+                            tvBookingMechanicDirection.setText("Complete");
+                            tvBookingMechanicDirection.setClickable(false);
+                            tvCheckBill.setVisibility(View.VISIBLE);
                             llDiration.setVisibility(View.VISIBLE);
                             ivDir.setVisibility(View.GONE);
                             llDiration.setClickable(false);
@@ -543,9 +613,11 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                             llCointainerServiceDone.setClickable(false);
                             llCointainerCompalete.setClickable(false);
                             tvTitle.setText("Completed / Cancelled service");
-                            routeCount = 4;
+                            routeCount = 5;
 
                         }
+
+
                         tvBookingMechanicName.setText(userDetails.getFullname());
                         tvBookingMechanicMobile.setText(contact);
                         if(bookingDetails.getData().getDetails().getBookingStatus().getUser().getStatus().equals("2"))
@@ -554,6 +626,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                             llDiration.setClickable(false);
                             ivDir.setVisibility(View.GONE);
                             tvBookingMechanicDirection.setText("Cancel by user");
+                            tvBookingMechanicDirection.setTextColor(Color.parseColor("#FF0000"));
                             llCointainerOnTheWay.setClickable(false);
                             llCointainerReachStart.setClickable(false);
                             llCointainerServiceDone.setClickable(false);
@@ -566,6 +639,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                             llDiration.setVisibility(View.VISIBLE);
                             llDiration.setClickable(false);
                             ivDir.setVisibility(View.GONE);
+                            tvBookingMechanicDirection.setTextColor(Color.parseColor("#FF0000"));
                             tvBookingMechanicDirection.setText("Cancel by you");
                             llCointainerOnTheWay.setClickable(false);
                             llCointainerReachStart.setClickable(false);

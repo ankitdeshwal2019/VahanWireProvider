@@ -1,9 +1,9 @@
 package com.electrom.vahanwireprovider.utility;
 
 public class UrlConstants {
-    //public static final String BASE_URL = "https://polar-plateau-32696.herokuapp.com/api/";
+
+    // public static final String BASE_URL = "http://3.0.231.209/api/";
     public static final String BASE_URL = "http://52.66.52.59/api/";
-    //public static final String BASE_URL = "https://guarded-bayou-98906.herokuapp.com/api/";
     public static final String REGISTER_PROVIDER = "petrolpump/provider/register/mobile";
     public static final String VERIFY_MOB_PROVIDER = "petrolpump/provider/register/verifymobile";
     public static final String RESISTRATION_UPDATE = "petrolpump/provider/details/update";
@@ -86,7 +86,7 @@ public class UrlConstants {
     public static final String BRAND_UPDATE_TOW = "tow/mainprovider/vehiclebrands/update";
     public static final String ALL_PAYMENT_METHOD_TOW = "tow/mainprovider/paymentmethod/all";
     public static final String PAYMENT_METHOD_UPDATE_TOW = "tow/mainprovider/paymentmethod/update";
-    public static final String OFFER_ADD_TOW = "tow/mainprovider/offer/add";
+    public static final String OFFER_ADD_TOW = "tow/provider/offer/add";
     public static final String PROVIDER_DETAIL_TOW = "tow/provider/details";
     public static final String LOGOUT_TOW = "tow/provider/logout";
     public static final String TOW_TIME_UPDATE = "tow/mainprovider/timing/update";

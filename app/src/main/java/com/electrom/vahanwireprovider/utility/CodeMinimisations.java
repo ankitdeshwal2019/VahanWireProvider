@@ -68,13 +68,7 @@ public class CodeMinimisations {
 
             case "Booking History":
 
-                if (sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_DRIVER))
-                {
-                    Log.e(TAG, "largeSwitchCase: " + "driver" );
-                    in = new Intent(context, BookingHistoryDriver.class);
-                    context.startActivity(in);
-                }
-                else if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_MECHNIC_PRO))
+                if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_MECHNIC_PRO))
                 {
                     Log.e(TAG, "largeSwitchCase: " + "mechanic" );
                     in = new Intent(context, BookingHistoryMechanic.class);
@@ -85,6 +79,17 @@ public class CodeMinimisations {
                 {
                     Log.e(TAG, "largeSwitchCase: " + "simple" );
                     in = new Intent(context, BookingHistory.class);
+                    context.startActivity(in);
+                }
+
+                break;
+
+            case "Assigned Task":
+
+                if (sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_DRIVER))
+                {
+                    Log.e(TAG, "largeSwitchCase: " + "driver" );
+                    in = new Intent(context, BookingHistoryDriver.class);
                     context.startActivity(in);
                 }
 
@@ -158,9 +163,14 @@ public class CodeMinimisations {
                 break;
 
 
-            case "Service Charge":
+            case "Visiting Charges":
                 // ActionForAll.myFlash(context, "Offer page");
                 in = new Intent(context, ActivityServiceCharge.class);
+                context.startActivity(in);
+                break;
+
+                case "Write as Expert":
+                in = new Intent(context, AddnExpert.class);
                 context.startActivity(in);
                 break;
 
@@ -288,6 +298,8 @@ public class CodeMinimisations {
                         sessionManager.setString(SessionManager.PRO_PERSONAL_PAN, "");
                         sessionManager.setString(SessionManager.PRO_SPECIAL_TALENT, "");
                         sessionManager.setString(SessionManager.PRO_ORG_PAN, "");
+                        sessionManager.setString(SessionManager.PRO_ORG_ID, "");
+                        sessionManager.setString(SessionManager.NAV_NAME_MECH, "");
 
                         dialog.dismiss();
                         Intent logout = new Intent(context, BeforeLogin.class);

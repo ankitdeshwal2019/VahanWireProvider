@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioAttributes;
 import android.net.Uri;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -328,7 +329,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // TODO: Implement this method to send token to your app server.
     }
 
-
     private void sendMyNotification(String title, String body, String tag, String type) {
 
         PendingIntent pendingIntent = null;
@@ -372,13 +372,35 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
 
         Uri soundUri = Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/" + R.raw.apple_tone);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, "CH_ID")
+        NotificationCompat.Builder notificationBuilder;
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+            notificationBuilder = new NotificationCompat.Builder(this, "CH_ID")
+                    .setSmallIcon(R.drawable.not_logo)
+                    .setColor(getResources().getColor(R.color.notification_color))
+                    .setContentTitle(title)
+                    .setContentText(body)
+                    .setAutoCancel(true)
+                    .setSound(soundUri)
+                    .setContentIntent(pendingIntent);
+        } else {
+            notificationBuilder = new NotificationCompat.Builder(this, "CH_ID")
+                    .setSmallIcon(R.drawable.not_logo)
+                    .setContentTitle(title)
+                    .setContentText(body)
+                    .setAutoCancel(true)
+                    .setSound(soundUri)
+                    .setContentIntent(pendingIntent);
+        }
+
+       /* NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, "CH_ID")
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(title)
                 .setContentText(body)
                 .setAutoCancel(true)
                 .setSound(soundUri)
-                .setContentIntent(pendingIntent);
+                .setContentIntent(pendingIntent);*/
 
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {

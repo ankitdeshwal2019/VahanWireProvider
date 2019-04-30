@@ -87,7 +87,7 @@ public class ActionForAll {
     public static void alertUser(String title, String massage, String action, final Activity context) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("VahanProvider");
+        builder.setTitle("Vahanprovider");
         builder.setMessage(massage);
         //builder.setIcon(R.drawable.ic_launcher_foreground);
         builder.setPositiveButton(action,new DialogInterface.OnClickListener() {
@@ -106,7 +106,7 @@ public class ActionForAll {
     public static void alertUserWithCloseActivity(String title, String massage, String action, final Activity context) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("VahanProvider");
+        builder.setTitle("Vahanprovider");
         builder.setMessage(massage);
         builder.setPositiveButton(action,new DialogInterface.OnClickListener() {
             @Override
@@ -126,7 +126,7 @@ public class ActionForAll {
     public static void alertChoiseCloseActivity(final Context context) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("VahanProvider");
+        builder.setTitle("Vahanprovider");
         builder.setMessage("Do you want to exit from this page?");
         builder.setPositiveButton("YES",new DialogInterface.OnClickListener() {
             @Override

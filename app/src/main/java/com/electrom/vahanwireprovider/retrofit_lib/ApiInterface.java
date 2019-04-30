@@ -5,7 +5,7 @@ import com.electrom.vahanwireprovider.models.amb_booking_his.BookingHistory;
 import com.electrom.vahanwireprovider.models.b_detail.BDetail;
 import com.electrom.vahanwireprovider.models.book_detail_tow.BdetailTow;
 import com.electrom.vahanwireprovider.models.booking_detail.DetailBookingDriver;
-import com.electrom.vahanwireprovider.models.booking_details.BookingDetails;
+import com.electrom.vahanwireprovider.models.booking_detail_new.BookingDetails;
 import com.electrom.vahanwireprovider.models.booking_status.B_Status;
 import com.electrom.vahanwireprovider.models.brands.Brand;
 import com.electrom.vahanwireprovider.models.cancel_reason_mech.CancelReason;

@@ -16,11 +16,11 @@
 
         <item
             android:id="@+id/nav_my_introduction"
-            android:icon="@drawable/introduction_nav"
+            android:icon="@drawable/introduction_new_nav"
             android:title="My Introduction" />
 
         <item
-            android:icon="@drawable/nav_booking_history"
+            android:icon="@drawable/booking_history_new_nav"
             android:id="@+id/nav_booking"
             android:title="Booking History" />
 
@@ -29,14 +29,14 @@
             android:icon="@drawable/nav_booking_history"
             android:visible="false"
             android:id="@+id/nav_booking_driver"
-            android:title="Booking History" />
+            android:title="Assigned Task" />
 
 
         <item
             android:visible="false"
-            android:icon="@drawable/service_charge_nav"
+            android:icon="@drawable/service_charge_new_nav"
             android:id="@+id/nav_service_charge_mech"
-            android:title="Service Charge" />
+            android:title="Visiting Charges" />
 
         <item
             android:id="@+id/nav_offer"
@@ -50,7 +50,7 @@
 
         <item
             android:id="@+id/nav_payment_method"
-            android:icon="@drawable/facility_payments_method"
+            android:icon="@drawable/payment_new_nav"
             android:title="Payments" />
 
         <item
@@ -59,12 +59,12 @@
             android:title="Facilities" />
 
         <item
-            android:icon="@drawable/nav_brand"
+            android:icon="@drawable/servicable_brand"
             android:id="@+id/nav_Serviceable_brand"
             android:title="Select Serviceable brand" />
 
         <item
-            android:icon="@drawable/nav_services"
+            android:icon="@drawable/select_service_new_nav"
             android:id="@+id/nav_Service"
             android:title="Select Services" />
 
