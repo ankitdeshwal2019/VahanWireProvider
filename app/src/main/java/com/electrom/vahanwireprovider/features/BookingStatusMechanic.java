@@ -14,6 +14,7 @@ import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -58,8 +59,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import javax.security.auth.login.LoginException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
@@ -154,7 +153,6 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
 
             case R.id.llCointainerReachStart:
                 if(routeCount == 1)
-
                 verifyOtpPopup();
                 break;
 
@@ -181,7 +179,9 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                 break;
 
                 case R.id.back:
-                finish();
+                    Intent logout = new Intent(getApplicationContext(), BookingHistoryMechanic.class);
+                    logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(logout);
                 break;
 
                 case R.id.tvCheckBill:
@@ -228,7 +228,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
     private void boobkingStatusOnTheWay()
     {
         Log.e(TAG, "provider id " + sessionManager.getString(SessionManager.PROVIDER_ID));
-        Log.e(TAG, "provider id " + sessionManager.getString(SessionManager.BOOKING_ID));
+        Log.e(TAG, "booking id " + sessionManager.getString(SessionManager.BOOKING_ID));
 
         final ProgressDialog progressDialog = Util.showProgressDialog(context);
 
@@ -950,6 +950,18 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
         });
 
         verifyDiolog.show();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if(keyCode == event.KEYCODE_BACK)
+        {
+            Intent logout = new Intent(getApplicationContext(), BookingHistoryMechanic.class);
+            logout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(logout);
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
 }

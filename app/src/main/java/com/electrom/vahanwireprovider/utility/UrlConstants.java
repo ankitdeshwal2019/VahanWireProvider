@@ -107,4 +107,6 @@ public class UrlConstants {
     public static final String QUOTE_STATUS = "mechanic/provider/prerequest/request/quotation";
     public static final String MINI_QUOTE_STATUS = "mechanic/provider/prerequest/request/miniquotation";
     public static final String PRE_BOOKING = "mechanic/provider/prerequest/booking";
+    public static final String ALL_PRE_SERVICE = "mechanic/mainprovider/service/all";
+    public static final String PRE_SERVICE_UPDATE = "mechanic/mainprovider/service/update";
 }

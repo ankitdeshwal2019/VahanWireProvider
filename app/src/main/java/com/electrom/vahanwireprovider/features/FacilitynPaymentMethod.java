@@ -35,7 +35,7 @@ import retrofit2.Response;
 
 public class FacilitynPaymentMethod extends AppCompatActivity implements View.OnClickListener{
 
-    private static final String TAG = FacilitynPaymentMethod.class.getSimpleName();
+    private static final String TAG = PreServices.class.getSimpleName();
     RecyclerView recyclerFacility;
     CustomButton btnSubmitPaymentnFacility;
     ServiceAdapter serviceAdapter;

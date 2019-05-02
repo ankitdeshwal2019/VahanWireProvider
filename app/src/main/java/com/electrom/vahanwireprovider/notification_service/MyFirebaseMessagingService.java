@@ -166,9 +166,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     type = data.isNull("request_type") ? "" : data.getString("request_type");
                     if(type.equals("prerequest"))
                     {
-
                         Log.e(TAG, "onMessageReceived: " + "pre request");
-
                         booking_id = data.getString("booking_id");
                         JSONObject booking_status = data.getJSONObject("booking_status");
                         JSONObject mech = booking_status.getJSONObject("servicecenter");

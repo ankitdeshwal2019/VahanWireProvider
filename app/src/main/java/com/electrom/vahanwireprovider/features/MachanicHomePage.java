@@ -131,6 +131,8 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
 
         manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
+        //requestPopup();
+
         if (sessionManager.getString(SessionManager.BOOKING_STATUS).equals("0") &&
                 !sessionManager.getString(SessionManager.BOOKING_STATUS_USER).equals("2") &&
                 !sessionManager.getString(SessionManager.NOTI_ISSUE).equalsIgnoreCase("Pre Request")) {

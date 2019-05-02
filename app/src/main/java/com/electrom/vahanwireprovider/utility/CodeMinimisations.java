@@ -20,6 +20,7 @@ import com.electrom.vahanwireprovider.features.AddnExpert;
 import com.electrom.vahanwireprovider.features.AmbulanceHomePage;
 import com.electrom.vahanwireprovider.features.BookingHistory;
 import com.electrom.vahanwireprovider.features.BookingHistoryMechanic;
+import com.electrom.vahanwireprovider.features.PreServices;
 import com.electrom.vahanwireprovider.features.SelectionActivity;
 import com.electrom.vahanwireprovider.new_app_driver.BookingHistoryDriver;
 import com.electrom.vahanwireprovider.features.FacilitynPaymentMethod;
@@ -92,7 +93,6 @@ public class CodeMinimisations {
                     in = new Intent(context, BookingHistoryDriver.class);
                     context.startActivity(in);
                 }
-
                 break;
 
             case "Home":
@@ -152,12 +152,11 @@ public class CodeMinimisations {
                 if (sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_MECHNIC_PRO)) {
                     in = new Intent(context, UploadSocial.class);
                     context.startActivity(in);
-
                 }
                 break;
 
             case "Offers":
-                // ActionForAll.myFlash(context, "Offer page");
+
                 in = new Intent(context, OfferActivity.class);
                 context.startActivity(in);
                 break;
@@ -198,9 +197,15 @@ public class CodeMinimisations {
                 context.startActivity(in);
                 break;
 
-            case "Select Services":
+            case "Emergency Services":
                 // ActionForAll.myFlash(context, "Facility and Payment method page");
                 in = new Intent(context, SelectIssue.class);
+                context.startActivity(in);
+                break;
+
+                case "Pre Services":
+                // ActionForAll.myFlash(context, "Facility and Payment method page");
+                in = new Intent(context, PreServices.class);
                 context.startActivity(in);
                 break;
 

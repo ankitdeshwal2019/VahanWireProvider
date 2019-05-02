@@ -12,6 +12,7 @@ import com.electrom.vahanwireprovider.models.cancel_reason_mech.CancelReason;
 import com.electrom.vahanwireprovider.models.cancel_request.CancelRequest;
 import com.electrom.vahanwireprovider.models.checked.Check;
 import com.electrom.vahanwireprovider.models.city.City;
+import com.electrom.vahanwireprovider.models.country.Country;
 import com.electrom.vahanwireprovider.models.d_book_list.DriBookList;
 import com.electrom.vahanwireprovider.models.detail.Detail;
 import com.electrom.vahanwireprovider.models.driver.Driver;
@@ -32,6 +33,7 @@ import com.electrom.vahanwireprovider.models.payment_tow.PaymentTow;
 import com.electrom.vahanwireprovider.models.petrol_status.PetrolStatus;
 import com.electrom.vahanwireprovider.models.pre_req_status.PreRequestStatus;
 import com.electrom.vahanwireprovider.models.pre_request.PreRequest;
+import com.electrom.vahanwireprovider.models.pre_service_all.PreSerModel;
 import com.electrom.vahanwireprovider.models.pro_update_mech.ProfileUpdateMech;
 import com.electrom.vahanwireprovider.models.quote_status.QuoteStatus;
 import com.electrom.vahanwireprovider.models.request_accept.RequestAccept;
@@ -142,6 +144,9 @@ public interface ApiInterface {
 
     @GET(UrlConstants.ALL_ISSUES)
     Call<Issue> getAllIssueMechnic(@QueryMap Map<String, String> params);
+
+    @GET(UrlConstants.ALL_PRE_SERVICE)
+    Call<PreSerModel> getAllPreService(@QueryMap Map<String, String> params);
 
     @GET(UrlConstants.ALL_CHECKED_LIST)
     Call<Check> getAllCheckedList(@QueryMap Map<String, String> params);
@@ -256,6 +261,11 @@ public interface ApiInterface {
     Call<ResponseBody> issue_update_mech(@Field("mobile") String mobile,
                                          @Field("vehicle_issue") String issue);
 
+    @POST(UrlConstants.PRE_SERVICE_UPDATE)
+    @FormUrlEncoded
+    Call<ResponseBody> pre_ser_update(@Field("mobile") String mobile,
+                                         @Field("service") String service);
+
     @POST(UrlConstants.BRAND_UPDATE_MECHANIC)
     @FormUrlEncoded
     Call<ResponseBody> brand_update_mech(@Field("mobile") String mobile,
@@ -318,7 +328,6 @@ public interface ApiInterface {
                                          @Field("device_type") String device_type,
                                          @Field("notification_id") String notification_id);
 
-
     @POST(UrlConstants.TOW_LOGIN)
     @FormUrlEncoded
     Call<TowLogin> login_tow(@Field("mobile") String mobile,
@@ -369,11 +378,7 @@ public interface ApiInterface {
             @Field("open_to") String open_to,
             @Field("website") String website,
             @Field("latitude") String latitude,
-            @Field("longitude") String longitude
-            );
-
-
-
+            @Field("longitude") String longitude);
 
     @POST(UrlConstants.MECHANIC_REGISTRATION_UPDATE_NEW)
     @FormUrlEncoded
@@ -407,7 +412,6 @@ public interface ApiInterface {
             @Field("mobile_pin") String mobile_pin
     );
 
-
     @POST(UrlConstants.MECHANIC_LOGIN)
     @FormUrlEncoded
     Call<MechanicLogin> login_mechanic(@Field("mobile") String mobile,
@@ -416,8 +420,14 @@ public interface ApiInterface {
                                        @Field("device_type") String device_type,
                                        @Field("notification_id") String notification_id);
 
-    /*@GET(UrlConstants.SELECT_COUNRTY)
-    Call<Country> getCounrty();*/
+    @GET(UrlConstants.SELECT_COUNRTY)
+    Call<Country> getCounrty();
+
+    @GET(UrlConstants.SELECT_STATE)
+    Call<State> getState(@QueryMap Map<String, String> params);
+
+    @GET(UrlConstants.SELECT_CITY)
+    Call<City> getCity(@QueryMap Map<String, String> params);
 
     @GET(UrlConstants.CANCEL_REASON_MECHANIC)
     Call<CancelReason> cancelReason();
@@ -431,18 +441,11 @@ public interface ApiInterface {
     @GET(UrlConstants.CANCEL_REASON_AMBULANCE_BOOKING)
     Call<CancelReason> cancelReasonAmbulanceBooking(@QueryMap Map<String, String> params);
 
-
     @GET(UrlConstants.CANCEL_REASON_TOW_BOOKING)
     Call<CancelReason> cancelReasonTowBooking(@QueryMap Map<String, String> params);
 
     @GET(UrlConstants.CANCEL_REASON_DRIVER_BOOKING)
     Call<CancelReason> cancelReasonDriverBooking(@QueryMap Map<String, String> params);
-
-    @GET(UrlConstants.SELECT_STATE)
-    Call<State> getState(@QueryMap Map<String, String> params);
-
-    @GET(UrlConstants.SELECT_CITY)
-    Call<City> getCity(@QueryMap Map<String, String> params);
 
    /* @GET(UrlConstants.MECHANIC_BOOKING_ACTIVE)
     Call<BookingDetails> getAllDetail(@QueryMap Map<String, String> params);*/
@@ -475,13 +478,10 @@ public interface ApiInterface {
     @FormUrlEncoded
     Call<RequestAccept> mech_req_accept(@Field("id") String id,
                                         @Field("booking_id") String booking_id);
-
-
     @POST(UrlConstants.PRE_APPOINTMENT_REQUEST_ACCEPT)
     @FormUrlEncoded
     Call<RequestAccept> preReQuest_req_accept(@Field("id") String id,
                                         @Field("booking_id") String booking_id);
-
     @POST(UrlConstants.REQUEST_AMBULANCE)
     @FormUrlEncoded
     Call<RequestAccept> req_acceptAmbulance(@Field("id") String id,
@@ -492,13 +492,11 @@ public interface ApiInterface {
     Call<CancelRequest> mech_req_cancel(@Field("id") String id,
                                         @Field("booking_id") String booking_id,
                                         @Field("reason") String reason);
-
     @POST(UrlConstants.PRE_REQ_CANCEL)
     @FormUrlEncoded
     Call<CancelRequest> pre_req_cancel(@Field("id") String id,
                                         @Field("booking_id") String booking_id,
                                         @Field("reason") String reason);
-
 
     @POST(UrlConstants.TOW_REQUEST_CANCEL)
     @FormUrlEncoded
@@ -511,6 +509,7 @@ public interface ApiInterface {
     Call<CancelRequest> ambulance_req_cancel(@Field("id") String id,
                                              @Field("booking_id") String booking_id,
                                              @Field("reason") String reason);
+
     @POST(UrlConstants.AMBULANCE_CANCEL_AUTO)
     @FormUrlEncoded
     Call<CancelRequest> ambulance_req_cancel_auto(@Field("id") String id,
@@ -605,7 +604,6 @@ public interface ApiInterface {
 
     @GET(UrlConstants.ADD_EXPERT)
     Call<Expert> add_experts(@QueryMap Map<String, String> params);
-    //api/searchtypes/{Id}/filters
 
     @GET("mechanic/mainprovider")
     Call<ResponseBody> getFilterList(@Path("Id") String customerId,
@@ -620,12 +618,10 @@ public interface ApiInterface {
                              @Field("device_type") String device_type,
                              @Field("notification_id") String notification_id);
 
-
     @POST(UrlConstants.TOW_REQUEST_ACCEPT)
     @FormUrlEncoded
     Call<RequestAccept> tow_req_accept(@Field("id") String id,
                                         @Field("booking_id") String booking_id);
-
 
     @POST(UrlConstants.CHECK_LIST_ADD)
     @FormUrlEncoded
