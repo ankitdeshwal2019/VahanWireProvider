@@ -197,13 +197,13 @@ public class CodeMinimisations {
                 context.startActivity(in);
                 break;
 
-            case "Emergency Services":
+            case "Select Emergency Services":
                 // ActionForAll.myFlash(context, "Facility and Payment method page");
                 in = new Intent(context, SelectIssue.class);
                 context.startActivity(in);
                 break;
 
-                case "Pre Services":
+                case "Select Pre-Request Services":
                 // ActionForAll.myFlash(context, "Facility and Payment method page");
                 in = new Intent(context, PreServices.class);
                 context.startActivity(in);
@@ -365,7 +365,6 @@ public class CodeMinimisations {
 
                     if (bookingStatus.getStatus().equals("200")) {
                         Log.d(TAG, "success " + bookingStatus.getMessage());
-
 
                         //ActionForAll.alertUserWithCloseActivity("VahanWire","Request cancelled !","OK", BookingStatusMechanic.this);
                     } else {
