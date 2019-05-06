@@ -192,6 +192,7 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
         if (sessionManager.getString(SessionManager.MAIN_PROVIDER).equals("1")) {
 
             nav_Menu.findItem(R.id.nav_service_charge_mech).setVisible(true);
+            nav_Menu.findItem(R.id.nav_Service_pre_service).setVisible(true);
             /*nav_Menu.findItem(R.id.nav_Service).setVisible(false);
             nav_Menu.findItem(R.id.nav_Serviceable_brand).setVisible(false);*/
         } else {

@@ -2,8 +2,8 @@ package com.electrom.vahanwireprovider.utility;
 
 public class UrlConstants {
 
-    // public static final String BASE_URL = "http://3.0.231.209/api/";
-    public static final String BASE_URL = "http://52.66.52.59/api/";
+    public static final String BASE_URL = "http://3.0.231.209/api/";
+    //public static final String BASE_URL = "http://52.66.52.59/api/";
     public static final String REGISTER_PROVIDER = "petrolpump/provider/register/mobile";
     public static final String VERIFY_MOB_PROVIDER = "petrolpump/provider/register/verifymobile";
     public static final String RESISTRATION_UPDATE = "petrolpump/provider/details/update";

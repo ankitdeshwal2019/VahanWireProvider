@@ -276,43 +276,10 @@ public class VerifyOtp extends AppCompatActivity implements View.OnClickListener
 
     private void requestGetOtp() {
 
-        Dexter.withActivity(this)
-                .withPermissions(
-                        Manifest.permission.RECEIVE_SMS,
-                        Manifest.permission.READ_SMS,
-                        Manifest.permission.READ_PHONE_STATE)
-                .withListener(new MultiplePermissionsListener() {
-                    @Override
-                    public void onPermissionsChecked(MultiplePermissionsReport report) {
-                        // check if all permissions are granted
-                        if (report.areAllPermissionsGranted()) {
-
-                            if(service.equalsIgnoreCase("Petrol_Pump"))
-                                getRegisterMobile();
-                            else if(service.equalsIgnoreCase("MechanicPro"))
-                                getRegisterMobileMechanic();
-                        }
-                        // check for permanent denial of any permission
-                        if (report.isAnyPermissionPermanentlyDenied()) {
-                            // show alert dialog navigating to Settings
-                            showSettingsDialog();
-                        }
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-                        token.continuePermissionRequest();
-                    }
-                }).
-                withErrorListener(new PermissionRequestErrorListener() {
-                    @Override
-                    public void onError(DexterError error) {
-                        //Toast.makeText(getApplicationContext(), "Error occurred! ", Toast.LENGTH_SHORT).show();
-                        ActionForAll.myFlash(getApplicationContext(), "Error occurred!");
-                    }
-                })
-                .onSameThread()
-                .check();
+        if(service.equalsIgnoreCase("Petrol_Pump"))
+            getRegisterMobile();
+        else if(service.equalsIgnoreCase("MechanicPro"))
+            getRegisterMobileMechanic();
     }
 
     //petrol pump registration

@@ -71,6 +71,7 @@
         <item
             android:icon="@drawable/select_service_new_nav"
             android:id="@+id/nav_Service_pre_service"
+            android:visible="false"
             android:title="Select Pre-Request Services" />
 
         <item

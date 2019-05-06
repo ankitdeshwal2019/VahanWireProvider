@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
@@ -210,21 +211,23 @@ public class CodeMinimisations {
                 break;
 
             case "About Us":
-              /*  in = new Intent(context, SelectionActivity.class);
-                context.startActivity(in);*/
-                ActionForAll.alertUser("VahanProvider", "Work in progress", "OK", (Activity) context);
+                Intent about = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.vahanwire.com/provider-about-us"));
+                context.startActivity(about);
                 break;
 
             case "Terms of use":
-                ActionForAll.alertUser("VahanProvider", "Work in progress", "OK", (Activity) context);
+                Intent terms = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.vahanwire.com/provider-terms-and-conditions"));
+                context.startActivity(terms);
                 break;
 
             case "Privacy Policy":
-                ActionForAll.alertUser("VahanProvider", "Work in progress", "OK", (Activity) context);
+                Intent policy = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.vahanwire.com/provider-privacy-policy"));
+                context.startActivity(policy);
                 break;
 
             case "Contact Us":
-                ActionForAll.alertUser("VahanProvider", "Work in progress", "OK", (Activity) context);
+                Intent contact = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.vahanwire.com/contact-us"));
+                context.startActivity(contact);
                 break;
 
             case "Log out":

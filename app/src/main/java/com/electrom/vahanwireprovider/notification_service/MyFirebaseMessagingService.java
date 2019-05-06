@@ -237,23 +237,28 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
                 if (remoteMessage.getData() != null) {
                     if (tag.equalsIgnoreCase("ambulance")) {
-                        startActivity(new Intent(getApplicationContext(), AmbulanceHomePage.class));
+                        startActivity(new Intent(getApplicationContext(), AmbulanceHomePage.class)
+                        .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                     }
 
                     else if (tag.equalsIgnoreCase("mechanic") && type.equalsIgnoreCase("prerequest")) {
-                        startActivity(new Intent(getApplicationContext(), BookingHistoryMechanic.class));
+                        startActivity(new Intent(getApplicationContext(), BookingHistoryMechanic.class)
+                                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                     }
 
                     else if (tag.equalsIgnoreCase("mechanic")) {
-                        startActivity(new Intent(getApplicationContext(), MachanicHomePage.class));
+                        startActivity(new Intent(getApplicationContext(), MachanicHomePage.class)
+                         .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                     }
 
                     else if (tag.equalsIgnoreCase("driver")) {
-                        startActivity(new Intent(getApplicationContext(), DriverHomePage.class));
+                        startActivity(new Intent(getApplicationContext(), DriverHomePage.class)
+                                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                     }
 
                     else if (tag.equalsIgnoreCase("tow")) {
-                        startActivity(new Intent(getApplicationContext(), TowHomePage.class));
+                        startActivity(new Intent(getApplicationContext(), TowHomePage.class)
+                                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                     }
 
                     Log.e(TAG, "onMessageReceived: " + "done");
