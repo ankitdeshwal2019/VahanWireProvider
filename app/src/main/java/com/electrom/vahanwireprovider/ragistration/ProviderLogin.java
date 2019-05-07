@@ -154,7 +154,40 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
                     else if(service.contains("MechanicPro"))
                     {
 
-                        loginMecanic();
+
+                        Dexter.withActivity(this).withPermissions(
+                                Manifest.permission.ACCESS_COARSE_LOCATION,
+                                Manifest.permission.ACCESS_FINE_LOCATION)
+                                .withListener(new MultiplePermissionsListener() {
+                                    @Override
+                                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                                        // check if all permissions are granted
+                                        if (report.areAllPermissionsGranted()) {
+                                            // do you work now
+                                            if (!isMyServiceRunning(GPSTracker.class))
+                                                startService(new Intent(getApplicationContext(), GPSTracker.class));
+                                            sessionManager.setString(SessionManager.SERVICE, service);
+
+                                            loginMecanic();
+                                        }
+
+                                        //check for permanent denial of any permission
+                                        if (report.isAnyPermissionPermanentlyDenied()) {
+                                            showSettingsDialog();
+                                            // permission is denied permenantly, navigate user to app settings
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                                        token.continuePermissionRequest();
+                                    }
+                                })
+                                .onSameThread()
+                                .check();
+
+
+
                     }
                     else
                     {

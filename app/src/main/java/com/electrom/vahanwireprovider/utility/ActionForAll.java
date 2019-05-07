@@ -83,7 +83,6 @@ public class ActionForAll {
 
     //=========================================>> Alert Dialog with one Action <<==============================================//
 
-
     public static void alertUser(String title, String massage, String action, final Activity context) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -93,15 +92,12 @@ public class ActionForAll {
         builder.setPositiveButton(action,new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-
             }
         });
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
-
     }
-
 
     public static void alertUserWithCloseActivity(String title, String massage, String action, final Activity context) {
 
@@ -111,10 +107,8 @@ public class ActionForAll {
         builder.setPositiveButton(action,new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-
                 // context.startActivity(new Intent(context , LoginActivity.class));
                 context.finish();
-
             }
         });
 
@@ -153,7 +147,8 @@ public class ActionForAll {
         if (conMan.getActiveNetworkInfo() != null && conMan.getActiveNetworkInfo().isConnected())
             return true;
 
-        else{
+        else
+            {
             new AlertDialog.Builder(context)
                     .setTitle("Network Info")
                     .setMessage("No Network Available, Please Check Internet Settings")
@@ -167,7 +162,6 @@ public class ActionForAll {
                     .create().show();
             return false;
         }
-
     }
 
     public static String capitalize(String capString){

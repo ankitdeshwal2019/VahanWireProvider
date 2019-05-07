@@ -1,12 +1,16 @@
 package com.electrom.vahanwireprovider.utility;
 
 import android.app.Application;
+import android.content.Context;
+import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.firebase.client.Firebase;
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 
 public class MyApplication extends android.app.Application {
 
@@ -18,6 +22,7 @@ public class MyApplication extends android.app.Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
         Firebase.setAndroidContext(getApplicationContext());
             mInstance = this;
             sApplication = this;
@@ -51,5 +56,11 @@ public class MyApplication extends android.app.Application {
         if (mRequestQueue != null) {
             mRequestQueue.cancelAll(tag);
         }
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 }

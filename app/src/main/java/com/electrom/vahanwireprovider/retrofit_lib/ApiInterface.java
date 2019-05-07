@@ -45,6 +45,7 @@ import com.electrom.vahanwireprovider.models.tow_detail.TowDetail;
 import com.electrom.vahanwireprovider.models.tow_login.TowLogin;
 import com.electrom.vahanwireprovider.models.tow_registration.RegTow;
 import com.electrom.vahanwireprovider.models.update_profile.Update;
+import com.electrom.vahanwireprovider.models.version.Version;
 import com.electrom.vahanwireprovider.utility.UrlConstants;
 
 import java.util.Map;
@@ -425,6 +426,9 @@ public interface ApiInterface {
 
     @GET(UrlConstants.SELECT_STATE)
     Call<State> getState(@QueryMap Map<String, String> params);
+
+    @GET(UrlConstants.VERSION)
+    Call<Version> check_version(@QueryMap Map<String, String> params);
 
     @GET(UrlConstants.SELECT_CITY)
     Call<City> getCity(@QueryMap Map<String, String> params);

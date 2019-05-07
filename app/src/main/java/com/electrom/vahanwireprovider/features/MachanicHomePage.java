@@ -14,6 +14,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -36,6 +37,8 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.electrom.vahanwireprovider.BuildConfig;
+import com.electrom.vahanwireprovider.PetrolPumpHomePage;
 import com.electrom.vahanwireprovider.R;
 import com.electrom.vahanwireprovider.location_service_update_track.MyForeGroundService;
 import com.electrom.vahanwireprovider.models.booking_detail_new.BookingDetails;
@@ -50,6 +53,7 @@ import com.electrom.vahanwireprovider.models.mechanic_new.Offer;
 import com.electrom.vahanwireprovider.models.mechanic_new.PersonalDetails;
 import com.electrom.vahanwireprovider.models.mechanic_new.WorkingHours;
 import com.electrom.vahanwireprovider.models.request_accept.RequestAccept;
+import com.electrom.vahanwireprovider.models.version.Version;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiClient;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiInterface;
 import com.electrom.vahanwireprovider.utility.ActionForAll;
@@ -128,7 +132,7 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
         Log.e(TAG, sessionManager.getString(SessionManager.NOTIFICATION_TOKEN));
         Log.e(TAG, "initView: pro_id " + sessionManager.getString(SessionManager.PROVIDER_ID));
         getreason();
-
+        //check_version();
         manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         //requestPopup();
@@ -370,8 +374,13 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                 }
 
                 public void onFinish() {
-                    if(requestPopup.isShowing())
-                    requestPopup.dismiss();
+                    try{
+                        if(requestPopup!=null && requestPopup.isShowing())
+                        {
+                            requestPopup.dismiss();
+                        }
+                    }
+                    catch (Exception e){}
 
                     if (!ActionForAll.isNetworkAvailable(getApplicationContext())) {
 
@@ -1021,6 +1030,78 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
 
         // Showing Alert Message
         alertDialog.show();
+    }
+
+    String version="";
+    int versionCode = BuildConfig.VERSION_CODE;
+    String versionName = BuildConfig.VERSION_NAME;
+    Version body;
+
+    private void check_version()
+    {
+        final ProgressDialog progressDialog = Util.showProgressDialog(this);
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("device", "android");
+
+        Call<Version> call = apiService.check_version(params);
+        call.enqueue(new Callback<Version>() {
+
+            @Override
+            public void onResponse(Call<Version> call, Response<Version> response) {
+
+                if(response!=null && response.isSuccessful())
+                {
+                    body = response.body();
+                    if(body.getStatus().equals("200"))
+                    {
+                        Log.e(TAG, "onResponse: check_version " + body.getStatus());
+
+                        if(body.getData().size() > 0)
+                        {
+                            if(body.getData().get(0).getLatestVersion().equals(versionName))
+                            {
+                                Util.hideProgressDialog(progressDialog);
+                            }
+                            else
+                            {
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+
+                                        new AlertDialog.Builder(MachanicHomePage.this)
+                                                .setTitle("Update version")
+                                                .setMessage("New update available please update the app")
+                                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        Util.hideProgressDialog(progressDialog);
+                                                        Intent goToMarket = new Intent(Intent.ACTION_VIEW)
+                                                                .setData(Uri.parse("https://play.google.com/store/apps/details?id=" + getPackageName()));
+                                                        startActivity(goToMarket);
+
+                                                    }
+                                                }).create().show();
+                                    }
+                                }, 300);
+                            }
+                        }
+                    }
+
+                }
+                else
+                {
+                    Util.hideProgressDialog(progressDialog);
+                    ActionForAll.alertUserWithCloseActivity("VahanWire", body.getMessage(), "OK", MachanicHomePage.this);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Version> call, Throwable t) {
+
+            }
+        });
     }
 
 }

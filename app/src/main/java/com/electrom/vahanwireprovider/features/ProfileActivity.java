@@ -91,7 +91,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private int REQUEST_CAMERA = 0, SELECT_FILE = 1;
     String imgUSerString = "", userChoosenTask, service;
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,7 +134,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         spinCountry.setText(sessionManager.getString(SessionManager.COUNRTY));
         etPinCode.setText(sessionManager.getString(SessionManager.PINCODE));
         PicassoClient.downloadImage(this, sessionManager.getString(SessionManager.PROVIDER_IMAGE), iv_profile_image);
-
     }
 
     @Override
