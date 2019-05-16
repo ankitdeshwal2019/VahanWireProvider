@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -72,6 +73,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -150,7 +153,15 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 break;
 
             case R.id.ivProfileContainer:
-                selectImage();
+                if (android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.M)
+                {
+                    selectImageBelowMarse();
+                }
+                else
+                {
+                    selectImage();
+                }
+                //selectImage();
                 break;
         }
     }
@@ -381,6 +392,91 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         builder.show();
     }
 
+    private void selectImageBelowMarse() {
+
+        final CharSequence[] items = {"Camera",
+                "Cancel"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Add Photo!");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                //boolean result = Utility.checkPermission(getActivity());
+
+                if (items[item].equals("Camera")) {
+                    userChoosenTask = "Camera";
+                    //if (result)
+                    //cameraIntent();
+                    requestCameraPermission();
+                }
+
+                else if (items[item].equals("Cancel")) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        builder.show();
+    }
+    public static Uri handleImageUri(Uri uri) {
+        if (uri.getPath().contains("content")) {
+            Pattern pattern = Pattern.compile("(content://media/.*\\d)");
+            Matcher matcher = pattern.matcher(uri.getPath());
+            if (matcher.find())
+                return Uri.parse(matcher.group(1));
+            else
+                throw new IllegalArgumentException("Cannot handle this URI");
+        }
+        return uri;
+    }
+    private void onCaptureImageResult(Intent data) {
+        Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        thumbnail.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
+
+        File destination = new File(Environment.getExternalStorageDirectory(),
+                System.currentTimeMillis() + ".jpg");
+
+        FileOutputStream fo;
+        try {
+            destination.createNewFile();
+            fo = new FileOutputStream(destination);
+            fo.write(bytes.toByteArray());
+            fo.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        iv_profile_image.setImageBitmap(thumbnail);
+
+        if (android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
+            getRealPathFromURI(this, data.getData());
+        } else {
+            getImageUri(this, thumbnail);
+        }
+    }
+    public String getRealPathFromURI(Context context, Uri uri) {
+        Cursor cursor = null;
+        try {
+            Uri newUri = handleImageUri(uri);
+            String[] proj = { MediaStore.Images.Media.DATA };
+            cursor = context.getContentResolver().query(newUri,  proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            imgUSerString =  cursor.getString(column_index);
+            Log.e(TAG, "getRealPathFromURI: " +  cursor.getString(column_index));
+            return cursor.getString(column_index);
+        } catch (Exception e){
+            return null;
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
     private void galleryIntent() {
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -438,30 +534,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         iv_profile_image.setImageBitmap(bm);
         getImageUri(this, bm);
 
-    }
-
-    private void onCaptureImageResult(Intent data) {
-        Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        thumbnail.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
-
-        File destination = new File(Environment.getExternalStorageDirectory(),
-                System.currentTimeMillis() + ".jpg");
-
-        FileOutputStream fo;
-        try {
-            destination.createNewFile();
-            fo = new FileOutputStream(destination);
-            fo.write(bytes.toByteArray());
-            fo.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        iv_profile_image.setImageBitmap(thumbnail);
-        getImageUri(this, thumbnail);
     }
 
     private void profileUpdate() {

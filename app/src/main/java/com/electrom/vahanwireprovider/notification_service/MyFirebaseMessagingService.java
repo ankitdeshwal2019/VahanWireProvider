@@ -51,6 +51,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             JSONObject data = null;
             String booking_id = null;
 
+            if(tag.equals("provider"))
+            {
+                Log.e(TAG, "onMessageReceived: version " +"success " );
+                sendMyNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("body"), remoteMessage.getData().get("tag"), remoteMessage.getData().get("tag_whosend"));
+            }
+
             if(tag.contains("tow"))
             {
                 try {
@@ -104,8 +110,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     e.printStackTrace();
                 }
             }
-
-
             if(tag.contains("driver"))
             {
                 try {
@@ -228,9 +232,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 }
 
                 JSONObject use = new JSONObject(user_details);
-
                 SessionManager.getInstance(getApplicationContext()).setString(SessionManager.NOTI_NAME, use.getString("fullname"));
-
                 Log.e(TAG, "onMessageReceived: name " + use.getString("fullname"));
 
                 sendMyNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("body"), remoteMessage.getData().get("tag"), type);
@@ -374,6 +376,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         }
 
+        else if (tag.equalsIgnoreCase("provider")) {
+
+            Intent goToMarket = new Intent(Intent.ACTION_VIEW)
+                    .setData(Uri.parse("https://play.google.com/store/apps/details?id=" + getPackageName()));
+            goToMarket.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            pendingIntent = PendingIntent.getActivity(this, 0, goToMarket, PendingIntent.FLAG_ONE_SHOT);
+        }
+
         Uri soundUri = Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/" + R.raw.apple_tone);
         NotificationCompat.Builder notificationBuilder;
 
@@ -386,6 +396,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     .setContentText(body)
                     .setAutoCancel(true)
                     .setSound(soundUri)
+                    .setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 })
                     .setContentIntent(pendingIntent);
         } else {
             notificationBuilder = new NotificationCompat.Builder(this, "CH_ID")
@@ -394,6 +405,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     .setContentText(body)
                     .setAutoCancel(true)
                     .setSound(soundUri)
+                    .setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 })
                     .setContentIntent(pendingIntent);
         }
 

@@ -2,8 +2,8 @@ package com.electrom.vahanwireprovider.utility;
 
 public class UrlConstants {
 
-    //public static final String BASE_URL = "http://3.0.231.209/api/";
-    public static final String BASE_URL = "http://52.66.52.59/api/";
+    public static final String BASE_URL = "http://3.0.231.209/api/";
+    //public static final String BASE_URL = "http://52.66.52.59/api/";
     public static final String REGISTER_PROVIDER = "petrolpump/provider/register/mobile";
     public static final String VERIFY_MOB_PROVIDER = "petrolpump/provider/register/verifymobile";
     public static final String RESISTRATION_UPDATE = "petrolpump/provider/details/update";
@@ -110,4 +110,8 @@ public class UrlConstants {
     public static final String ALL_PRE_SERVICE = "mechanic/mainprovider/service/all";
     public static final String PRE_SERVICE_UPDATE = "mechanic/mainprovider/service/update";
     public static final String VERSION = "application/version";
+    public static final String PRE_SERVICE_ADD = "mechanic/mainprovider/service/add";
+    public static final String MECH_SERVICE_ADD = "mechanic/provider/service/add";
+    public static final String MECH_ISSUES_ADD = "mechanic/provider/vehicleissues/add";
+    public static final String PETROL_PUMP_SERVICE_ADD = "petrolpump/provider/service/add";
 }

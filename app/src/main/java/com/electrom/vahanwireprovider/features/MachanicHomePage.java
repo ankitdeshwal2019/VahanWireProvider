@@ -132,7 +132,7 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
         Log.e(TAG, sessionManager.getString(SessionManager.NOTIFICATION_TOKEN));
         Log.e(TAG, "initView: pro_id " + sessionManager.getString(SessionManager.PROVIDER_ID));
         getreason();
-        //check_version();
+        check_version();
         manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         //requestPopup();
@@ -679,8 +679,7 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
 
                 }
 
-                Log.e("service", response.body().getStatus());
-
+               // Log.e("service", response.body().getStatus());
             }
 
             @Override
@@ -688,7 +687,6 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                 Log.e("service failier", t.getMessage());
             }
         });
-
     }
 
     @Override
@@ -714,27 +712,28 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
             public void onResponse(Call<MechNewDetail> call, Response<MechNewDetail> response) {
                 MechNewDetail detail = response.body();
                 //            Log.d(TAG, detail.getStatus());
-                if (detail.getStatus().equals("200")) {
-                    Util.hideProgressDialog(progressDialog);
-                    Log.e(TAG, detail.getData().getMobile() + "-pin-" + detail.getData().getMobilePin());
 
-                    int count_navitaion_user = detail.getData().getRequestedUsers().size();
-                    tvTotalVisitorsCountMechanic.setText(String.valueOf(count_navitaion_user));
-                    List<Offer> offers = detail.getData().getOrganisation().getOffers();
-                    SharedPreferences appSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                    if (offers.size() > 0) {
-                        com.electrom.vahanwireprovider.models.mechanic_new.Offer offer = offers.get(0);
-                        SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
-                        Gson gson = new Gson();
-                        String json = gson.toJson(offer);
-                        prefsEditor.putString("Offer", json);
-                        prefsEditor.apply();
-                    } else {
-                        appSharedPrefs.edit().remove("Offer").commit();
-                    }
-                    //sessionManager.setObject("Myobj", offer);
-                    try {
+                if(response!=null && response.isSuccessful())
+                {
+                    if (detail.getStatus().equals("200")) {
+                        Util.hideProgressDialog(progressDialog);
+                        Log.e(TAG, detail.getData().getMobile() + "-pin-" + detail.getData().getMobilePin());
 
+                        int count_navitaion_user = detail.getData().getRequestedUsers().size();
+                        tvTotalVisitorsCountMechanic.setText(String.valueOf(count_navitaion_user));
+                        List<Offer> offers = detail.getData().getOrganisation().getOffers();
+                        SharedPreferences appSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                        if (offers.size() > 0) {
+                            com.electrom.vahanwireprovider.models.mechanic_new.Offer offer = offers.get(0);
+                            SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+                            Gson gson = new Gson();
+                            String json = gson.toJson(offer);
+                            prefsEditor.putString("Offer", json);
+                            prefsEditor.apply();
+                        } else {
+                            appSharedPrefs.edit().remove("Offer").commit();
+                        }
+                        //sessionManager.setObject("Myobj", offer);
                        /* Log.e(TAG, "onResponse: dob " + detail.getData().getPersonalDetails().getDob());
                         Log.e(TAG, "onResponse: email " + detail.getData().getPersonalDetails().getEmail());
                         Log.e(TAG, "onResponse: highQul " + detail.getData().getPersonalDetails().getHighestQualification());
@@ -766,7 +765,8 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                         sessionManager.setString(SessionManager.PRO_PERSONAL_PAN, detail.getData().getPersonalDetails().getPanNumber());
                         sessionManager.setString(SessionManager.PRO_SPECIAL_TALENT, detail.getData().getPersonalDetails().getSpecialTalent());
                         sessionManager.setString(SessionManager.PRO_ORG_PAN, detail.getData().getOrganisation().getOrgDetails().getPanNumber());
-                         sessionManager.setString(SessionManager.PRO_ORG_ID, detail.getData().getOrganisationId());
+                        sessionManager.setString(SessionManager.PRO_ORG_ID, detail.getData().getOrganisationId());
+                        Log.e(TAG, "onResponse: org_id  " + detail.getData().getOrganisationId() );
 
                         sessionManager.setString(SessionManager.ACTIVE_STATUS, detail.getData().getMechanicActiveStatus().toString());
                         Log.e(TAG, "onResponse: " + detail.getData().getMechanicActiveStatus().toString());
@@ -800,48 +800,53 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                         prefsEditor.putString("personalDetails", json);
                         prefsEditor.apply();
 
-                    } catch (Exception e) {
+                    /*} catch (Exception e) {
 
-                    }
+                    }*/
 
-                    sessionManager.setString(SessionManager.PROVIDER_MOBILE, detail.getData().getMobile());
-                    sessionManager.setString(SessionManager.PROVIDER_PIN, detail.getData().getMobilePin());
-                    sessionManager.setString(SessionManager.REGISTER_NAME, detail.getData().getName());
-                    sessionManager.setString(SessionManager.EMAIL, detail.getData().getOrganisation().getEmail());
-                    sessionManager.setString(SessionManager.ADDRESS, detail.getData().getOrganisation().getRegAddress().getFirstAddress());
-                    sessionManager.setString(SessionManager.CONTACT_PERSON, detail.getData().getOrganisation().getOrganisationName());
-                    sessionManager.setString(SessionManager.LANDLINE, detail.getData().getOrganisation().getPhone());
-                    sessionManager.setString(SessionManager.PROVIDER_IMAGE, detail.getData().getProfilePic());
-                    sessionManager.setString(SessionManager.PROVIDER_ID, detail.getData().getId());
-                    sessionManager.setString(SessionManager.COUNRTY, detail.getData().getOrganisation().getRegAddress().getCountry());
-                    sessionManager.setString(SessionManager.STATE, detail.getData().getOrganisation().getRegAddress().getState());
-                    sessionManager.setString(SessionManager.CITY, detail.getData().getOrganisation().getRegAddress().getCity());
-                    sessionManager.setString(SessionManager.PINCODE, detail.getData().getOrganisation().getRegAddress().getPincode());
-                    WorkingHours workingHours = detail.getData().getOrganisation().getWorkingHours();
-                    sessionManager.setString(SessionManager.WORK_TO, workingHours.getTo());
-                    sessionManager.setString(SessionManager.WORK_FROM, workingHours.getFrom());
-
-
-                    if(sessionManager.getString(SessionManager.MAIN_PROVIDER).equalsIgnoreCase("1"))
-                    {
+                        sessionManager.setString(SessionManager.PROVIDER_MOBILE, detail.getData().getMobile());
+                        sessionManager.setString(SessionManager.PROVIDER_PIN, detail.getData().getMobilePin());
+                        sessionManager.setString(SessionManager.REGISTER_NAME, detail.getData().getName());
+                        sessionManager.setString(SessionManager.EMAIL, detail.getData().getOrganisation().getEmail());
+                        sessionManager.setString(SessionManager.ADDRESS, detail.getData().getOrganisation().getRegAddress().getFirstAddress());
+                        sessionManager.setString(SessionManager.CONTACT_PERSON, detail.getData().getOrganisation().getOrganisationName());
+                        sessionManager.setString(SessionManager.LANDLINE, detail.getData().getOrganisation().getPhone());
                         sessionManager.setString(SessionManager.PROVIDER_IMAGE, detail.getData().getProfilePic());
-                        sessionManager.setString(SessionManager.NAV_NAME_MECH, detail.getData().getName());
+                        sessionManager.setString(SessionManager.PROVIDER_ID, detail.getData().getId());
+                        sessionManager.setString(SessionManager.COUNRTY, detail.getData().getOrganisation().getRegAddress().getCountry());
+                        sessionManager.setString(SessionManager.STATE, detail.getData().getOrganisation().getRegAddress().getState());
+                        sessionManager.setString(SessionManager.CITY, detail.getData().getOrganisation().getRegAddress().getCity());
+                        sessionManager.setString(SessionManager.PINCODE, detail.getData().getOrganisation().getRegAddress().getPincode());
+                        WorkingHours workingHours = detail.getData().getOrganisation().getWorkingHours();
+                        sessionManager.setString(SessionManager.WORK_TO, workingHours.getTo());
+                        sessionManager.setString(SessionManager.WORK_FROM, workingHours.getFrom());
 
+
+                        if(sessionManager.getString(SessionManager.MAIN_PROVIDER).equalsIgnoreCase("1"))
+                        {
+                            sessionManager.setString(SessionManager.PROVIDER_IMAGE, detail.getData().getProfilePic());
+                            sessionManager.setString(SessionManager.NAV_NAME_MECH, detail.getData().getName());
+
+                        }
+                        else
+                        {
+                            sessionManager.setString(SessionManager.PROVIDER_IMAGE, detail.getData().getOrganisation().getProfilePic());
+                            sessionManager.setString(SessionManager.NAV_NAME_MECH, detail.getData().getOrganisation().getOrganisationName());
+                        }
+
+                        try {
+                            setUpLayoutWithToolbar();
+                        } catch (IllegalArgumentException e) {
+                        }
+
+                        Log.e(TAG, "onResponse: done ");
                     }
                     else
                     {
-                        sessionManager.setString(SessionManager.PROVIDER_IMAGE, detail.getData().getOrganisation().getProfilePic());
-                        sessionManager.setString(SessionManager.NAV_NAME_MECH, detail.getData().getOrganisation().getOrganisationName());
+                        ActionForAll.myFlash(getApplicationContext(), detail.getMessage());
                     }
-
-                    try {
-                        setUpLayoutWithToolbar();
-                    } catch (IllegalArgumentException e) {
-                    }
-
-                    Log.e(TAG, "onResponse: done ");
-
-                } else {
+                }
+                   else {
                     Util.hideProgressDialog(progressDialog);
                     ActionForAll.alertUserWithCloseActivity("VahanWire", "Network busy, Please try after some time", "OK", MachanicHomePage.this);
                 }
@@ -1034,7 +1039,7 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
 
     String version="";
     int versionCode = BuildConfig.VERSION_CODE;
-    String versionName = BuildConfig.VERSION_NAME;
+    //String versionName = BuildConfig.VERSION_NAME;
     Version body;
 
     private void check_version()
@@ -1044,6 +1049,7 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
 
         Map<String, String> params = new HashMap<String, String>();
         params.put("device", "android");
+        params.put("app_type", "provider");
 
         Call<Version> call = apiService.check_version(params);
         call.enqueue(new Callback<Version>() {
@@ -1058,13 +1064,11 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                     {
                         Log.e(TAG, "onResponse: check_version " + body.getStatus());
 
+
                         if(body.getData().size() > 0)
                         {
-                            if(body.getData().get(0).getLatestVersion().equals(versionName))
-                            {
-                                Util.hideProgressDialog(progressDialog);
-                            }
-                            else
+                            int apiVersionCode = Integer.parseInt(body.getData().get(0).getLatestVersion());
+                            if(apiVersionCode > versionCode)
                             {
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
@@ -1073,6 +1077,7 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                                         new AlertDialog.Builder(MachanicHomePage.this)
                                                 .setTitle("Update version")
                                                 .setMessage("New update available please update the app")
+                                                .setCancelable(false)
                                                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                                     @Override
                                                     public void onClick(DialogInterface dialog, int which) {
@@ -1080,20 +1085,25 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                                                         Intent goToMarket = new Intent(Intent.ACTION_VIEW)
                                                                 .setData(Uri.parse("https://play.google.com/store/apps/details?id=" + getPackageName()));
                                                         startActivity(goToMarket);
+                                                        dialog.dismiss();
+                                                        finish();
 
                                                     }
                                                 }).create().show();
                                     }
                                 }, 300);
                             }
+                            else
+                            {
+                                Util.hideProgressDialog(progressDialog);
+                            }
                         }
                     }
-
                 }
                 else
                 {
                     Util.hideProgressDialog(progressDialog);
-                    ActionForAll.alertUserWithCloseActivity("VahanWire", body.getMessage(), "OK", MachanicHomePage.this);
+                    //ActionForAll.alertUserWithCloseActivity("VahanWire", body.getMessage(), "OK", MachanicHomePage.this);
                 }
             }
 

@@ -61,7 +61,7 @@
         <item
             android:icon="@drawable/servicable_brand"
             android:id="@+id/nav_Serviceable_brand"
-            android:title="Select Serviceable brand" />
+            android:title="Select brands" />
 
         <item
             android:icon="@drawable/select_service_new_nav"

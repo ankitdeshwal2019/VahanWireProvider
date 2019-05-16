@@ -1,5 +1,6 @@
 package com.electrom.vahanwireprovider.ragistration;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -39,6 +40,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -89,7 +91,7 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
         Log.e(TAG, "initView: D_ID "+ sessionManager.getString(SessionManager.DEVICE_ID));
         Log.e(TAG, "initView: NOTIFICATION "+ sessionManager.getString(SessionManager.NOTIFICATION_TOKEN));
 
-        //check_version();
+        check_version();
 
         if(sessionManager.getString(SessionManager.PROVIDER_MOBILE).length() > 0 &&
                 sessionManager.getString(SessionManager.PROVIDER_PIN).length() > 0)
@@ -242,6 +244,8 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
     protected void onStart() {
         super.onStart();
 
+        FirebaseMessaging.getInstance().subscribeToTopic("versionprovider");
+
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                     @Override
@@ -308,6 +312,7 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
 
         Map<String, String> params = new HashMap<String, String>();
         params.put("device", "android");
+        params.put("app_type", "provider");
 
         Call<Version> call = apiService.check_version(params);
         call.enqueue(new Callback<Version>() {
@@ -322,42 +327,52 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
                     {
                         Log.e(TAG, "onResponse: check_version " + body.getStatus());
 
+
                         if(body.getData().size() > 0)
                         {
-                            if(body.getData().get(0).getLatestVersion().equals(versionName))
+                            int apiVersionCode = Integer.parseInt(body.getData().get(0).getLatestVersion());
+                            if(apiVersionCode > versionCode)
                             {
-                                Util.hideProgressDialog(progressDialog);
+
+                                if(!(BeforeLogin.this.isFinishing()))
+                                {
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+
+                                            new AlertDialog.Builder(BeforeLogin.this)
+                                                    .setTitle("Update version")
+                                                    .setMessage("New update available please update the app")
+                                                    .setCancelable(false)
+                                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialog, int which) {
+                                                            Util.hideProgressDialog(progressDialog);
+                                                            Intent goToMarket = new Intent(Intent.ACTION_VIEW)
+                                                                    .setData(Uri.parse("https://play.google.com/store/apps/details?id=" + getPackageName()));
+                                                            startActivity(goToMarket);
+                                                            dialog.dismiss();
+                                                            finish();
+
+                                                        }
+                                                    }).create().show();
+                                        }
+                                    }, 300);
+                                }
                             }
                             else
                             {
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-
-                                        new AlertDialog.Builder(BeforeLogin.this)
-                                                .setTitle("Update version")
-                                                .setMessage("New update available please update the app")
-                                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        Util.hideProgressDialog(progressDialog);
-                                                        Intent goToMarket = new Intent(Intent.ACTION_VIEW)
-                                                                .setData(Uri.parse("https://play.google.com/store/apps/details?id=" + getPackageName()));
-                                                        startActivity(goToMarket);
-
-                                                    }
-                                                }).create().show();
-                                    }
-                                }, 300);
+                                try{
+                                    Util.hideProgressDialog(progressDialog);
+                                }catch (Exception e){}
                             }
                         }
                     }
-
                 }
                 else
                 {
                     Util.hideProgressDialog(progressDialog);
-                    ActionForAll.alertUserWithCloseActivity("VahanWire", body.getMessage(), "OK", BeforeLogin.this);
+                    //ActionForAll.alertUserWithCloseActivity("VahanWire", body.getMessage(), "OK", BeforeLogin.this);
                 }
             }
 

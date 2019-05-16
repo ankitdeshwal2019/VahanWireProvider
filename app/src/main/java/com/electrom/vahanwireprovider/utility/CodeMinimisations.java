@@ -192,7 +192,7 @@ public class CodeMinimisations {
                 context.startActivity(in);
                 break;
 
-            case "Select Serviceable brand":
+            case "Select brands":
                 // ActionForAll.myFlash(context, "Facility and Payment method page");
                 in = new Intent(context, SelectBrand.class);
                 context.startActivity(in);

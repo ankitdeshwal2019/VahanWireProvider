@@ -36,6 +36,7 @@ import com.electrom.vahanwireprovider.models.pre_request.PreRequest;
 import com.electrom.vahanwireprovider.models.pre_service_all.PreSerModel;
 import com.electrom.vahanwireprovider.models.pro_update_mech.ProfileUpdateMech;
 import com.electrom.vahanwireprovider.models.quote_status.QuoteStatus;
+import com.electrom.vahanwireprovider.models.req.Req;
 import com.electrom.vahanwireprovider.models.request_accept.RequestAccept;
 import com.electrom.vahanwireprovider.models.services.Service;
 import com.electrom.vahanwireprovider.models.state.State;
@@ -638,6 +639,26 @@ public interface ApiInterface {
 
     @GET(UrlConstants.MINI_QUOTE_STATUS)
     Call<QuoteStatus> mini_quote_status(@QueryMap Map<String, String> params);
+
+    @POST(UrlConstants.PRE_SERVICE_ADD)
+    @FormUrlEncoded
+    Call<Req> pre_service_add(@Field("who_add") String who_add,
+                              @Field("service_name") String service_name);
+
+    @POST(UrlConstants.MECH_SERVICE_ADD)
+    @FormUrlEncoded
+    Call<Req> mech_service_add(@Field("who_add") String who_add,
+                              @Field("service_name") String service_name);
+
+    @POST(UrlConstants.PETROL_PUMP_SERVICE_ADD)
+    @FormUrlEncoded
+    Call<Req> petrol_pump_service_add(@Field("who_add") String who_add,
+                              @Field("service_name") String service_name);
+
+    @POST(UrlConstants.MECH_ISSUES_ADD)
+    @FormUrlEncoded
+    Call<Req> mech_issue_add(@Field("who_add") String who_add,
+                               @Field("issue_name") String issue_name);
 
 
 }

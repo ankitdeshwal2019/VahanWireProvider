@@ -510,10 +510,16 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                         PicassoClient.downloadImage(context,userDetails.getProfilePic(),ivMechanicProfile);
                         Details details = data.getDetails();
                         contact = userDetails.getPhone();
-                        List<Double> coordinates = details.getUserLocation().getCoordinates();
-                        Longitude = coordinates.get(0);
+
+                        try{
+                            List<Double> coordinates = details.getUserLocation().getCoordinates();
+                            Longitude = coordinates.get(0);
+                            Latitude = coordinates.get(1);
+                        }
+                        catch (Exception e){}
+                        /*Longitude = coordinates.get(0);
                         Latitude = coordinates.get(1);
-                        Log.e(TAG, "onResponse: "+ Longitude+" - " + Latitude);
+                        Log.e(TAG, "onResponse: "+ Longitude+" - " + Latitude);*/
                         String status = details.getEnrouteStatus();
                         OTP =  details.getOtpVerify();
                         Log.e(TAG, "onResponse: otp mechanic" +  OTP);
