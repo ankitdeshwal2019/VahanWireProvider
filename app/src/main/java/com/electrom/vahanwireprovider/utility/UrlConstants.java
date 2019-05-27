@@ -2,8 +2,8 @@ package com.electrom.vahanwireprovider.utility;
 
 public class UrlConstants {
 
-    public static final String BASE_URL = "http://3.0.231.209/api/";
-    //public static final String BASE_URL = "http://52.66.52.59/api/";
+    //public static final String BASE_URL = "http://3.0.231.209/api/";
+    public static final String BASE_URL = "http://52.66.52.59/api/";
     public static final String REGISTER_PROVIDER = "petrolpump/provider/register/mobile";
     public static final String VERIFY_MOB_PROVIDER = "petrolpump/provider/register/verifymobile";
     public static final String RESISTRATION_UPDATE = "petrolpump/provider/details/update";
@@ -114,4 +114,15 @@ public class UrlConstants {
     public static final String MECH_SERVICE_ADD = "mechanic/provider/service/add";
     public static final String MECH_ISSUES_ADD = "mechanic/provider/vehicleissues/add";
     public static final String PETROL_PUMP_SERVICE_ADD = "petrolpump/provider/service/add";
+    public static final String FORGOT_PIN_PROVIDER = "petrolpump/provider/forgotpin";
+    public static final String MECHANIC_FORGOT_PASS ="mechanic/provider/forgotpin" ;
+    public static final String FORGOT_PASS_TOW ="tow/provider/forgotpin" ;
+    public static final String DELETE_BLOG = "expertscorner/blogs/delete";
+    public static final String REPUBLISH_BLOG = "expertscorner/blogs/republish";
+    public static final String UPLOAD_PETROL_PUMP_IMAGE = "petrolpump/provider/upload/myimage";
+    public static final String UPLOAD_INCOR_CER = "petrolpump/provider/upload/document/incorporationcertificate";
+    public static final String UPLOAD_PANCARD_COM = "petrolpump/provider/upload/document/pancardcompany";
+    public static final String UPLOAD_GST = "petrolpump/provider/upload/document/gstnumber";
+    public static final String UPLOAD_CANCEL_CHECK = "petrolpump/provider/upload/document/cancelcheque";
+    public static final String UPLOAD_OWNER_ID = "petrolpump/provider/upload/document/ownerid";
 }

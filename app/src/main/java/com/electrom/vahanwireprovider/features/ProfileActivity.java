@@ -35,6 +35,7 @@ import com.electrom.vahanwireprovider.adapters.StateAdapter;
 import com.electrom.vahanwireprovider.models.city.City;
 import com.electrom.vahanwireprovider.models.city.CityData;
 import com.electrom.vahanwireprovider.models.country.Country;
+import com.electrom.vahanwireprovider.models.new_petrol_pump_detail.NewPetrolDetail;
 import com.electrom.vahanwireprovider.models.pro_update_mech.ProfileUpdateMech;
 import com.electrom.vahanwireprovider.models.state.DateState;
 import com.electrom.vahanwireprovider.models.state.State;
@@ -247,6 +248,101 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         });
     }
 
+    private void compaleteRegistrationNew() {
+
+        final ProgressDialog progressDialog = Util.showProgressDialog(this);
+
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        Call<NewPetrolDetail> call = apiService.registrationUpdateNew(
+                sessionManager.getString(SessionManager.PROVIDER_MOBILE),
+                sessionManager.getString(SessionManager.PROVIDER_PIN),
+                etProfileCompanyName.getText().toString(),
+                etProfilePersonName.getText().toString(),
+                etProfileLandLine.getText().toString(),
+                "","","","","","",
+                etProfileAddress.getText().toString(),
+                spinCity.getText().toString(),
+                spinState.getText().toString(),
+                spinCountry.getText().toString(),
+                etPinCode.getText().toString(),
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "","","");
+
+
+        Log.e(TAG, "compaleteRegistration: mob "+  sessionManager.getString(SessionManager.PROVIDER_MOBILE));
+        Log.e(TAG, "compaleteRegistration: pin "+  sessionManager.getString(SessionManager.PROVIDER_PIN));
+        Log.e(TAG, "compaleteRegistration: name "+  etProfileCompanyName.getText().toString());
+        Log.e(TAG, "compaleteRegistration: penson  "+   etProfilePersonName.getText().toString());
+        Log.e(TAG, "compaleteRegistration: address "+  etProfileAddress.getText().toString());
+        Log.e(TAG, "compaleteRegistration: "+  city_name);
+        Log.e(TAG, "compaleteRegistration: "+  state_name);
+        Log.e(TAG, "compaleteRegistration: "+  country);
+        Log.e(TAG, "compaleteRegistration: "+  etPinCode.getText().toString());
+
+
+
+        call.enqueue(new Callback<NewPetrolDetail>() {
+            @Override
+            public void onResponse(Call<NewPetrolDetail> call, Response<NewPetrolDetail> response) {
+                NewPetrolDetail update = response.body();
+                Log.d(TAG, update.getStatus());
+
+                if (response != null && response.isSuccessful()) {
+                    Util.hideProgressDialog(progressDialog);
+                    if(update.getStatus().equals("200"))
+                    {
+                        List<com.electrom.vahanwireprovider.models.new_petrol_pump_detail.Datum> list = update.getData();
+                        sessionManager.setString(SessionManager.PROVIDER_MOBILE, list.get(0).getMobile());
+                        sessionManager.setString(SessionManager.PROVIDER_PIN, list.get(0).getMobilePin());
+                        sessionManager.setString(SessionManager.CONTACT_PERSON, list.get(0).getRegisteredName());
+                        sessionManager.setString(SessionManager.EMAIL, list.get(0).getEmail());
+                        sessionManager.setString(SessionManager.ADDRESS, list.get(0).getAddress().getFirstAddress());
+                        sessionManager.setString(SessionManager.REGISTER_NAME,list.get(0).getContactPerson());
+                        sessionManager.setString(SessionManager.LANDLINE, list.get(0).getPhone());
+                        sessionManager.setString(SessionManager.PROVIDER_IMAGE, list.get(0).getProfilePic());
+                        sessionManager.setString(SessionManager.COUNRTY, list.get(0).getAddress().getCountry());
+                        sessionManager.setString(SessionManager.STATE, list.get(0).getAddress().getState());
+                        sessionManager.setString(SessionManager.CITY, list.get(0).getAddress().getCity());
+                        sessionManager.setString(SessionManager.PINCODE, list.get(0).getAddress().getPincode());
+                        etProfileCompanyName.setText(sessionManager.getString(SessionManager.CONTACT_PERSON));
+                        etProfilePersonName.setText(sessionManager.getString(SessionManager.REGISTER_NAME));
+                        etProfileMobileNumber.setText(sessionManager.getString(SessionManager.PROVIDER_MOBILE));
+                        etProfileLandLine.setText(sessionManager.getString(SessionManager.LANDLINE));
+                        etProfileAddress.setText(sessionManager.getString(SessionManager.ADDRESS));
+                        etPinCode.setText(sessionManager.getString(SessionManager.PINCODE));
+                        PicassoClient.downloadImage(getApplicationContext(), sessionManager.getString(SessionManager.PROVIDER_IMAGE), iv_profile_image);
+                        ActionForAll.alertUser("VahanWire", update.getMessage(), "OK", ProfileActivity.this);
+                    }
+                    else
+                    {
+                        ActionForAll.alertUser("VahanWire", update.getMessage(), "OK", ProfileActivity.this);
+                    }
+
+                } else {
+                    Util.hideProgressDialog(progressDialog);
+                    ActionForAll.alertUserWithCloseActivity("VahanWire", "Network busy, Please try after some time", "OK", ProfileActivity.this);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<NewPetrolDetail> call, Throwable t) {
+                Util.hideProgressDialog(progressDialog);
+                Log.d(TAG, "onFailure: " + t.getMessage());
+            }
+        });
+    }
+
+
     private void compaleteRegistrationMechanic() {
         Log.e(TAG, "service: regstration for mechanic ");
         final ProgressDialog progressDialog = Util.showProgressDialog(this);
@@ -334,7 +430,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_PETROL_PUMP))
             {
                 Log.e(TAG, "isNotEmptyFields: " + sessionManager.getString(SessionManager.SERVICE));
-                compaleteRegistration();
+                //compaleteRegistration();
+                compaleteRegistrationNew();
             }
             else  if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_AMBULANCE))
             {

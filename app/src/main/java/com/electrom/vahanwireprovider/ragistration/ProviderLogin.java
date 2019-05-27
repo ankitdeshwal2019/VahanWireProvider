@@ -26,6 +26,7 @@ import com.electrom.vahanwireprovider.models.login.LoginPP;
 import com.electrom.vahanwireprovider.models.login_ambulance.Data;
 import com.electrom.vahanwireprovider.models.login_ambulance.LoginAmbulance;
 import com.electrom.vahanwireprovider.models.mechanic.MechanicLogin;
+import com.electrom.vahanwireprovider.models.petrol_login_new.PetrolLoginNew;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiClient;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiInterface;
 import com.electrom.vahanwireprovider.utility.ActionForAll;
@@ -114,10 +115,16 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
 
                     if(service.contains("Petrol_Pump"))
                     {
-                        login();
+                        if(ActionForAll.isNetworkAvailable(ProviderLogin.this))
+                        {
+                            login();
+                        }
+
                     }
                     else if(service.contains("Ambulance"))
                     {
+
+
                         Dexter.withActivity(this).withPermissions(
                                 Manifest.permission.ACCESS_COARSE_LOCATION,
                                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -131,7 +138,10 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
                                                 startService(new Intent(getApplicationContext(), GPSTracker.class));
                                             sessionManager.setString(SessionManager.SERVICE, service);
 
-                                            loginAmbulance();
+                                            if(ActionForAll.isNetworkAvailable(ProviderLogin.this))
+                                            {
+                                                loginAmbulance();
+                                            }
                                         }
 
                                         //check for permanent denial of any permission
@@ -168,7 +178,10 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
                                                 startService(new Intent(getApplicationContext(), GPSTracker.class));
                                             sessionManager.setString(SessionManager.SERVICE, service);
 
-                                            loginMecanic();
+                                            if(ActionForAll.isNetworkAvailable(ProviderLogin.this))
+                                            {
+                                                loginMecanic();
+                                            }
                                         }
 
                                         //check for permanent denial of any permission
@@ -323,18 +336,18 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
         final ProgressDialog progressDialog = Util.showProgressDialog(this);
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
 
-        Call<LoginPP> call = apiService.login(etLoginMobile.getText().toString(),
+        Call<PetrolLoginNew> call = apiService.login(etLoginMobile.getText().toString(),
                 etLoginPassword.getText().toString(),
                 "1",
                 sessionManager.getString(sessionManager.NOTIFICATION_TOKEN));
 
-        call.enqueue(new Callback<LoginPP>() {
+        call.enqueue(new Callback<PetrolLoginNew>() {
             @Override
-            public void onResponse(Call<LoginPP> call, Response<LoginPP> response) {
+            public void onResponse(Call<PetrolLoginNew> call, Response<PetrolLoginNew> response) {
                 if (response != null && response.isSuccessful()) {
                     Log.d(TAG, "onResponse: "+ response.body().getStatus());
                     Util.hideProgressDialog(progressDialog);
-                    LoginPP login = response.body();
+                    PetrolLoginNew login = response.body();
                     if (login.getStatus().equals("200")) {
 
                         Log.d(TAG, "onResponse: " + "  message " + login.getMessage());
@@ -399,7 +412,7 @@ public class ProviderLogin extends AppCompatActivity implements View.OnClickList
             }
 
             @Override
-            public void onFailure(Call<LoginPP> call, Throwable t) {
+            public void onFailure(Call<PetrolLoginNew> call, Throwable t) {
                 Util.hideProgressDialog(progressDialog);
                 Log.e(TAG, "error::: " + t.getMessage());
                 etLoginPassword.setText("");

@@ -28,8 +28,11 @@ import com.electrom.vahanwireprovider.models.mech_status.MechanicStatus;
 import com.electrom.vahanwireprovider.models.mechanic.MechanicLogin;
 import com.electrom.vahanwireprovider.models.mechanic_new.MechNewDetail;
 import com.electrom.vahanwireprovider.models.mechanic_registration.Mechanic;
+import com.electrom.vahanwireprovider.models.new_detail_petrol.NewPetrolDetailNew;
+import com.electrom.vahanwireprovider.models.new_petrol_pump_detail.NewPetrolDetail;
 import com.electrom.vahanwireprovider.models.payment.Payment;
 import com.electrom.vahanwireprovider.models.payment_tow.PaymentTow;
+import com.electrom.vahanwireprovider.models.petrol_login_new.PetrolLoginNew;
 import com.electrom.vahanwireprovider.models.petrol_status.PetrolStatus;
 import com.electrom.vahanwireprovider.models.pre_req_status.PreRequestStatus;
 import com.electrom.vahanwireprovider.models.pre_request.PreRequest;
@@ -51,12 +54,16 @@ import com.electrom.vahanwireprovider.utility.UrlConstants;
 
 import java.util.Map;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
@@ -69,9 +76,23 @@ public interface ApiInterface {
                                         @Field("device_type") String device_type,
                                         @Field("notification_id") String notification_id);
 
+    // Customer Registration Process****
+    @POST(UrlConstants.FORGOT_PIN_PROVIDER)
+    @FormUrlEncoded
+    Call<ResponseBody> forgotPinPetrol(@Field("mobile") String mobile,
+                                        @Field("device_type") String device_type,
+                                        @Field("notification_id") String notification_id);
+
     @POST(UrlConstants.MECHANIC_MOBILE_REGISTRATION)
     @FormUrlEncoded
     Call<Mechanic> registration_mechanic(@Field("device_id") String device_id,
+                                         @Field("device_type") String device_type,
+                                         @Field("notification_id") String notification_id,
+                                         @Field("mobile") String mobile);
+
+    @POST(UrlConstants.MECHANIC_FORGOT_PASS)
+    @FormUrlEncoded
+    Call<Mechanic> mechanic_forgot_pass(@Field("device_id") String device_id,
                                          @Field("device_type") String device_type,
                                          @Field("notification_id") String notification_id,
                                          @Field("mobile") String mobile);
@@ -80,6 +101,13 @@ public interface ApiInterface {
     @POST(UrlConstants.TOW_MOBILE_REGISTRATION)
     @FormUrlEncoded
     Call<Mechanic> two_mechanic(@Field("device_id") String device_id,
+                                         @Field("device_type") String device_type,
+                                         @Field("notification_id") String notification_id,
+                                         @Field("mobile") String mobile);
+
+    @POST(UrlConstants.FORGOT_PASS_TOW)
+    @FormUrlEncoded
+    Call<Mechanic> two_forgotpin(@Field("device_id") String device_id,
                                          @Field("device_type") String device_type,
                                          @Field("notification_id") String notification_id,
                                          @Field("mobile") String mobile);
@@ -101,13 +129,13 @@ public interface ApiInterface {
 
     @POST(UrlConstants.LOGIN)
     @FormUrlEncoded
-    Call<LoginPP> login(@Field("mobile") String mobile,
-                        @Field("pin") String pin,
-                        @Field("device_type") String device_type,
-                        @Field("notification_id") String notification_id);
+    Call<PetrolLoginNew> login(@Field("mobile") String mobile,
+                               @Field("pin") String pin,
+                               @Field("device_type") String device_type,
+                               @Field("notification_id") String notification_id);
 
     @GET(UrlConstants.PROVIDER_DETAIL)
-    Call<Detail> getUpdatedDetail(@QueryMap Map<String, String> params);
+    Call<NewPetrolDetailNew> getUpdatedDetail(@QueryMap Map<String, String> params);
 
     @GET(UrlConstants.DRIVER_DETAIL)
     Call<Driver> driver_detail(@QueryMap Map<String, String> params);
@@ -206,6 +234,39 @@ public interface ApiInterface {
                                     @Field("saturday_status") String saturday_status,
                                     @Field("saturday_from") String saturday_from,
                                     @Field("saturday_to") String saturday_to);
+
+
+    @POST(UrlConstants.RESISTRATION_UPDATE)
+    @FormUrlEncoded
+    Call<NewPetrolDetail> registrationUpdateNew(@Field("mobile") String mobile,
+                                                @Field("mobile_pin") String mobile_pin,
+                                                @Field("registered_name") String registered_name,
+                                                @Field("contact_person") String contact_person,
+                                                @Field("phone") String phone,
+                                                @Field("email") String email,
+                                                @Field("gst_number") String gst_number,
+                                                @Field("pan_number") String pan_number,
+                                                @Field("device_type") String device_type,
+                                                @Field("notification_id") String notification_id,
+                                                @Field("password") String password,
+                                                @Field("first_address") String first_address,
+                                                @Field("city") String city,
+                                                @Field("state") String state,
+                                                @Field("country") String country,
+                                                @Field("pincode") String pincode,
+                                                @Field("latitude") String latitude,
+                                                @Field("longitude") String longitude,
+                                                @Field("paidsub_status") String paidsub_status,
+                                                @Field("active_status") String active_status,
+                                                @Field("about_company") String about_company,
+                                                @Field("facebook") String facebook,
+                                                @Field("twitter") String twitter,
+                                                @Field("instagram") String instagram,
+                                                @Field("youtube") String youtube,
+                                                @Field("linkedin") String linkedin,
+                                                @Field("website") String website,
+                                                @Field("bank_account_number") String bank_account_number,
+                                                @Field("bank_ifsc") String bank_ifsc);
 
     @POST(UrlConstants.OFFER_ADD)
     @FormUrlEncoded
@@ -659,6 +720,24 @@ public interface ApiInterface {
     @FormUrlEncoded
     Call<Req> mech_issue_add(@Field("who_add") String who_add,
                                @Field("issue_name") String issue_name);
+
+
+    @POST(UrlConstants.DELETE_BLOG)
+    @FormUrlEncoded
+    Call<Req> delete_post(@Field("id") String id);
+
+    @Multipart
+    @POST(UrlConstants.REPUBLISH_BLOG)
+    Call<ResponseBody> republish_blog_pic(
+            @Part("id") RequestBody id,
+            @Part("expert_id") RequestBody expert_id ,
+            @Part("expert_type") RequestBody expert_type ,
+            @Part("title") RequestBody title,
+            @Part("description") RequestBody description,
+            @Part("link_url") RequestBody link_url ,
+            @Part("photo_credits") RequestBody photo_credits ,
+            @Part("reference_url") RequestBody reference_url ,
+            @Part MultipartBody.Part profile_pic);
 
 
 }

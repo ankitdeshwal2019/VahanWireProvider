@@ -14,6 +14,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TimePicker;
@@ -61,6 +62,7 @@ public class WorkingHours extends AppCompatActivity implements View.OnClickListe
     String ACTIVE_STATUS_ON ="ON";
     String ACTIVE_STATUS_OFF ="OFF";
     String loginStatus;
+    LinearLayout llStatusContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +80,8 @@ public class WorkingHours extends AppCompatActivity implements View.OnClickListe
         btnPetrolServiceOn = findViewById(R.id.btnPetrolServiceOn);
         btnPetrolServiceOff = findViewById(R.id.btnPetrolServiceOff);
         tvTagCurrentStatus = findViewById(R.id.tvTagCurrentStatus);
-        tvTagCurrentStatus.setVisibility(View.INVISIBLE);
+        llStatusContainer = findViewById(R.id.llStatusContainer);
+        //tvTagCurrentStatus.setVisibility(View.INVISIBLE);
 
         if(sessionManager.getString(SessionManager.WORK_FROM).length() > 0)
         {
@@ -119,6 +122,8 @@ public class WorkingHours extends AppCompatActivity implements View.OnClickListe
             tvPetrolServiceOnOff.setVisibility(View.GONE);
             btnPetrolServiceOff.setVisibility(View.GONE);
             btnPetrolServiceOn.setVisibility(View.GONE);
+            tvTagCurrentStatus.setVisibility(View.GONE);
+            llStatusContainer.setVisibility(View.GONE);
         }
     }
 

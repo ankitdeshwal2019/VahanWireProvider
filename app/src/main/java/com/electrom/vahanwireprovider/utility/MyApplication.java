@@ -22,7 +22,15 @@ public class MyApplication extends android.app.Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Fabric.with(this, new Crashlytics());
+        if(UrlConstants.BASE_URL.equals("http://3.0.231.209/api/"))
+        {
+            Fabric.with(this, new Crashlytics());
+        }
+        else
+        {
+
+        }
+        //Fabric.with(this, new Crashlytics());
         Firebase.setAndroidContext(getApplicationContext());
             mInstance = this;
             sApplication = this;

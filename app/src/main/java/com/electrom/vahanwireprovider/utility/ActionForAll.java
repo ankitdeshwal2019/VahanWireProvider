@@ -151,11 +151,34 @@ public class ActionForAll {
             new AlertDialog.Builder(context)
                     .setTitle("Network Info")
                     .setMessage("No Network Available, Please Check Internet Settings")
+                    .setCancelable(false)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
                             ((Activity)context).finish();
+                        }
+                    })
+                    .create().show();
+            return false;
+        }
+    }
+
+    public static boolean isNetworkAvailableWithoutCloseActivity(final Context context) {
+        ConnectivityManager conMan = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (conMan.getActiveNetworkInfo() != null && conMan.getActiveNetworkInfo().isConnected())
+            return true;
+
+        else
+        {
+            new AlertDialog.Builder(context)
+                    .setTitle("Network Info")
+                    .setMessage("No Network Available, Please Check Internet Settings")
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
                         }
                     })
                     .create().show();

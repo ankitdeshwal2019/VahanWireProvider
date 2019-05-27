@@ -68,6 +68,19 @@ public class SessionManager {
     public static final String PRO_ORG_ID  = "org_id";
     public static final String NAV_NAME_MECH = "nav_name_mech";
     public static final String LIST_CHECKED = "list_checked";
+    public static final String PRO_IMAGE_0 = "pro_0";
+    public static final String PRO_IMAGE_1 = "pro_1";
+    public static final String PRO_IMAGE_2 = "pro_2";
+    public static final String PRO_IMAGE_3= "pro_3";
+    public static final String PRO_IMAGE_4= "pro_4";
+    public static final String PRO_IMAGE_5 = "pro_5";
+    public static final String PRO_IncCent = "doc_0";
+    public static final String PRO_PanCard = "doc_1";
+    public static final String PRO_CanCheck = "doc_2";
+    public static final String PRO_GstNum = "doc_3";
+    public static final String PRO_OwnId = "doc_4";
+    public static final String IMG_URL = "img_url";
+
 
     private static String SHARED_PREFERENCE_PROVIDER = "shared_provider_electrom";
     ///public static final String COUNT_COMPARE = "count_compare";

@@ -47,6 +47,7 @@ import com.electrom.vahanwireprovider.models.cancel_reason_mech.CancelReason;
 import com.electrom.vahanwireprovider.models.cancel_reason_mech.Datum;
 import com.electrom.vahanwireprovider.models.cancel_request.CancelRequest;
 import com.electrom.vahanwireprovider.models.mech_status.MechanicStatus;
+import com.electrom.vahanwireprovider.models.mechanic_new.BookingStatus;
 import com.electrom.vahanwireprovider.models.mechanic_new.MechNewDetail;
 import com.electrom.vahanwireprovider.models.mechanic_new.Myimages;
 import com.electrom.vahanwireprovider.models.mechanic_new.Offer;
@@ -110,7 +111,6 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_machanic_home_page_nav);
         initView();
-        getDetail();
         try {
             setUpLayoutWithToolbar();
         } catch (IllegalArgumentException e) {
@@ -131,8 +131,13 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
         createchannel();
         Log.e(TAG, sessionManager.getString(SessionManager.NOTIFICATION_TOKEN));
         Log.e(TAG, "initView: pro_id " + sessionManager.getString(SessionManager.PROVIDER_ID));
-        getreason();
-        check_version();
+
+        if(ActionForAll.isNetworkAvailable(this))
+        {
+            getreason();
+            check_version();
+            getDetail();
+        }
         manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         //requestPopup();
@@ -145,6 +150,7 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
+
                     requestPopup();
                 }
             }, 500);
@@ -197,9 +203,10 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
 
             nav_Menu.findItem(R.id.nav_service_charge_mech).setVisible(true);
             nav_Menu.findItem(R.id.nav_Service_pre_service).setVisible(true);
-            /*nav_Menu.findItem(R.id.nav_Service).setVisible(false);
-            nav_Menu.findItem(R.id.nav_Serviceable_brand).setVisible(false);*/
-        } else {
+            nav_Menu.findItem(R.id.nav_add_n_expert).setVisible(true);
+            /*nav_Menu.findItem(R.id.nav_Serviceable_brand).setVisible(false);*/
+        }
+        else {
             nav_Menu.findItem(R.id.nav_profile).setVisible(false);
             nav_Menu.findItem(R.id.nav_offer).setVisible(false);
             nav_Menu.findItem(R.id.nav_time_n_schedule).setVisible(false);
@@ -235,7 +242,6 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                                 }
                                 // check for permanent denial of any permission
                                 if (report.isAnyPermissionPermanentlyDenied()) {
-
                                 }
                             }
 
@@ -254,16 +260,12 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                         })
                         .onSameThread()
                         .check();
-
-
                 break;
 
             case R.id.banStatusOffMechanic:
                 updateserviceInfo("0");
                 break;
-
         }
-
     }
 
     private void updateserviceInfo(final String status_id) {
@@ -324,7 +326,6 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                 ActionForAll.alertUser("VahanWire", t.getMessage(), "OK", MachanicHomePage.this);
             }
         });
-
     }
 
     public void requestPopup() {
@@ -353,7 +354,10 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                 if(sessionManager.getString(SessionManager.NOTI_ISSUE).contains("Pre Request"))
                     startActivity(new Intent(getApplicationContext(), BookingHistoryMechanic.class));
                 else
-                    requestAdd();
+                    if(ActionForAll.isNetworkAvailableWithoutCloseActivity(getApplicationContext()))
+                    {
+                        requestAdd();
+                    }
             }
         });
 
@@ -394,6 +398,7 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                             //requestCancelAuto();
 
                             sessionManager.setString(SessionManager.BOOKING_STATUS, "");
+                            sessionManager.setString(SessionManager.BOOKING_STATUS_USER, "");
                             if (requestPopup.isShowing()) {
                                 requestPopup.dismiss();
                             }
@@ -432,6 +437,7 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                     RequestAccept requestAccept = response.body();
                     if (requestAccept.getStatus().equals("200")) {
                         sessionManager.setString(SessionManager.BOOKING_STATUS, "");
+                        sessionManager.setString(SessionManager.BOOKING_STATUS_USER, "");
 
                         new AlertDialog.Builder(context)
                                 .setTitle("VahanWire")
@@ -440,7 +446,7 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        startActivity(new Intent(context, BookingHistory.class));
+                                        startActivity(new Intent(context, BookingStatusMechanic.class));
                                     }
                                 })
                                 .create().show();
@@ -499,6 +505,7 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                     CancelRequest cancelRequest = response.body();
                     if (cancelRequest.getStatus().equals("200")) {
                         sessionManager.setString(SessionManager.BOOKING_STATUS, "");
+                        sessionManager.setString(SessionManager.BOOKING_STATUS_USER, "");
                         Log.d(TAG, "success " + cancelRequest.getMessage());
                         ActionForAll.alertUserWithCloseActivity("VahanWire", "Request cancelled !", "OK", MachanicHomePage.this);
                         timer.cancel();
@@ -623,8 +630,8 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        sessionManager.setString(SessionManager.BOOKING_STATUS_USER, "");
-        sessionManager.setString(SessionManager.BOOKING_STATUS, "");
+       /* sessionManager.setString(SessionManager.BOOKING_STATUS_USER, "");
+        sessionManager.setString(SessionManager.BOOKING_STATUS, "");*/
     }
 
     /**
@@ -717,8 +724,7 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                 {
                     if (detail.getStatus().equals("200")) {
                         Util.hideProgressDialog(progressDialog);
-                        Log.e(TAG, detail.getData().getMobile() + "-pin-" + detail.getData().getMobilePin());
-
+                        //Log.e(TAG, detail.getData().getMobile() + "-pin-" + detail.getData().getMobilePin());
                         int count_navitaion_user = detail.getData().getRequestedUsers().size();
                         tvTotalVisitorsCountMechanic.setText(String.valueOf(count_navitaion_user));
                         List<Offer> offers = detail.getData().getOrganisation().getOffers();
@@ -733,8 +739,9 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                         } else {
                             appSharedPrefs.edit().remove("Offer").commit();
                         }
+
                         //sessionManager.setObject("Myobj", offer);
-                       /* Log.e(TAG, "onResponse: dob " + detail.getData().getPersonalDetails().getDob());
+                        /* Log.e(TAG, "onResponse: dob " + detail.getData().getPersonalDetails().getDob());
                         Log.e(TAG, "onResponse: email " + detail.getData().getPersonalDetails().getEmail());
                         Log.e(TAG, "onResponse: highQul " + detail.getData().getPersonalDetails().getHighestQualification());
                         Log.e(TAG, "onResponse: marital " + detail.getData().getPersonalDetails().getMaritalStatus());
@@ -746,7 +753,6 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                         Log.e(TAG, "onResponse: insta " + detail.getData().getPersonalDetails().getSocialMedia().getInstagram());
                         Log.e(TAG, "onResponse: name " + detail.getData().getName());
                         Log.e(TAG, "onResponse: org name " + detail.getData().getOrganisation().getOrganisationName());*/
-
 
                         sessionManager.setString(SessionManager.PRO_DOB, detail.getData().getPersonalDetails().getDob());
                         sessionManager.setString(SessionManager.EMAIL, detail.getData().getPersonalDetails().getEmail());
@@ -766,10 +772,10 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                         sessionManager.setString(SessionManager.PRO_SPECIAL_TALENT, detail.getData().getPersonalDetails().getSpecialTalent());
                         sessionManager.setString(SessionManager.PRO_ORG_PAN, detail.getData().getOrganisation().getOrgDetails().getPanNumber());
                         sessionManager.setString(SessionManager.PRO_ORG_ID, detail.getData().getOrganisationId());
-                        Log.e(TAG, "onResponse: org_id  " + detail.getData().getOrganisationId() );
+                        //Log.e(TAG, "onResponse: org_id  " + detail.getData().getOrganisationId() );
 
                         sessionManager.setString(SessionManager.ACTIVE_STATUS, detail.getData().getMechanicActiveStatus().toString());
-                        Log.e(TAG, "onResponse: " + detail.getData().getMechanicActiveStatus().toString());
+                        //Log.e(TAG, "onResponse: " + detail.getData().getMechanicActiveStatus().toString());
 
                         if (sessionManager.getString(SessionManager.ACTIVE_STATUS).equals("1")) {
                             banStatusOnMechanic.setVisibility(View.GONE);
@@ -800,10 +806,6 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                         prefsEditor.putString("personalDetails", json);
                         prefsEditor.apply();
 
-                    /*} catch (Exception e) {
-
-                    }*/
-
                         sessionManager.setString(SessionManager.PROVIDER_MOBILE, detail.getData().getMobile());
                         sessionManager.setString(SessionManager.PROVIDER_PIN, detail.getData().getMobilePin());
                         sessionManager.setString(SessionManager.REGISTER_NAME, detail.getData().getName());
@@ -826,7 +828,6 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                         {
                             sessionManager.setString(SessionManager.PROVIDER_IMAGE, detail.getData().getProfilePic());
                             sessionManager.setString(SessionManager.NAV_NAME_MECH, detail.getData().getName());
-
                         }
                         else
                         {

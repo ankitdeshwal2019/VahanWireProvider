@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#666666"
+    android:background="#999"
     android:orientation="vertical"
     tools:context=".features.FacilitynPaymentMethod">
 
@@ -155,6 +155,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/llStatusContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="5dp"
@@ -162,9 +163,6 @@
         android:background="#DDD"
         android:orientation="vertical"
         android:gravity="center">
-
-
-
 
         <com.electrom.vahanwireprovider.utility.CustomTextView
             android:id="@+id/tvTagCurrentStatus"

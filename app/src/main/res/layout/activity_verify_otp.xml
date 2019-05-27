@@ -8,81 +8,97 @@
     android:background="@drawable/provider_login_three"
     tools:context=".ragistration.RegisterMobile">
 
-    <LinearLayout
+
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="4"
-        android:gravity="top"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/ivBackLogin"
-            android:layout_margin="@dimen/size_10dp"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:padding="@dimen/size_5dp"
-            android:src="@drawable/back_wihte"/>
-
-        <ImageView
-            android:layout_gravity="center"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:src="@drawable/logo"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="6"
-        android:orientation="vertical"
-        android:gravity="center_horizontal">
-
-        <RelativeLayout
-            android:layout_marginTop="@dimen/size_50dp"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/size_50dp"
-            android:background="@color/colorWhite"
-            android:layout_marginRight="@dimen/size_30dp"
-            android:layout_marginLeft="@dimen/size_30dp">
-
-            <com.electrom.vahanwireprovider.utility.CustomEditText
-                android:id="@+id/etVerifyOtp"
-                android:background="#fff"
-                android:paddingLeft="@dimen/size_15dp"
-                android:hint="Enter OTP"
-
-                android:inputType="numberPassword"
-                android:gravity="center"
-                android:maxLength="4"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-        </RelativeLayout>
-
-
-        <com.electrom.vahanwireprovider.utility.CustomTextView
-            android:id="@+id/tvResendOtp"
-            android:layout_marginTop="@dimen/size_30dp"
-            android:layout_width="wrap_content"
-            android:textSize="18sp"
-            android:textColor="@color/colorWhite"
             android:layout_height="wrap_content"
-            android:text="Resend OTP "/>
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/ivBackLogin"
+                    android:layout_margin="@dimen/size_10dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:padding="@dimen/size_5dp"
+                    android:src="@drawable/back_wihte"/>
+
+                <ImageView
+                    android:layout_marginBottom="@dimen/size_20dp"
+                    android:layout_gravity="center"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:src="@drawable/logo"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
+
+                <RelativeLayout
+                    android:layout_marginTop="@dimen/size_50dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_50dp"
+                    android:background="@color/colorWhite"
+                    android:layout_marginRight="@dimen/size_30dp"
+                    android:layout_marginLeft="@dimen/size_30dp">
+
+                    <com.electrom.vahanwireprovider.utility.CustomEditText
+                        android:id="@+id/etVerifyOtp"
+                        android:background="#fff"
+                        android:paddingLeft="@dimen/size_15dp"
+                        android:hint="Enter OTP"
+                        android:maxLines="1"
+                        android:inputType="numberPassword"
+                        android:gravity="center"
+                        android:maxLength="4"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                </RelativeLayout>
 
 
-        <com.electrom.vahanwireprovider.utility.CustomButton
-            android:id="@+id/btnVerifyOtp"
-            android:layout_marginTop="@dimen/size_30dp"
-            android:layout_width="200dp"
-            android:layout_height="@dimen/size_50dp"
-            android:gravity="center"
-            android:background="@drawable/button"
-            android:paddingRight="@dimen/size_20dp"
-            android:paddingLeft="@dimen/size_20dp"
-            android:textSize="@dimen/size_20sp"
-            android:text="VERIFY"/>
+                <com.electrom.vahanwireprovider.utility.CustomTextView
+                    android:id="@+id/tvResendOtp"
+                    android:layout_marginTop="@dimen/size_30dp"
+                    android:layout_width="wrap_content"
+                    android:textSize="18sp"
+                    android:textColor="@color/colorWhite"
+                    android:layout_height="wrap_content"
+                    android:text="Resend OTP "/>
 
-    </LinearLayout>
+
+                <com.electrom.vahanwireprovider.utility.CustomButton
+                    android:id="@+id/btnVerifyOtp"
+                    android:layout_marginTop="@dimen/size_30dp"
+                    android:layout_width="200dp"
+                    android:layout_height="@dimen/size_50dp"
+                    android:gravity="center"
+                    android:background="@drawable/button"
+                    android:paddingRight="@dimen/size_20dp"
+                    android:paddingLeft="@dimen/size_20dp"
+                    android:textSize="@dimen/size_20sp"
+                    android:layout_marginBottom="@dimen/size_20dp"
+                    android:text="VERIFY"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+
 
 </LinearLayout>

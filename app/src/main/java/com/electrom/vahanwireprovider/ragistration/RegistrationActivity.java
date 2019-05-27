@@ -25,6 +25,7 @@ import com.electrom.vahanwireprovider.PetrolPumpHomePage;
 import com.electrom.vahanwireprovider.R;
 import com.electrom.vahanwireprovider.features.MachanicHomePage;
 import com.electrom.vahanwireprovider.location_service.GPSTracker;
+import com.electrom.vahanwireprovider.models.new_petrol_pump_detail.NewPetrolDetail;
 import com.electrom.vahanwireprovider.models.pro_update_mech.ProfileUpdateMech;
 import com.electrom.vahanwireprovider.models.update_profile.Update;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiClient;
@@ -150,6 +151,8 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
                                     if (!isMyServiceRunning(GPSTracker.class))
                                         startService(new Intent(getApplicationContext(), GPSTracker.class));
                                     getLocation();
+
+                                    if(ActionForAll.isNetworkAvailable(RegistrationActivity.this))
                                     isNotEmptyFields();
                                 }
 
@@ -181,7 +184,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
 
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
 
-        Call<Update> call = apiService.registrationUpdate(
+        Call<NewPetrolDetail> call = apiService.registrationUpdateNew(
                 sessionManager.getString(SessionManager.PROVIDER_MOBILE),
                 etRegisterPassword.getText().toString().trim(), et_resister_com_name.getText().toString(),
                 etContactPerson.getText().toString(),etRegisterLandLine.getText().toString(),
@@ -190,16 +193,14 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
                 etRegisterAddress.getText().toString(), "", "","","",
                 sessionManager.getString(SessionManager.LATITUDE),sessionManager.getString(SessionManager.LONGITUDE),
                 "", "", "","","","","",
-                "", "","","","","","",
-                "","","","","","","",
-                "", "");
+                "", "","","");
 
-        call.enqueue(new Callback<Update>() {
+        call.enqueue(new Callback<NewPetrolDetail>() {
             @Override
-            public void onResponse(Call<Update> call, Response<Update> response) {
+            public void onResponse(Call<NewPetrolDetail> call, Response<NewPetrolDetail> response) {
                 if (response != null && response.isSuccessful()) {
                     Util.hideProgressDialog(progressDialog);
-                    final Update update = response.body();
+                    final NewPetrolDetail update = response.body();
                         Log.d(TAG, update.getStatus());
                         if(update.getStatus().equals("200"))
                         {
@@ -247,7 +248,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
             }
 
             @Override
-            public void onFailure(Call<Update> call, Throwable t) {
+            public void onFailure(Call<NewPetrolDetail> call, Throwable t) {
                 Util.hideProgressDialog(progressDialog);
                 Log.d(TAG, "onFailure: " + t.getMessage());
             }
@@ -339,6 +340,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
         {
             if(sessionManager.getString(SessionManager.SERVICE).equalsIgnoreCase("Petrol_Pump"))
             {
+
                 compaleteRegistration();
             }
             else if (sessionManager.getString(SessionManager.SERVICE).equalsIgnoreCase("MechanicPro"))

@@ -146,7 +146,7 @@ public class OfferActivity extends AppCompatActivity implements View.OnClickList
                 startDate.show(getSupportFragmentManager(), "datePicker");
                 break;
 
-                case R.id.btnEndDate:
+            case R.id.btnEndDate:
                 check_btn = 2;
                 DialogFragment endDate = new DatePickerFragment();
                 endDate.show(getSupportFragmentManager(), "datePicker");
@@ -208,7 +208,7 @@ public class OfferActivity extends AppCompatActivity implements View.OnClickList
                                                     startActivity(logout);
                                                 }
                                             }).create().show();
-                                   //ActionForAll.alertUserWithCloseActivity("VahanWire", message,"OK", OfferActivity.this);
+                                    //ActionForAll.alertUserWithCloseActivity("VahanWire", message,"OK", OfferActivity.this);
                                 }
                             }, 300);
                         } else {
@@ -340,11 +340,11 @@ public class OfferActivity extends AppCompatActivity implements View.OnClickList
                     } else {
                         ActionForAll.alertUser("VahanWire", body.getMessage(), "OK", OfferActivity.this);
                     }
-                    }
-                    else
-                    {
-                        ActionForAll.alertUser("VahanWire", "No connection please try after sometime", "OK", OfferActivity.this);
-                    }
+                }
+                else
+                {
+                    ActionForAll.alertUser("VahanWire", "No connection please try after sometime", "OK", OfferActivity.this);
+                }
             }
 
             @Override
@@ -415,28 +415,28 @@ public class OfferActivity extends AppCompatActivity implements View.OnClickList
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
 
-                if(check_btn == 1)
-                {
+            if(check_btn == 1)
+            {
 
-                    y1 = year;
-                    m1 = month;
-                    d1 = day;
-                    dateStart = y1 + "-" + setStringMonth(m1) + "-" + setStringDay(d1);
-                    btnStartDate.setText(dateStart);
-                    Log.e(TAG, "onDateSet: " + dateStart );
-                }
-
-                if(check_btn == 2)
-                {
-                    y2 = year;
-                    m2= month;
-                    d2 = day;
-
-                    dateEnd = y2 + "-" + setStringMonth(m2) + "-" + setStringDay(d2);
-                    btnEndDate.setText(dateEnd);
-                    Log.e(TAG, "onDateSet: " + dateStart );
-                }
+                y1 = year;
+                m1 = month;
+                d1 = day;
+                dateStart = y1 + "-" + setStringMonth(m1) + "-" + setStringDay(d1);
+                btnStartDate.setText(dateStart);
+                Log.e(TAG, "onDateSet: " + dateStart );
             }
+
+            if(check_btn == 2)
+            {
+                y2 = year;
+                m2= month;
+                d2 = day;
+
+                dateEnd = y2 + "-" + setStringMonth(m2) + "-" + setStringDay(d2);
+                btnEndDate.setText(dateEnd);
+                Log.e(TAG, "onDateSet: " + dateStart );
+            }
+        }
     }
 
     @Override
@@ -452,9 +452,9 @@ public class OfferActivity extends AppCompatActivity implements View.OnClickList
 
     private static String setStringMonth(int month){
         if((month + 1) <= 9)
-        return "0"+ (month + 1);
+            return "0"+ (month + 1);
         else
-        return (month +1)+"";
+            return (month +1)+"";
     }
 
     private static String setStringDay(int day){

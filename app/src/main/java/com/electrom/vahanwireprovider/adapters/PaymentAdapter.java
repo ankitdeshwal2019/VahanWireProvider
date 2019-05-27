@@ -1,5 +1,6 @@
 package com.electrom.vahanwireprovider.adapters;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -123,7 +124,16 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.ViewHold
                 {
                     if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_PETROL_PUMP))
                     {
-                        updateserviceInfo(ids);
+
+                        if(ids.length() > 0)
+                        {
+                            updateserviceInfo(ids);
+                        }
+                        else
+                        {
+                            ActionForAll.alertUser("", "Please select at least one Payment method", "OK", (Activity)context);
+                        }
+
                         Log.e(TAG, "adapter: petrol " + sessionManager.getString(SessionManager.SERVICE));
                     }
                     else if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_AMBULANCE))
@@ -134,7 +144,17 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.ViewHold
 
                     else if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_MECHNIC_PRO))
                     {
-                        updateserviceInfomech(ids);
+
+                        if(ids.length() > 0)
+                        {
+                            updateserviceInfomech(ids);
+                        }
+                        else
+                        {
+                            ActionForAll.alertUser("", "Please select at least one Payment method", "OK", (Activity)context);
+                        }
+
+
                         Log.e(TAG, "adapter: mech " + sessionManager.getString(SessionManager.SERVICE));
                     }
                 }

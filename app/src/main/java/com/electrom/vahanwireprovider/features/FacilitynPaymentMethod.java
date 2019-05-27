@@ -38,7 +38,7 @@ import retrofit2.Response;
 
 public class FacilitynPaymentMethod extends AppCompatActivity implements View.OnClickListener{
 
-    private static final String TAG = PreServices.class.getSimpleName();
+    private static final String TAG = FacilitynPaymentMethod.class.getSimpleName();
     RecyclerView recyclerFacility;
     CustomButton btnSubmitPaymentnFacility;
     ServiceAdapter serviceAdapter;
@@ -100,6 +100,7 @@ public class FacilitynPaymentMethod extends AppCompatActivity implements View.On
 
         Map<String, String> params = new HashMap<String, String>();
         params.put("mobile", sessionManager.getString(SessionManager.PROVIDER_MOBILE));
+        params.put("id", sessionManager.getString(SessionManager.PRO_ORG_ID));
 
         Call<Service> call = apiService.getAllServices(params);
 
@@ -140,6 +141,7 @@ public class FacilitynPaymentMethod extends AppCompatActivity implements View.On
 
         Map<String, String> params = new HashMap<String, String>();
         params.put("mobile", sessionManager.getString(SessionManager.PROVIDER_MOBILE));
+        params.put("id", sessionManager.getString(SessionManager.PRO_ORG_ID));
 
         Call<Service> call = apiService.getAllServicesMechanic(params);
 

@@ -132,7 +132,16 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ViewHold
                     if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_PETROL_PUMP))
                     {
                         Log.e(TAG, "adapter: " + sessionManager.getString(SessionManager.SERVICE) );
-                        updateserviceInfo(ids);
+
+                        if(ids.length() > 0)
+                        {
+                            updateserviceInfo(ids);
+                        }
+                        else
+                        {
+                            ActionForAll.alertUser("", "Please select at least one facility", "OK", (Activity)context);
+                        }
+
                     }
                     else if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_AMBULANCE))
                     {
@@ -142,7 +151,15 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ViewHold
                     else if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_MECHNIC_PRO))
                     {
                         Log.e(TAG, "adapter: " + sessionManager.getString(SessionManager.SERVICE) );
-                        updateserviceInfoMech(ids);
+                        if(ids.length() > 0)
+                        {
+                            updateserviceInfoMech(ids);
+                        }
+                        else
+                        {
+                            ActionForAll.alertUser("", "Please select at least one facility", "OK", (Activity)context);
+                        }
+
                     }
 
                 }

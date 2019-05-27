@@ -21,8 +21,8 @@ android {
         applicationId "com.electrom.vahanwireprovider"
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 9
-        versionName "1.1.6"
+        versionCode 10
+        versionName "1.1.7"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         useLibrary 'org.apache.http.legacy'
@@ -48,7 +48,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.squareup.picasso:picasso:2.4.0'
     implementation 'com.squareup.okhttp3:okhttp:3.9.0'
-     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
     implementation files('libs/universal-image-loader-1.9.4.jar')
     implementation 'com.android.volley:volley:1.1.1'
@@ -59,6 +59,7 @@ dependencies {
     implementation 'com.karumi:dexter:4.2.0'
     implementation 'com.firebase:firebase-client-android:2.5.2'
     implementation 'com.github.gcacace:signature-pad:1.2.0'
+    implementation 'id.zelory:compressor:2.1.0'
     // Check for v11.4.2 or higher
     implementation 'com.google.firebase:firebase-core:16.0.8'
     implementation 'com.android.support:multidex:1.0.1'

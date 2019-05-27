@@ -15,6 +15,24 @@
             android:title="Profile" />
 
         <item
+            android:visible="false"
+            android:id="@+id/nav_about_petrol"
+            android:icon="@drawable/nav_about_petrol_pump"
+            android:title="About Petrol Pump" />
+
+        <item
+            android:visible="false"
+            android:id="@+id/my_Gallery"
+            android:icon="@drawable/nav_my_gallery"
+            android:title="My Gallery" />
+
+        <item
+            android:visible="false"
+            android:id="@+id/my_document_petrol"
+            android:icon="@drawable/document_nav"
+            android:title="My Document" />
+
+        <item
             android:id="@+id/nav_my_introduction"
             android:icon="@drawable/introduction_new_nav"
             android:title="My Introduction" />
@@ -38,10 +56,19 @@
             android:id="@+id/nav_service_charge_mech"
             android:title="Visiting Charges" />
 
+
+        <item
+            android:visible="false"
+            android:id="@+id/nav_add_n_expert"
+            android:icon="@drawable/expert_nav"
+            android:title="Write as Expert" />
+
         <item
             android:id="@+id/nav_offer"
             android:icon="@drawable/offer"
             android:title="Offers" />
+
+
 
         <item
             android:id="@+id/nav_time_n_schedule"
@@ -51,7 +78,7 @@
         <item
             android:id="@+id/nav_payment_method"
             android:icon="@drawable/payment_new_nav"
-            android:title="Payments" />
+            android:title="Payment Methods" />
 
         <item
             android:id="@+id/nav_facility_n_payment"
@@ -61,7 +88,7 @@
         <item
             android:icon="@drawable/servicable_brand"
             android:id="@+id/nav_Serviceable_brand"
-            android:title="Select brands" />
+            android:title="Select Serviceable Brands" />
 
         <item
             android:icon="@drawable/select_service_new_nav"

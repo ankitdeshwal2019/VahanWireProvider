@@ -100,8 +100,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
         initView();
 
        getAllBookingDetail();
-
-        getreason();
+       getreason();
     }
 
     private void initView() {
@@ -218,7 +217,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
 
                                 @Override
                                 public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
-
+                                    token.continuePermissionRequest();
                                 }
                             }).check();
                 break;
@@ -491,8 +490,6 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                     {
                         Data data = bookingDetails.getData();
 
-
-
                         List<Billing> billing = data.getDetails().getBilling();
                         billing_url = bookingDetails.getData().getDetails().getBillingUrl();
                         if(billing.size()>0)
@@ -631,7 +628,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                             llDiration.setVisibility(View.VISIBLE);
                             llDiration.setClickable(false);
                             ivDir.setVisibility(View.GONE);
-                            tvBookingMechanicDirection.setText("Cancel by user");
+                            tvBookingMechanicDirection.setText("Cancelled By User");
                             tvBookingMechanicDirection.setTextColor(Color.parseColor("#FF0000"));
                             llCointainerOnTheWay.setClickable(false);
                             llCointainerReachStart.setClickable(false);
@@ -646,7 +643,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                             llDiration.setClickable(false);
                             ivDir.setVisibility(View.GONE);
                             tvBookingMechanicDirection.setTextColor(Color.parseColor("#FF0000"));
-                            tvBookingMechanicDirection.setText("Cancel by you");
+                            tvBookingMechanicDirection.setText("Cancelled By You");
                             llCointainerOnTheWay.setClickable(false);
                             llCointainerReachStart.setClickable(false);
                             llCointainerServiceDone.setClickable(false);

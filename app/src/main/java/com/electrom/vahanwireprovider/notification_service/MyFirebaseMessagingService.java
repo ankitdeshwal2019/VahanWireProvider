@@ -15,6 +15,7 @@ import android.util.Log;
 import com.electrom.vahanwireprovider.R;
 import com.electrom.vahanwireprovider.features.AmbulanceHomePage;
 import com.electrom.vahanwireprovider.features.BookingHistoryMechanic;
+import com.electrom.vahanwireprovider.features.BookingStatusMechanic;
 import com.electrom.vahanwireprovider.features.MachanicHomePage;
 import com.electrom.vahanwireprovider.new_app_driver.DriverHomePage;
 import com.electrom.vahanwireprovider.new_app_tow.TowHomePage;
@@ -87,7 +88,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     else {
 
                         Log.e(TAG, "onMessageReceived: " + "emergency");
-
                         booking_id = data.getString("booking_id");
                         JSONObject booking_status = data.getJSONObject("booking_status");
                         String issue = data.getString("issue");
@@ -117,9 +117,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     type = data.isNull("request_type") ? "" : data.getString("request_type");
                     if(type.equals("prerequest"))
                     {
-
                         Log.e(TAG, "onMessageReceived: " + "pre request");
-
                         booking_id = data.getString("booking_id");
                         JSONObject booking_status = data.getJSONObject("booking_status");
                         JSONObject mech = booking_status.getJSONObject("servicecenter");
@@ -250,6 +248,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
                     else if (tag.equalsIgnoreCase("mechanic")) {
                         startActivity(new Intent(getApplicationContext(), MachanicHomePage.class)
+                        //startActivity(new Intent(getApplicationContext(), BookingStatusMechanic.class)
                          .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                     }
 
@@ -344,7 +343,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
         }
 
-        else if (tag.equalsIgnoreCase("mechanic") && type.equalsIgnoreCase("prerequest")) {
+        else if(tag.equalsIgnoreCase("mechanic") && type.equalsIgnoreCase("prerequest")) {
 
             Intent intent = new Intent(this, BookingHistoryMechanic.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -379,7 +378,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         else if (tag.equalsIgnoreCase("provider")) {
 
             Intent goToMarket = new Intent(Intent.ACTION_VIEW)
-                    .setData(Uri.parse("https://play.google.com/store/apps/details?id=" + getPackageName()));
+            .setData(Uri.parse("https://play.google.com/store/apps/details?id=" + getPackageName()));
             goToMarket.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             pendingIntent = PendingIntent.getActivity(this, 0, goToMarket, PendingIntent.FLAG_ONE_SHOT);
         }
