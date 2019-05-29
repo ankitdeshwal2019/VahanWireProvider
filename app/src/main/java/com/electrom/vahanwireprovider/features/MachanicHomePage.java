@@ -159,6 +159,7 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    sessionManager.setString(SessionManager.BOOKING_STATUS_USER,"");
                     ActionForAll.alertUserWithCloseActivity("VahanWire", "Request cancelled by user.", "OK", MachanicHomePage.this);
                 }
             }, 500);
@@ -173,8 +174,9 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
     private void setUpLayoutWithToolbar() {
 
         initToolbar();
-        ImageView nav = findViewById(R.id.ivDrawer);/*CustomTextView title = findViewById(R.id.tvToolClick);
+        ImageView nav = findViewById(R.id.ivDrawer);
 
+        /*CustomTextView title = findViewById(R.id.tvToolClick);
         title.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

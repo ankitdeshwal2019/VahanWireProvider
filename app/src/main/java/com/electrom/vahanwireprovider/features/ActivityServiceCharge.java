@@ -100,7 +100,7 @@ public class ActivityServiceCharge extends AppCompatActivity {
                 ,""
                 ,""
                 ,""
-                , "",
+                ,"",
                 "",
                 etServiceCharge.getText().toString(),
         "");
@@ -113,13 +113,11 @@ public class ActivityServiceCharge extends AppCompatActivity {
                 Util.hideProgressDialog(progressDialog);
 
 
-                if(response.isSuccessful())
+                if(response!=null && response.isSuccessful())
                 {
-
                     try {
                         String res = response.body().string();
                         Log.e(TAG, "onResponse: " + res);
-
                         JSONObject object = new JSONObject(res);
                         if(object.getString("status").equals("200"))
                         {

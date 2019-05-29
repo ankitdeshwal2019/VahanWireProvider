@@ -24,7 +24,7 @@ public class MyApplication extends android.app.Application {
         super.onCreate();
         if(UrlConstants.BASE_URL.equals("http://3.0.231.209/api/"))
         {
-            Fabric.with(this, new Crashlytics());
+            //Fabric.with(this, new Crashlytics());
         }
         else
         {

@@ -26,6 +26,8 @@ import com.google.firebase.messaging.RemoteMessage;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK;
+
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "MyFirebaseMsgService";
@@ -238,28 +240,30 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 if (remoteMessage.getData() != null) {
                     if (tag.equalsIgnoreCase("ambulance")) {
                         startActivity(new Intent(getApplicationContext(), AmbulanceHomePage.class)
-                        .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                .addFlags(FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
                     }
 
                     else if (tag.equalsIgnoreCase("mechanic") && type.equalsIgnoreCase("prerequest")) {
                         startActivity(new Intent(getApplicationContext(), BookingHistoryMechanic.class)
+                                .putExtra("req_type", "pre_mech")
                                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+
                     }
 
                     else if (tag.equalsIgnoreCase("mechanic")) {
                         startActivity(new Intent(getApplicationContext(), MachanicHomePage.class)
                         //startActivity(new Intent(getApplicationContext(), BookingStatusMechanic.class)
-                         .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                .addFlags(FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
                     }
 
                     else if (tag.equalsIgnoreCase("driver")) {
                         startActivity(new Intent(getApplicationContext(), DriverHomePage.class)
-                                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                .addFlags(FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
                     }
 
                     else if (tag.equalsIgnoreCase("tow")) {
                         startActivity(new Intent(getApplicationContext(), TowHomePage.class)
-                                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                .addFlags(FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
                     }
 
                     Log.e(TAG, "onMessageReceived: " + "done");
@@ -347,6 +351,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
             Intent intent = new Intent(this, BookingHistoryMechanic.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra("req_type", "pre_mech");
             pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
         }
