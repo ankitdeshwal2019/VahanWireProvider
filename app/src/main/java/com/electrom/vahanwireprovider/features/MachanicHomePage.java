@@ -509,13 +509,26 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                         sessionManager.setString(SessionManager.BOOKING_STATUS, "");
                         sessionManager.setString(SessionManager.BOOKING_STATUS_USER, "");
                         Log.d(TAG, "success " + cancelRequest.getMessage());
-                        ActionForAll.alertUserWithCloseActivity("VahanWire", "Request cancelled !", "OK", MachanicHomePage.this);
+
+                        new AlertDialog.Builder(context)
+                                .setTitle("VahanWire")
+                                .setMessage("Request Cancelled")
+                                .setCancelable(false)
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        timer.cancel();
+                                        faltuCheck = "cancelled_by_provider";
+                                        if (requestPopup.isShowing()) {
+                                            requestPopup.dismiss();
+
+                                        }
+                                    }
+                                })
+                                .create().show();
+
                         timer.cancel();
                         faltuCheck = "cancelled_by_provider";
-                        if (requestPopup.isShowing()) {
-                            requestPopup.dismiss();
-
-                        }
 
                         if (cancelDiolog.isShowing()) {
                             cancelDiolog.dismiss();
