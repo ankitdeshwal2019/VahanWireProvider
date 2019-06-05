@@ -206,6 +206,7 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
             nav_Menu.findItem(R.id.nav_service_charge_mech).setVisible(true);
             nav_Menu.findItem(R.id.nav_Service_pre_service).setVisible(true);
             nav_Menu.findItem(R.id.nav_add_n_expert).setVisible(true);
+            nav_Menu.findItem(R.id.my_document_mechanic).setVisible(true);
             /*nav_Menu.findItem(R.id.nav_Serviceable_brand).setVisible(false);*/
         }
         else {
@@ -849,6 +850,36 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
                             sessionManager.setString(SessionManager.PROVIDER_IMAGE, detail.getData().getOrganisation().getProfilePic());
                             sessionManager.setString(SessionManager.NAV_NAME_MECH, detail.getData().getOrganisation().getOrganisationName());
                         }
+
+
+                        if(detail.getData().getOrganisation().getOrgDetails().getIncorporation_cert().length() > 0)
+                        {
+                            sessionManager.setString(SessionManager.PRO_IncCent, detail.getData().getOrganisation().getOrgDetails().getIncorporation_cert());
+                        }
+                        if(detail.getData().getOrganisation().getOrgDetails().getPan_card_company_doc().length() > 0)
+                        {
+                            sessionManager.setString(SessionManager.PRO_PanCard, detail.getData().getOrganisation().getOrgDetails().getPan_card_company_doc());
+                        }
+                        if(detail.getData().getOrganisation().getOrgDetails().getCancel_cheque().length() > 0)
+                        {
+                            sessionManager.setString(SessionManager.PRO_CanCheck, detail.getData().getOrganisation().getOrgDetails().getCancel_cheque());
+                        }
+                        if(detail.getData().getOrganisation().getOrgDetails().getGst_nummber_doc().length() > 0)
+                        {
+                            sessionManager.setString(SessionManager.PRO_GstNum, detail.getData().getOrganisation().getOrgDetails().getGst_nummber_doc());
+                        }
+                        if(detail.getData().getOrganisation().getOrgDetails().getOwner_id_doc().length() > 0)
+                        {
+                            Log.e(TAG, "onResponse: " + detail.getData().getOrganisation().getOrgDetails().getOwner_id_doc());
+                            sessionManager.setString(SessionManager.PRO_OwnId, detail.getData().getOrganisation().getOrgDetails().getOwner_id_doc());
+                        }
+
+                        if(detail.getData().getOrganisation().getOrgDetails().getOther_document().length() > 0)
+                        {
+                            Log.e(TAG, "onResponse: " + detail.getData().getOrganisation().getOrgDetails().getOther_document());
+                            sessionManager.setString(SessionManager.PRO_OTHER_DOC, detail.getData().getOrganisation().getOrgDetails().getOther_document());
+                        }
+                        //detail.getData().getOrgDetails().getIncorporationCert();
 
                         try {
                             setUpLayoutWithToolbar();

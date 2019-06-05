@@ -334,7 +334,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
     private void isNotEmptyFields(){
         if(ActionForAll.validEditText(et_resister_com_name, "company name", RegistrationActivity.this) &&
                 ActionForAll.validEditText(etContactPerson, "name", RegistrationActivity.this) &&
-                ActionForAll.isValidEmail(etRegisterEmail, RegistrationActivity.this) &&
+                //ActionForAll.isValidEmail(etRegisterEmail, RegistrationActivity.this) &&
                 ActionForAll.validEditText(etRegisterPassword, "password", RegistrationActivity.this) &&
                 ActionForAll.validEditText(etRegisterAddress, "address", RegistrationActivity.this))
         {

@@ -30,7 +30,13 @@
             android:visible="false"
             android:id="@+id/my_document_petrol"
             android:icon="@drawable/document_nav"
-            android:title="My Document" />
+            android:title="KYC" />
+
+        <item
+            android:visible="false"
+            android:id="@+id/my_document_mechanic"
+            android:icon="@drawable/document_nav"
+            android:title="KYC" />
 
         <item
             android:id="@+id/nav_my_introduction"

@@ -80,6 +80,7 @@ public class SessionManager {
     public static final String PRO_GstNum = "doc_3";
     public static final String PRO_OwnId = "doc_4";
     public static final String IMG_URL = "img_url";
+    public static final String PRO_OTHER_DOC = "other_doc";
 
 
     private static String SHARED_PREFERENCE_PROVIDER = "shared_provider_electrom";

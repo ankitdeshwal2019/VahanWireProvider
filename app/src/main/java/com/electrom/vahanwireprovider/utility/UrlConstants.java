@@ -125,4 +125,17 @@ public class UrlConstants {
     public static final String UPLOAD_GST = "petrolpump/provider/upload/document/gstnumber";
     public static final String UPLOAD_CANCEL_CHECK = "petrolpump/provider/upload/document/cancelcheque";
     public static final String UPLOAD_OWNER_ID = "petrolpump/provider/upload/document/ownerid";
+    public static final String UPLOAD_INCOR_CER_MECH = "mechanic/mainprovider/upload/document/incorporationcertificate";
+    public static final String UPLOAD_PANCARD_COM_MECH = "mechanic/mainprovider/upload/document/pancardcompany";
+    public static final String UPLOAD_CANCEL_CHECK_MECH = "mechanic/mainprovider/upload/document/cancelcheque";
+    public static final String UPLOAD_GST_MECH = "mechanic/mainprovider/upload/document/gstnumber";
+    public static final String UPLOAD_OWNER_ID_MECH = "mechanic/mainprovider/upload/document/ownerid";
+    public static final String UPLOAD_OTHER_MECH = "mechanic/mainprovider/upload/document/other";
+
+    public static final String UPLOAD_INCOR_CER_TOW = "tow/mainprovider/upload/document/incorporationcertificate";
+    public static final String UPLOAD_PANCARD_COM_TOW = "tow/mainprovider/upload/document/pancardcompany";
+    public static final String UPLOAD_CANCEL_CHECK_TOW = "tow/mainprovider/upload/document/cancelcheque";
+    public static final String UPLOAD_GST_TOW = "tow/mainprovider/upload/document/gstnumber";
+    public static final String UPLOAD_OWNER_ID_TOW = "tow/mainprovider/upload/document/ownerid";
+    public static final String UPLOAD_OTHER_TOW = "tow/mainprovider/upload/document/other";
 }

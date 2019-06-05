@@ -22,6 +22,7 @@ import com.electrom.vahanwireprovider.features.AddnExpert;
 import com.electrom.vahanwireprovider.features.AmbulanceHomePage;
 import com.electrom.vahanwireprovider.features.BookingHistory;
 import com.electrom.vahanwireprovider.features.BookingHistoryMechanic;
+import com.electrom.vahanwireprovider.features.MyDocumentMechanic;
 import com.electrom.vahanwireprovider.features.MyDocumentsPetrol;
 import com.electrom.vahanwireprovider.features.PetrolPumpIntroImage;
 import com.electrom.vahanwireprovider.features.PreServices;
@@ -171,9 +172,18 @@ public class CodeMinimisations {
                 context.startActivity(in);
                 break;
 
-                case "My Document":
-                in = new Intent(context, MyDocumentsPetrol.class);
-                context.startActivity(in);
+                case "KYC":
+                    if(sessionManager.getString(SessionManager.SERVICE).equals(Constant.SERVICE_PETROL_PUMP))
+                    {
+                        in = new Intent(context, MyDocumentsPetrol.class);
+                        context.startActivity(in);
+                    }
+                    else
+                    {
+                        in = new Intent(context, MyDocumentMechanic.class);
+                        context.startActivity(in);
+                    }
+
                 break;
 
             case "Offers":
@@ -340,6 +350,7 @@ public class CodeMinimisations {
                         sessionManager.setString(SessionManager.PRO_GstNum, "");
                         sessionManager.setString(SessionManager.PRO_OwnId, "");
                         sessionManager.setString(SessionManager.IMG_URL, "");
+                        sessionManager.setString(SessionManager.PRO_OTHER_DOC, "");
 
 
                         dialog.dismiss();

@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -74,6 +75,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
     List<Datum> data;
     ArrayList<String> reason = new ArrayList();
     String cancelReason;
+    Handler mHandler = new Handler();
 
     LinearLayout llCointainerOnTheWay, llCointainerReachStart, llCointainerServiceDone,
             llCointainerCompalete, llDiration, llCallCointainer,llCointainerBilling;
@@ -91,6 +93,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
     int routeCount = 0;
     String billing_url="";
     String billview="";
+    boolean countinue = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -572,6 +575,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                             llCointainerServiceDone.setClickable(false);
                             llCointainerBilling.setClickable(true);
                             routeCount = 3;
+                            countinue = true;
 
                         }
                         else if(status.equals("4")){
@@ -593,7 +597,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                             llCointainerServiceDone.setClickable(false);
                             llCointainerCompalete.setClickable(true);
                             tvTitle.setText("Completed / Cancelled service");
-
+                            countinue = true;
                             routeCount = 4;
                         }
 
@@ -617,6 +621,236 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                             llCointainerCompalete.setClickable(false);
                             tvTitle.setText("Completed / Cancelled service");
                             routeCount = 5;
+                            countinue = false;
+
+                        }
+
+                        tvBookingMechanicName.setText(userDetails.getFullname());
+                        tvBookingMechanicMobile.setText(contact);
+                        if(bookingDetails.getData().getDetails().getBookingStatus().getUser().getStatus().equals("2"))
+                        {
+                            llDiration.setVisibility(View.VISIBLE);
+                            llDiration.setClickable(false);
+                            ivDir.setVisibility(View.GONE);
+                            tvBookingMechanicDirection.setText("Cancelled By User");
+                            tvBookingMechanicDirection.setTextColor(Color.parseColor("#FF0000"));
+                            llCointainerOnTheWay.setClickable(false);
+                            llCointainerReachStart.setClickable(false);
+                            llCointainerServiceDone.setClickable(false);
+                            llCointainerCompalete.setClickable(false);
+                            btnCancelMechanic.setVisibility(View.INVISIBLE);
+                            tvTitle.setText("Completed / Cancelled service");
+                            countinue = false;
+                        }
+                        else if(bookingDetails.getData().getDetails().getBookingStatus().getMechanic().getStatus().equals("2"))
+                        {
+                            llDiration.setVisibility(View.VISIBLE);
+                            llDiration.setClickable(false);
+                            ivDir.setVisibility(View.GONE);
+                            tvBookingMechanicDirection.setTextColor(Color.parseColor("#FF0000"));
+                            tvBookingMechanicDirection.setText("Cancelled By You");
+                            llCointainerOnTheWay.setClickable(false);
+                            llCointainerReachStart.setClickable(false);
+                            llCointainerServiceDone.setClickable(false);
+                            llCointainerCompalete.setClickable(false);
+                            btnCancelMechanic.setVisibility(View.INVISIBLE);
+                            tvTitle.setText("Completed / Cancelled service");
+                            countinue = false;
+                        }
+                        // CountryAdapter adapter = new CountryAdapter(ProfileActivity.this, list);
+                    }
+
+                    else if(bookingDetails.getStatus().equals("404"))
+                    {
+                        ActionForAll.alertUserWithCloseActivity("VahanWire","No booking found", "OK", BookingStatusMechanic.this);
+                    }
+                    else
+                    {
+                        ActionForAll.alertUserWithCloseActivity("VahanWire", bookingDetails.getMessage(), "OK", BookingStatusMechanic.this);
+                    }
+
+                }
+                else
+                {
+                    ActionForAll.alertUserWithCloseActivity("VahanWire", bookingDetails.getMessage(), "OK", BookingStatusMechanic.this);
+                }
+
+                Log.e("service", response.body().getStatus());
+            }
+
+            @Override
+            public void onFailure(Call<BookingDetails> call, Throwable t) {
+                Util.hideProgressDialog(progressDialog);
+                Log.e("service failier", t.getMessage());
+                t.printStackTrace();
+                //ActionForAll.alertUserWithCloseActivity("VahanWire", "No active bookin found", "OK", BookingStatusMechanic.this);
+
+            }
+        });
+
+    }
+
+    private void getAllBookingDetailRepeat(){
+
+        //final ProgressDialog progressDialog = Util.showProgressDialog(this);
+
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("id", sessionManager.getString(SessionManager.PROVIDER_ID));
+        params.put("booking_id", sessionManager.getString(SessionManager.BOOKING_ID));
+
+        Log.e(TAG, "getAllBookingDetail: id " +  sessionManager.getString(SessionManager.PROVIDER_ID));
+        Log.e(TAG, "getAllBookingDetail: booking id " +  sessionManager.getString(SessionManager.BOOKING_ID));
+
+        Call<BookingDetails> call = apiService.getMechBooking(params);
+
+        call.enqueue(new Callback<BookingDetails>() {
+            @Override
+            public void onResponse(Call<BookingDetails> call, Response<BookingDetails> response) {
+
+                //Util.hideProgressDialog(progressDialog);
+
+                BookingDetails bookingDetails = response.body();
+
+                //  Log.e(TAG, "onResponse: " + bookingDetails.getStatus());
+
+                if(response.isSuccessful())
+                {
+
+                    if(bookingDetails.getStatus().equals("200"))
+                    {
+                        Data data = bookingDetails.getData();
+
+                        List<Billing> billing = data.getDetails().getBilling();
+                        billing_url = bookingDetails.getData().getDetails().getBillingUrl();
+                        if(billing.size()>0)
+                        {
+                            String billingAmount = billing.get(0).getBillingAmount();
+                            String billingLink = billing.get(0).getBillImageLink();
+
+                            Log.e(TAG, "onResponse: billing " + billingAmount);
+                            Log.e(TAG, "onResponse: link " + billingLink);
+                            Log.e(TAG, "onResponse: billing_url " + billing_url);
+                            billview = bookingDetails.getData().getDetails().getBilling().get(0).getBillImageLink();
+                        }
+
+                        UserDetails userDetails = bookingDetails.getData().getUserDetails();
+                        PicassoClient.downloadImage(context,userDetails.getProfilePic(),ivMechanicProfile);
+                        Details details = data.getDetails();
+                        contact = userDetails.getPhone();
+
+                        try{
+                            List<Double> coordinates = details.getUserLocation().getCoordinates();
+                            Longitude = coordinates.get(0);
+                            Latitude = coordinates.get(1);
+                        }
+                        catch (Exception e){}
+                        /*Longitude = coordinates.get(0);
+                        Latitude = coordinates.get(1);
+                        Log.e(TAG, "onResponse: "+ Longitude+" - " + Latitude);*/
+                        String status = details.getEnrouteStatus();
+                        OTP =  details.getOtpVerify();
+                        Log.e(TAG, "onResponse: otp mechanic" +  OTP);
+                        Log.e(TAG, "onResponse: status mechanic" +  status);
+
+
+                        if(status.equals("0")){
+                            btnCancelMechanic.setVisibility(View.VISIBLE);
+                            llDiration.setVisibility(View.INVISIBLE);
+                        }
+                        else if(status.equals("1")){
+
+                            ivOnTheWay.setImageResource(R.drawable.on_the_way_green);
+                            ivReachStart.setImageResource(R.drawable.reach_start_grey);
+                            ivServiceDone.setImageResource(R.drawable.service_done);
+                            ivComplete.setImageResource(R.drawable.complete);
+                            tvBookingMechanicDirection.setText("Direction");
+                            llDiration.setVisibility(View.VISIBLE);
+                            btnCancelMechanic.setVisibility(View.VISIBLE);
+                            llCointainerOnTheWay.setClickable(false);
+                            llCointainerReachStart.setClickable(true);
+                            llCointainerServiceDone.setClickable(true);
+                            llCointainerCompalete.setClickable(true);
+                            routeCount = 1;
+
+                        }
+                        else if(status.equals("2")){
+
+                            ivOnTheWay.setImageResource(R.drawable.on_the_way_green);
+                            ivReachStart.setImageResource(R.drawable.reach_start);
+                            ivServiceDone.setImageResource(R.drawable.service_done);
+                            ivComplete.setImageResource(R.drawable.complete);
+                            tvBookingMechanicDirection.setText("Direction");
+                            llDiration.setVisibility(View.INVISIBLE);
+                            btnCancelMechanic.setVisibility(View.VISIBLE);
+                            llCointainerOnTheWay.setClickable(false);
+                            llCointainerReachStart.setClickable(false);
+                            llCointainerServiceDone.setClickable(true);
+                            llCointainerCompalete.setClickable(true);
+                            routeCount = 2;
+                        }
+                        else if(status.equals("3")){
+
+                            ivOnTheWay.setImageResource(R.drawable.on_the_way_green);
+                            ivReachStart.setImageResource(R.drawable.reach_start);
+                            ivServiceDone.setImageResource(R.drawable.service_done_green);
+                            ivComplete.setImageResource(R.drawable.complete);
+                            tvBookingMechanicDirection.setText("Direction");
+                            llDiration.setVisibility(View.INVISIBLE);
+                            btnCancelMechanic.setVisibility(View.INVISIBLE);
+                            llCointainerOnTheWay.setClickable(false);
+                            llCointainerReachStart.setClickable(false);
+                            llCointainerServiceDone.setClickable(false);
+                            llCointainerBilling.setClickable(true);
+                            routeCount = 3;
+                            countinue = true;
+
+                        }
+                        else if(status.equals("4")){
+
+                            ivOnTheWay.setImageResource(R.drawable.on_the_way_green);
+                            ivReachStart.setImageResource(R.drawable.reach_start);
+                            ivServiceDone.setImageResource(R.drawable.service_done_green);
+                            //ivComplete.setImageResource(R.drawable.complete_green);
+                            ivBilling.setImageResource(R.drawable.bill_green_mechanic);
+                            tvBookingMechanicDirection.setText("Complete");
+                            tvBookingMechanicDirection.setClickable(false);
+                            tvCheckBill.setVisibility(View.VISIBLE);
+                            llDiration.setVisibility(View.VISIBLE);
+                            ivDir.setVisibility(View.GONE);
+                            llDiration.setClickable(false);
+                            btnCancelMechanic.setVisibility(View.INVISIBLE);
+                            llCointainerOnTheWay.setClickable(false);
+                            llCointainerReachStart.setClickable(false);
+                            llCointainerServiceDone.setClickable(false);
+                            llCointainerCompalete.setClickable(true);
+                            tvTitle.setText("Completed / Cancelled service");
+                            countinue = true;
+                            routeCount = 4;
+                        }
+
+                        else if(status.equals("5")){
+
+                            ivOnTheWay.setImageResource(R.drawable.on_the_way_green);
+                            ivReachStart.setImageResource(R.drawable.reach_start);
+                            ivServiceDone.setImageResource(R.drawable.service_done_green);
+                            ivComplete.setImageResource(R.drawable.complete_green);
+                            ivBilling.setImageResource(R.drawable.bill_green_mechanic);
+                            tvBookingMechanicDirection.setText("Complete");
+                            tvBookingMechanicDirection.setClickable(false);
+                            tvCheckBill.setVisibility(View.VISIBLE);
+                            llDiration.setVisibility(View.VISIBLE);
+                            ivDir.setVisibility(View.GONE);
+                            llDiration.setClickable(false);
+                            btnCancelMechanic.setVisibility(View.INVISIBLE);
+                            llCointainerOnTheWay.setClickable(false);
+                            llCointainerReachStart.setClickable(false);
+                            llCointainerServiceDone.setClickable(false);
+                            llCointainerCompalete.setClickable(false);
+                            tvTitle.setText("Completed / Cancelled service");
+                            routeCount = 5;
+                            countinue = false;
 
                         }
 
@@ -674,7 +908,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
 
             @Override
             public void onFailure(Call<BookingDetails> call, Throwable t) {
-                Util.hideProgressDialog(progressDialog);
+                //Util.hideProgressDialog(progressDialog);
                 Log.e("service failier", t.getMessage());
                 t.printStackTrace();
                 //ActionForAll.alertUserWithCloseActivity("VahanWire", "No active bookin found", "OK", BookingStatusMechanic.this);
@@ -965,6 +1199,43 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
             startActivity(logout);
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    private void routin_api_call()
+    {
+        if(!BookingStatusMechanic.this.isFinishing())
+        {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    // TODO Auto-generated method stub
+                    while (countinue && routeCount >= 3) {
+                        try {
+                            Thread.sleep(10000);
+                            mHandler.post(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    // TODO Auto-generated method stub
+                                    if(!BookingStatusMechanic.this.isFinishing())
+                                    {
+                                        getAllBookingDetailRepeat();
+                                    }
+                                    else
+                                    {
+                                        countinue = false;
+                                        mHandler.removeCallbacksAndMessages(null);
+                                    }
+                                    Log.e(TAG, "run: " + "api call by routin ");
+                                }
+                            });
+                        } catch (Exception e) {
+                            // TODO: handle exception
+                        }
+                    }
+                }
+            }).start();
+        }
     }
 
 }
