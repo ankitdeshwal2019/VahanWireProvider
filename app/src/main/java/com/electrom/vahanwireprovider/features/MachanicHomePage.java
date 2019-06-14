@@ -145,12 +145,11 @@ public class MachanicHomePage extends AppCompatActivity implements View.OnClickL
         if (sessionManager.getString(SessionManager.BOOKING_STATUS).equals("0") &&
                 !sessionManager.getString(SessionManager.BOOKING_STATUS_USER).equals("2") &&
                 !sessionManager.getString(SessionManager.NOTI_ISSUE).equalsIgnoreCase("Pre Request")) {
-                 Log.e(TAG, "initView: " + sessionManager.getString(SessionManager.BOOKING_ID));
-                 Log.e(TAG, "initView: " + sessionManager.getString(SessionManager.BOOKING_STATUS));
+                 //Log.e(TAG, "initView: " + sessionManager.getString(SessionManager.BOOKING_ID));
+                 //Log.e(TAG, "initView: " + sessionManager.getString(SessionManager.BOOKING_STATUS));
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-
                     requestPopup();
                 }
             }, 500);

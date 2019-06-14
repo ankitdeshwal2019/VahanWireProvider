@@ -21,8 +21,8 @@ android {
         applicationId "com.electrom.vahanwireprovider"
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 10
-        versionName "1.1.7"
+        versionCode 11
+        versionName "1.1.8"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         useLibrary 'org.apache.http.legacy'

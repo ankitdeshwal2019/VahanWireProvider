@@ -29,12 +29,14 @@ import com.electrom.vahanwireprovider.models.version.Version;
 import com.electrom.vahanwireprovider.new_app_driver.DriverHomePage;
 import com.electrom.vahanwireprovider.new_app_tow.ChoiseLogin;
 import com.electrom.vahanwireprovider.new_app_tow.TowHomePage;
+import com.electrom.vahanwireprovider.notification_service.Config;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiClient;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiInterface;
 import com.electrom.vahanwireprovider.utility.ActionForAll;
 import com.electrom.vahanwireprovider.utility.Constant;
 import com.electrom.vahanwireprovider.utility.CustomTextView;
 import com.electrom.vahanwireprovider.utility.SessionManager;
+import com.electrom.vahanwireprovider.utility.UrlConstants;
 import com.electrom.vahanwireprovider.utility.Util;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -51,7 +53,7 @@ import retrofit2.Response;
 
 public class BeforeLogin extends AppCompatActivity implements View.OnClickListener {
 
-    CustomTextView tvPetrolPump, tvMechanic, tvAbmulance;
+    CustomTextView tvPetrolPump, tvMechanic, tvAbmulance, tvCheckAppMode;
     SessionManager sessionManager;
     String service = "";
     String version="";
@@ -80,9 +82,13 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
         tvPetrolPump = findViewById(R.id.tvPetrolPump);
         tvMechanic = findViewById(R.id.tvMechanic);
         tvAbmulance = findViewById(R.id.tvAmbulance);
+        tvCheckAppMode = findViewById(R.id.tvCheckAppMode);
         tvPetrolPump.setOnClickListener(this);
         tvAbmulance.setOnClickListener(this);
         tvMechanic.setOnClickListener(this);
+
+        if(!UrlConstants.BASE_URL.contains("http://3.0.231.209/api/"))
+            tvCheckAppMode.setText("STAGING : " + BuildConfig.VERSION_NAME);
 
         Log.e(TAG, "mobile: " + sessionManager.getString(SessionManager.PROVIDER_MOBILE));
         Log.e(TAG, "pin: " +  sessionManager.getString(SessionManager.PROVIDER_PIN) );

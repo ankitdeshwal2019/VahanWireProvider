@@ -49,6 +49,7 @@ import com.electrom.vahanwireprovider.utility.ActionForAll;
 import com.electrom.vahanwireprovider.utility.Constant;
 import com.electrom.vahanwireprovider.utility.CustomButton;
 import com.electrom.vahanwireprovider.utility.CustomEditText;
+import com.electrom.vahanwireprovider.utility.CustomTextView;
 import com.electrom.vahanwireprovider.utility.PicassoClient;
 import com.electrom.vahanwireprovider.utility.SessionManager;
 import com.electrom.vahanwireprovider.utility.UrlConstants;
@@ -85,7 +86,7 @@ import retrofit2.Response;
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = ProfileActivity.class.getSimpleName();
-    ImageView iv_Profile_back, iv_profile_image, ivProfileContainer;
+    ImageView iv_Profile_back, iv_profile_image;
     CustomEditText etProfileCompanyName, etProfilePersonName, etProfileMobileNumber,
             etProfileLandLine, etProfileAddress, etPinCode;
     CustomButton btnProfileSubmit;
@@ -94,6 +95,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     CustomEditText spinCountry, spinState, spinCity;
     private int REQUEST_CAMERA = 0, SELECT_FILE = 1;
     String imgUSerString = "", userChoosenTask, service;
+    CustomTextView ivProfileContainer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

@@ -56,10 +56,13 @@
             android:textSize="@dimen/size_20sp"
             android:textColor="@color/colorWhite"/>
 
-
+        <com.electrom.vahanwireprovider.utility.CustomTextView
+            android:id="@+id/tvCheckAppMode"
+            android:visibility="visible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_40dp"/>
 
     </LinearLayout>
-
-
 
 </LinearLayout>

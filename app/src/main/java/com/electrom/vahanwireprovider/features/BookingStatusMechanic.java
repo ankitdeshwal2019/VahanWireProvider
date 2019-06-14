@@ -45,6 +45,7 @@ import com.electrom.vahanwireprovider.utility.ActionForAll;
 import com.electrom.vahanwireprovider.utility.CustomButton;
 import com.electrom.vahanwireprovider.utility.CustomEditText;
 import com.electrom.vahanwireprovider.utility.CustomTextView;
+import com.electrom.vahanwireprovider.utility.MyHandler;
 import com.electrom.vahanwireprovider.utility.PicassoClient;
 import com.electrom.vahanwireprovider.utility.SessionManager;
 import com.electrom.vahanwireprovider.utility.Util;
@@ -75,7 +76,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
     List<Datum> data;
     ArrayList<String> reason = new ArrayList();
     String cancelReason;
-    Handler mHandler = new Handler();
+    MyHandler mHandler = new MyHandler();
 
     LinearLayout llCointainerOnTheWay, llCointainerReachStart, llCointainerServiceDone,
             llCointainerCompalete, llDiration, llCallCointainer,llCointainerBilling;
@@ -102,8 +103,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
 
         initView();
 
-       getAllBookingDetail();
-       getreason();
+
     }
 
     private void initView() {
@@ -141,6 +141,14 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
         ivServiceDone = findViewById(R.id.ivServiceDone);
         ivComplete = findViewById(R.id.ivComplete);
         llCointainerBilling = findViewById(R.id.llCointainerBilling);
+
+        getAllBookingDetail();
+        getreason();
+
+        /*try{
+            routin_api_call();
+        }catch (Exception e)
+        {}*/
     }
 
     @Override
@@ -510,6 +518,10 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                         PicassoClient.downloadImage(context,userDetails.getProfilePic(),ivMechanicProfile);
                         Details details = data.getDetails();
                         contact = userDetails.getPhone();
+                        /*Log.e(TAG, "onResponse: pic " +  userDetails.getProfilePic());
+                        Log.e(TAG, "onResponse: phone  " +  userDetails.getPhone());
+                        Log.e(TAG, "onResponse: phone  " +  userDetails.getFullname());*/
+
 
                         try{
                             List<Double> coordinates = details.getUserLocation().getCoordinates();
@@ -658,6 +670,8 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                             countinue = false;
                         }
                         // CountryAdapter adapter = new CountryAdapter(ProfileActivity.this, list);
+
+                        routin_api_call();
                     }
 
                     else if(bookingDetails.getStatus().equals("404"))
@@ -739,6 +753,10 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                         PicassoClient.downloadImage(context,userDetails.getProfilePic(),ivMechanicProfile);
                         Details details = data.getDetails();
                         contact = userDetails.getPhone();
+
+                        Log.e(TAG, "onResponse: pic " +  userDetails.getProfilePic());
+                        Log.e(TAG, "onResponse: phone  " +  userDetails.getPhone());
+                        Log.e(TAG, "onResponse: phone  " +  userDetails.getFullname());
 
                         try{
                             List<Double> coordinates = details.getUserLocation().getCoordinates();
@@ -870,6 +888,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                             llCointainerCompalete.setClickable(false);
                             btnCancelMechanic.setVisibility(View.INVISIBLE);
                             tvTitle.setText("Completed / Cancelled service");
+                            countinue = false;
                         }
                         else if(bookingDetails.getData().getDetails().getBookingStatus().getMechanic().getStatus().equals("2"))
                         {
@@ -884,6 +903,7 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
                             llCointainerCompalete.setClickable(false);
                             btnCancelMechanic.setVisibility(View.INVISIBLE);
                             tvTitle.setText("Completed / Cancelled service");
+                            countinue = false;
                         }
                         // CountryAdapter adapter = new CountryAdapter(ProfileActivity.this, list);
                     }
@@ -1203,6 +1223,8 @@ public class BookingStatusMechanic extends AppCompatActivity implements View.OnC
 
     private void routin_api_call()
     {
+        Log.e(TAG, "routin_api_call: countinue "  + countinue );
+        Log.e(TAG, "routin_api_call: routeCount "  + routeCount );
         if(!BookingStatusMechanic.this.isFinishing())
         {
             new Thread(new Runnable() {

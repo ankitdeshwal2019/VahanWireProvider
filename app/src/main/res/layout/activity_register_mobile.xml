@@ -67,6 +67,7 @@
                         android:background="#fff"
                         android:inputType="number"
                         android:maxLines="1"
+                        android:maxLength="10"
                         android:paddingLeft="@dimen/size_5dp"
                         android:hint="Mobile no"
                         android:layout_width="match_parent"
