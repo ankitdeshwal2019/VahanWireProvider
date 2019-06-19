@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.electrom.vahanwireprovider">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -31,6 +32,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+
         <activity android:name=".features.MyDocumentMechanic"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
@@ -393,7 +395,7 @@
             android:value="593fdcbb38578d3cd8e6981efb284c9c15963780" />
 
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
             android:exported="false"
             android:grantUriPermissions="true">

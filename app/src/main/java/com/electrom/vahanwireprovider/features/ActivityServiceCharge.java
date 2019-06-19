@@ -4,7 +4,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,7 +16,6 @@ import com.electrom.vahanwireprovider.retrofit_lib.ApiInterface;
 import com.electrom.vahanwireprovider.utility.ActionForAll;
 import com.electrom.vahanwireprovider.utility.CustomButton;
 import com.electrom.vahanwireprovider.utility.CustomEditText;
-import com.electrom.vahanwireprovider.utility.CustomTextView;
 import com.electrom.vahanwireprovider.utility.SessionManager;
 import com.electrom.vahanwireprovider.utility.Util;
 

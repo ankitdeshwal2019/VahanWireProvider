@@ -1,26 +1,21 @@
 package com.electrom.vahanwireprovider.adapters;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.electrom.vahanwireprovider.R;
 import com.electrom.vahanwireprovider.features.FacilitynPaymentMethod;
-import com.electrom.vahanwireprovider.features.PaymentMethod;
 import com.electrom.vahanwireprovider.models.services.Datum;
-import com.electrom.vahanwireprovider.models.services.Service;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiClient;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiInterface;
 import com.electrom.vahanwireprovider.utility.ActionForAll;

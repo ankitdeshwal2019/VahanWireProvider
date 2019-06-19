@@ -12,4 +12,5 @@
     <string name="msg_token_fmt">test messege</string>
     <string name="channel_name">provider_location_update</string>
     <string name="channel_description">Provider location update channel</string>
+    <string name="text2"><![CDATA[< 2]]></string>
 </resources>

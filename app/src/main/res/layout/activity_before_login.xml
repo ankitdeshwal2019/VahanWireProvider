@@ -8,60 +8,113 @@
     android:layout_margin="@dimen/size_5dp">
 
     <ImageView
-        android:layout_marginTop="@dimen/size_50dp"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_marginTop="@dimen/size_30dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:src="@drawable/logo"/>
 
     <LinearLayout
-        android:layout_marginTop="@dimen/size_50dp"
+        android:layout_marginTop="@dimen/size_30dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="center_horizontal">
 
-        <com.electrom.vahanwireprovider.utility.CustomTextView
+        <com.electrom.vahanwireprovider.utility.CustomTextBold
             android:id="@+id/tvPetrolPump"
             android:layout_width="match_parent"
-            android:layout_height="70dp"
+            android:layout_height="50dp"
             android:layout_marginRight="@dimen/size_20dp"
             android:layout_marginLeft="@dimen/size_20dp"
-            android:background="@drawable/petrol_strip"
+            android:layout_marginBottom="@dimen/size_5dp"
+            android:background="@drawable/petrolpump_strip_new"
             android:text="PETROL PUMP"
             android:gravity="center"
-            android:textSize="@dimen/size_20sp"
+            android:textSize="@dimen/size_18sp"
             android:textColor="@color/colorWhite"/>
 
-        <com.electrom.vahanwireprovider.utility.CustomTextView
+        <com.electrom.vahanwireprovider.utility.CustomTextBold
             android:id="@+id/tvAmbulance"
             android:layout_width="match_parent"
-            android:layout_height="70dp"
+            android:layout_height="50dp"
             android:layout_marginRight="@dimen/size_20dp"
             android:layout_marginLeft="@dimen/size_20dp"
-            android:background="@drawable/ambulance_strip"
+            android:layout_marginBottom="@dimen/size_5dp"
+            android:background="@drawable/ambulance_strip_new"
             android:text="AMBULANCE"
             android:gravity="center"
-            android:textSize="@dimen/size_20sp"
+            android:textSize="@dimen/size_18sp"
             android:textColor="@color/colorWhite"/>
 
-        <com.electrom.vahanwireprovider.utility.CustomTextView
+        <com.electrom.vahanwireprovider.utility.CustomTextBold
             android:id="@+id/tvMechanic"
             android:layout_width="match_parent"
-            android:layout_height="70dp"
+            android:layout_height="50dp"
             android:layout_marginRight="@dimen/size_20dp"
             android:layout_marginLeft="@dimen/size_20dp"
-            android:background="@drawable/mechanic_strip"
+            android:layout_marginBottom="@dimen/size_5dp"
+            android:background="@drawable/mechanic_strip_new"
             android:text="MECHANIC"
             android:gravity="center"
-            android:textSize="@dimen/size_20sp"
+            android:textSize="@dimen/size_18sp"
             android:textColor="@color/colorWhite"/>
 
-        <com.electrom.vahanwireprovider.utility.CustomTextView
+        <com.electrom.vahanwireprovider.utility.CustomTextBold
+            android:id="@+id/tvPreAppointment"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginRight="@dimen/size_20dp"
+            android:layout_marginLeft="@dimen/size_20dp"
+            android:layout_marginBottom="@dimen/size_5dp"
+            android:background="@drawable/petrolpump_strip_new"
+            android:text="PRE APPOINTMENT"
+            android:gravity="center"
+            android:textSize="@dimen/size_18sp"
+            android:textColor="@color/colorWhite"/>
+
+        <com.electrom.vahanwireprovider.utility.CustomTextBold
+            android:id="@+id/tvTow"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginRight="@dimen/size_20dp"
+            android:layout_marginLeft="@dimen/size_20dp"
+            android:layout_marginBottom="@dimen/size_5dp"
+            android:background="@drawable/tow_strip_new"
+            android:text="TOW"
+            android:gravity="center"
+            android:textSize="@dimen/size_18sp"
+            android:textColor="@color/colorWhite"/>
+        <com.electrom.vahanwireprovider.utility.CustomTextBold
+            android:id="@+id/tvPickDrop"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginRight="@dimen/size_20dp"
+            android:layout_marginLeft="@dimen/size_20dp"
+            android:layout_marginBottom="@dimen/size_5dp"
+            android:background="@drawable/pick_n_drop_new"
+            android:text="PICK AND DROP DRIVER"
+            android:gravity="center"
+            android:textSize="@dimen/size_18sp"
+            android:textColor="@color/colorWhite"/>
+
+        <com.electrom.vahanwireprovider.utility.CustomTextBold
             android:id="@+id/tvCheckAppMode"
             android:visibility="visible"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_40dp"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="bottom">
+
+            <View android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:background="#ccc"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 

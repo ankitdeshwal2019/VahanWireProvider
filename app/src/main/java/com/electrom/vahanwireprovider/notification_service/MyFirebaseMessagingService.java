@@ -9,13 +9,12 @@ import android.content.Intent;
 import android.media.AudioAttributes;
 import android.net.Uri;
 import android.os.Build;
-import android.support.v4.app.NotificationCompat;
+import androidx.core.app.NotificationCompat;
 import android.util.Log;
 
 import com.electrom.vahanwireprovider.R;
 import com.electrom.vahanwireprovider.features.AmbulanceHomePage;
 import com.electrom.vahanwireprovider.features.BookingHistoryMechanic;
-import com.electrom.vahanwireprovider.features.BookingStatusMechanic;
 import com.electrom.vahanwireprovider.features.MachanicHomePage;
 import com.electrom.vahanwireprovider.new_app_driver.DriverHomePage;
 import com.electrom.vahanwireprovider.new_app_tow.TowHomePage;

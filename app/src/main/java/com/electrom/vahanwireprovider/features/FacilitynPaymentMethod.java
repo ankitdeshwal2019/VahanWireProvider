@@ -1,10 +1,10 @@
 package com.electrom.vahanwireprovider.features;
 
 import android.app.ProgressDialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -12,12 +12,9 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.electrom.vahanwireprovider.R;
-import com.electrom.vahanwireprovider.adapters.PaymentAdapter;
 import com.electrom.vahanwireprovider.adapters.ServiceAdapter;
-import com.electrom.vahanwireprovider.models.payment.Payment;
 import com.electrom.vahanwireprovider.models.req.Req;
 import com.electrom.vahanwireprovider.models.services.Datum;
-import com.electrom.vahanwireprovider.models.payment.Payment_array;
 import com.electrom.vahanwireprovider.models.services.Service;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiClient;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiInterface;

@@ -1,20 +1,16 @@
 package com.electrom.vahanwireprovider.ragistration;
 
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Handler;
-import android.preference.PreferenceActivity;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,16 +20,16 @@ import com.electrom.vahanwireprovider.PetrolPumpHomePage;
 import com.electrom.vahanwireprovider.R;
 import com.electrom.vahanwireprovider.features.AmbulanceHomePage;
 import com.electrom.vahanwireprovider.features.MachanicHomePage;
-import com.electrom.vahanwireprovider.features.PaymentMethod;
 import com.electrom.vahanwireprovider.models.version.Version;
 import com.electrom.vahanwireprovider.new_app_driver.DriverHomePage;
+import com.electrom.vahanwireprovider.new_app_driver.DriverLogin;
 import com.electrom.vahanwireprovider.new_app_tow.ChoiseLogin;
+import com.electrom.vahanwireprovider.new_app_tow.TowActivityLogin;
 import com.electrom.vahanwireprovider.new_app_tow.TowHomePage;
-import com.electrom.vahanwireprovider.notification_service.Config;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiClient;
 import com.electrom.vahanwireprovider.retrofit_lib.ApiInterface;
-import com.electrom.vahanwireprovider.utility.ActionForAll;
 import com.electrom.vahanwireprovider.utility.Constant;
+import com.electrom.vahanwireprovider.utility.CustomTextBold;
 import com.electrom.vahanwireprovider.utility.CustomTextView;
 import com.electrom.vahanwireprovider.utility.SessionManager;
 import com.electrom.vahanwireprovider.utility.UrlConstants;
@@ -53,7 +49,7 @@ import retrofit2.Response;
 
 public class BeforeLogin extends AppCompatActivity implements View.OnClickListener {
 
-    CustomTextView tvPetrolPump, tvMechanic, tvAbmulance, tvCheckAppMode;
+    CustomTextBold tvPetrolPump, tvMechanic, tvAbmulance, tvCheckAppMode,tvPreAppointment, tvTow, tvPickDrop;
     SessionManager sessionManager;
     String service = "";
     String version="";
@@ -83,17 +79,22 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
         tvMechanic = findViewById(R.id.tvMechanic);
         tvAbmulance = findViewById(R.id.tvAmbulance);
         tvCheckAppMode = findViewById(R.id.tvCheckAppMode);
+        tvPreAppointment = findViewById(R.id.tvPreAppointment);
+        tvTow = findViewById(R.id.tvTow);
+        tvPickDrop = findViewById(R.id.tvPickDrop);
         tvPetrolPump.setOnClickListener(this);
         tvAbmulance.setOnClickListener(this);
         tvMechanic.setOnClickListener(this);
+        tvPreAppointment.setOnClickListener(this);
+        tvTow.setOnClickListener(this);
+        tvPickDrop.setOnClickListener(this);
 
         if(!UrlConstants.BASE_URL.contains("http://3.0.231.209/api/"))
             tvCheckAppMode.setText("STAGING : " + BuildConfig.VERSION_NAME);
 
         Log.e(TAG, "mobile: " + sessionManager.getString(SessionManager.PROVIDER_MOBILE));
         Log.e(TAG, "pin: " +  sessionManager.getString(SessionManager.PROVIDER_PIN) );
-        Log.e(TAG, "serivce: " +  sessionManager.getString(SessionManager.SERVICE) );
-
+        Log.e(TAG, "service: " +  sessionManager.getString(SessionManager.SERVICE) );
         Log.e(TAG, "initView: D_ID "+ sessionManager.getString(SessionManager.DEVICE_ID));
         Log.e(TAG, "initView: NOTIFICATION "+ sessionManager.getString(SessionManager.NOTIFICATION_TOKEN));
 
@@ -131,116 +132,42 @@ public class BeforeLogin extends AppCompatActivity implements View.OnClickListen
 
         switch (v.getId())
         {
+
             case R.id.tvPetrolPump:
-                service = "Petrol_Pump";
 
+                service = Constant.SERVICE_PETROL_PUMP;
                 sessionManager.setString(SessionManager.SERVICE, service);
-
                 startActivity(new Intent(getApplicationContext(), ProviderLogin.class));
-               /* Dexter.withActivity(this).withPermissions(
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.ACCESS_FINE_LOCATION)
-                        .withListener(new MultiplePermissionsListener() {
-                            @Override
-                            public void onPermissionsChecked(MultiplePermissionsReport report) {
-                                // check if all permissions are granted
-                                if (report.areAllPermissionsGranted()) {
-                                    // do you work now
-                                    if (!isMyServiceRunning(GPSTracker.class))
-                                        startService(new Intent(getApplicationContext(), GPSTracker.class));
-
-                                        sessionManager.setString(SessionManager.SERVICE, service);
-                                }
-
-                                // check for permanent denial of any permission
-                                if (report.isAnyPermissionPermanentlyDenied()) {
-                                    showSettingsDialog();
-                                    // permission is denied permenantly, navigate user to app settings
-                                }
-                            }
-
-                            @Override
-                            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-                                token.continuePermissionRequest();
-                            }
-                        })
-                        .onSameThread()
-                        .check();*/
                 break;
+
             case R.id.tvAmbulance:
 
-                service = "Ambulance";
-
+                service = Constant.SERVICE_AMBULANCE;
                 startActivity(new Intent(getApplicationContext(), ProviderLogin.class));
                 sessionManager.setString(SessionManager.SERVICE, service);
-
-               /* Dexter.withActivity(this).withPermissions(
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.ACCESS_FINE_LOCATION)
-                        .withListener(new MultiplePermissionsListener() {
-                            @Override
-                            public void onPermissionsChecked(MultiplePermissionsReport report) {
-                                // check if all permissions are granted
-                                if (report.areAllPermissionsGranted()) {
-                                    // do you work now
-                                    if (!isMyServiceRunning(GPSTracker.class))
-                                        startService(new Intent(getApplicationContext(), GPSTracker.class));
-
-                                }
-
-                                //check for permanent denial of any permission
-                                if (report.isAnyPermissionPermanentlyDenied()) {
-                                    showSettingsDialog();
-                                    // permission is denied permenantly, navigate user to app settings
-                                }
-                            }
-
-                            @Override
-                            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-                                token.continuePermissionRequest();
-                            }
-                        })
-                        .onSameThread()
-                        .check();*/
                 break;
+
             case R.id.tvMechanic:
 
-                service = "MechanicPro";
+                sessionManager.setString(SessionManager.SERVICE, Constant.SERVICE_MECHNIC_PRO);
+                startActivity(new Intent(getApplicationContext(), ProviderLogin.class));
+                Log.e(TAG, "onClick: " + sessionManager.getString(SessionManager.SERVICE));
+                //finish();
+                break;
 
-                startActivity(new Intent(getApplicationContext(), ChoiseLogin.class));
-                sessionManager.setString(SessionManager.SERVICE, service);
+            case R.id.tvTow:
 
+                sessionManager.setString(SessionManager.SERVICE, Constant.SERVICE_TOW);
+                startActivity(new Intent(getApplicationContext(), TowActivityLogin.class));
+                Log.e(TAG, "onClick: " + sessionManager.getString(SessionManager.SERVICE));
+                //finish();
+                break;
 
-               /* Dexter.withActivity(this).withPermissions(
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.ACCESS_FINE_LOCATION)
-                        .withListener(new MultiplePermissionsListener() {
-                            @Override
-                            public void onPermissionsChecked(MultiplePermissionsReport report) {
-                                // check if all permissions are granted
-                                if (report.areAllPermissionsGranted()) {
-                                    // do you work now
-                                    if (report.areAllPermissionsGranted()) {
-                                        // do you work now
-                                        if (!isMyServiceRunning(GPSTracker.class))
-                                            startService(new Intent(getApplicationContext(), GPSTracker.class));
+            case R.id.tvPickDrop:
 
-                                    }
-                                }
-
-                                // check for permanent denial of any permission
-                                if (report.isAnyPermissionPermanentlyDenied()) {
-                                    showSettingsDialog();
-                                }
-                            }
-
-                            @Override
-                            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-                                token.continuePermissionRequest();
-                            }
-                        })
-                        .onSameThread()
-                        .check();*/
+                sessionManager.setString(SessionManager.SERVICE, Constant.SERVICE_DRIVER);
+                startActivity(new Intent(getApplicationContext(), DriverLogin.class));
+                Log.e(TAG, "onClick: " + sessionManager.getString(SessionManager.SERVICE));
                 break;
         }
 
